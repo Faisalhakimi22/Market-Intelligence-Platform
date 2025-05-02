@@ -4,12 +4,16 @@ import session from "express-session";
 import createMemoryStore from "memorystore";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
+import { db, pool } from "./db";
+import { eq } from "drizzle-orm";
+import connectPg from "connect-pg-simple";
 
 const MemoryStore = createMemoryStore(session);
+const PostgresSessionStore = connectPg(session);
 const scryptAsync = promisify(scrypt);
 
 export interface IStorage {
-  sessionStore: session.SessionStore;
+  sessionStore: session.Store;
   
   // User related
   getUser(id: number): Promise<User | undefined>;
@@ -57,7 +61,7 @@ export class MemStorage implements IStorage {
   private alerts: Map<number, Alert>;
   private aiInsights: Map<number, AiInsight>;
   
-  sessionStore: session.SessionStore;
+  sessionStore: session.Store;
   currentId: {
     users: number;
     industries: number;
@@ -72,6 +76,7 @@ export class MemStorage implements IStorage {
     this.users = new Map();
     this.industries = new Map();
     this.marketTrends = new Map();
+    this.opportunities = new Map();
     this.opportunities = new Map();
     this.competitors = new Map();
     this.alerts = new Map();
@@ -234,7 +239,132 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export class DatabaseStorage implements IStorage {
+  sessionStore: session.Store;
+  
+  constructor() {
+    this.sessionStore = new PostgresSessionStore({ 
+      pool, 
+      createTableIfMissing: true 
+    });
+  }
+  
+  // User related methods
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db.insert(users).values(insertUser).returning();
+    return user;
+  }
+
+  // Industry related methods
+  async getIndustries(userId: number): Promise<Industry[]> {
+    return await db.select().from(industries).where(eq(industries.userId, userId));
+  }
+
+  async getIndustry(id: number): Promise<Industry | undefined> {
+    const [industry] = await db.select().from(industries).where(eq(industries.id, id));
+    return industry;
+  }
+
+  async createIndustry(industry: InsertIndustry): Promise<Industry> {
+    const [newIndustry] = await db.insert(industries).values(industry).returning();
+    return newIndustry;
+  }
+
+  async updateIndustry(id: number, industryData: Partial<InsertIndustry>): Promise<Industry | undefined> {
+    const [updatedIndustry] = await db
+      .update(industries)
+      .set(industryData)
+      .where(eq(industries.id, id))
+      .returning();
+    return updatedIndustry;
+  }
+
+  // Market trends methods
+  async getMarketTrends(industryId: number): Promise<MarketTrend[]> {
+    return await db.select().from(marketTrends).where(eq(marketTrends.industryId, industryId));
+  }
+
+  async createMarketTrend(trend: InsertMarketTrend): Promise<MarketTrend> {
+    const [newTrend] = await db.insert(marketTrends).values(trend).returning();
+    return newTrend;
+  }
+
+  // Opportunities methods
+  async getOpportunities(industryId: number): Promise<Opportunity[]> {
+    return await db.select().from(opportunities).where(eq(opportunities.industryId, industryId));
+  }
+
+  async createOpportunity(opportunity: InsertOpportunity): Promise<Opportunity> {
+    const [newOpportunity] = await db.insert(opportunities).values(opportunity).returning();
+    return newOpportunity;
+  }
+
+  // Competitors methods
+  async getCompetitors(industryId: number): Promise<Competitor[]> {
+    return await db.select().from(competitors).where(eq(competitors.industryId, industryId));
+  }
+
+  async createCompetitor(competitor: InsertCompetitor): Promise<Competitor> {
+    const [newCompetitor] = await db.insert(competitors).values(competitor).returning();
+    return newCompetitor;
+  }
+
+  // Alerts methods
+  async getAlerts(userId: number): Promise<Alert[]> {
+    return await db.select().from(alerts).where(eq(alerts.userId, userId));
+  }
+
+  async createAlert(alert: InsertAlert): Promise<Alert> {
+    const [newAlert] = await db.insert(alerts).values(alert).returning();
+    return newAlert;
+  }
+
+  // AI Insights methods
+  async getAiInsight(industryId: number): Promise<AiInsight | undefined> {
+    const [insight] = await db.select().from(aiInsights).where(eq(aiInsights.industryId, industryId));
+    return insight;
+  }
+
+  async createAiInsight(insight: InsertAiInsight): Promise<AiInsight> {
+    const [newInsight] = await db.insert(aiInsights).values(insight).returning();
+    return newInsight;
+  }
+  
+  async updateAiInsight(industryId: number, insightData: Partial<InsertAiInsight>): Promise<AiInsight | undefined> {
+    const [updatedInsight] = await db
+      .update(aiInsights)
+      .set(insightData)
+      .where(eq(aiInsights.industryId, industryId))
+      .returning();
+    return updatedInsight;
+  }
+
+  // Password handling
+  async hashPassword(password: string): Promise<string> {
+    const salt = randomBytes(16).toString("hex");
+    const buf = (await scryptAsync(password, salt, 64)) as Buffer;
+    return `${buf.toString("hex")}.${salt}`;
+  }
+
+  async comparePasswords(supplied: string, stored: string): Promise<boolean> {
+    const [hashed, salt] = stored.split(".");
+    const hashedBuf = Buffer.from(hashed, "hex");
+    const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
+    return timingSafeEqual(hashedBuf, suppliedBuf);
+  }
+}
+
+export const storage = new DatabaseStorage();
 
 // Initialize with some example data for demo purposes
 (async () => {
@@ -246,7 +376,8 @@ export const storage = new MemStorage();
       password: hashedPassword,
       name: "Alex Morgan",
       email: "alex@example.com",
-      role: "Enterprise Analyst"
+      role: "Enterprise Analyst",
+      createdAt: new Date()
     });
     
     // Create some initial industries for the demo user
