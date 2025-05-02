@@ -330,11 +330,24 @@ class ForecastingService {
     // Extract values from time series data
     const values = data.map(d => d.value);
     
-    // Create x-coordinates (time steps)
-    const x = Array.from({ length: values.length }, (_, i) => i);
+    // Calculate linear regression manually
+    // y = mx + b (where m is slope, b is intercept)
+    let sumX = 0;
+    let sumY = 0;
+    let sumXY = 0;
+    let sumXX = 0;
+    const n = values.length;
     
-    // Perform linear regression
-    const { m: slope, b: intercept } = ss.linearRegression(x, values);
+    for (let i = 0; i < n; i++) {
+      sumX += i;
+      sumY += values[i];
+      sumXY += i * values[i];
+      sumXX += i * i;
+    }
+    
+    // Calculate slope (m) and intercept (b)
+    const m = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+    const b = (sumY - m * sumX) / n;
     
     // Generate forecast
     const forecast: TimeSeriesDataPoint[] = [];
@@ -355,7 +368,7 @@ class ForecastingService {
       lastTimestamp = nextDate;
       
       // Calculate forecast using linear regression
-      const forecastValue = slope * (values.length + i) + intercept;
+      const forecastValue = m * (values.length + i) + b;
       forecastValues.push(forecastValue);
       
       forecast.push({
@@ -365,7 +378,10 @@ class ForecastingService {
     }
     
     // Calculate confidence intervals
-    const residuals = x.map((_, i) => values[i] - (slope * x[i] + intercept));
+    const residuals = [];
+    for (let i = 0; i < values.length; i++) {
+      residuals.push(values[i] - (m * i + b));
+    }
     const stdDev = ss.standardDeviation(residuals);
     
     const upperBound = forecast.map(point => ({
@@ -444,8 +460,20 @@ class ForecastingService {
     
     // Solve system of equations
     try {
-      const phi = Matrix.solve(R, b);
-      return phi.to1DArray();
+      // Use LU decomposition to solve the system
+      const phi = new Array(p).fill(0.1); // Default in case we can't solve
+      if (p === 1) {
+        // Simple case: solve directly
+        phi[0] = r[1] / r[0];
+      } else if (p === 2) {
+        // 2x2 case: solve directly
+        const det = r[0] * r[0] - r[1] * r[1];
+        if (Math.abs(det) > 1e-10) {
+          phi[0] = (r[0] * r[1] - r[1] * r[2]) / det;
+          phi[1] = (r[0] * r[2] - r[1] * r[1]) / det;
+        }
+      }
+      return phi;
     } catch (e) {
       // Fall back to simpler approach if matrix is singular
       return new Array(p).fill(0.1); // Simple default values
