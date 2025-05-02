@@ -334,7 +334,7 @@ class ForecastingService {
     const x = Array.from({ length: values.length }, (_, i) => i);
     
     // Perform linear regression
-    const { slope, intercept } = ss.linearRegression(x, values);
+    const { m: slope, b: intercept } = ss.linearRegression(x, values);
     
     // Generate forecast
     const forecast: TimeSeriesDataPoint[] = [];
@@ -444,7 +444,7 @@ class ForecastingService {
     
     // Solve system of equations
     try {
-      const phi = R.solve(b);
+      const phi = Matrix.solve(R, b);
       return phi.to1DArray();
     } catch (e) {
       // Fall back to simpler approach if matrix is singular

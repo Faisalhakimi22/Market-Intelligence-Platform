@@ -1,40 +1,49 @@
-// Copied from shadcn/ui toast
-import { Toast, ToastActionElement, ToastProps } from "@/components/ui/toast";
-import {
-  toast as sonnerToast,
-  ToastOptions as SonnerToastOptions,
-} from "@/components/ui/sonner";
+import { toast as sonnerToast } from "sonner";
 
-type ToastOptions = Omit<SonnerToastOptions, "action" | "description"> & {
+type ToastOptions = {
+  title?: string;
   description?: React.ReactNode;
-  variant?: "default" | "destructive";
-  action?: ToastActionElement;
+  variant?: "default" | "destructive" | "success";
+  action?: React.ReactNode;
+  duration?: number;
 };
 
 export function useToast() {
   function toast({
     title,
     description,
-    variant,
+    variant = "default",
     action,
+    duration = 5000,
     ...props
   }: ToastOptions) {
-    const options: SonnerToastOptions = {
+    const options = {
       ...props,
-      className: variant === "destructive" ? "destructive" : undefined,
+      duration,
+      className: variant === "destructive" ? "destructive" : 
+                variant === "success" ? "success" : undefined,
       action,
     };
 
-    return sonnerToast[variant === "destructive" ? "error" : "message"](
-      title,
-      {
+    if (variant === "destructive") {
+      return sonnerToast.error(title!, {
         description,
         ...options,
-      }
-    );
+      });
+    } else if (variant === "success") {
+      return sonnerToast.success(title!, {
+        description,
+        ...options,
+      });
+    } else {
+      return sonnerToast(title!, {
+        description,
+        ...options,
+      });
+    }
   }
 
-  function dismiss(toastId: string) {
+  function dismiss(toastId?: string) {
     sonnerToast.dismiss(toastId);
   }
 
