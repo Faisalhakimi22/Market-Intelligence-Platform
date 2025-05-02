@@ -9,7 +9,9 @@ import {
   Search,
   Menu,
   X,
-  LogOut
+  LogOut,
+  Database,
+  Lightbulb
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
@@ -29,7 +31,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: "Market Analysis", href: "/market-analysis", icon: Search },
     { name: "Forecasting", href: "/forecasting", icon: TrendingUp },
     { name: "Competitors", href: "/competitor-intelligence", icon: Users },
-    { name: "Opportunities", href: "/opportunities", icon: BarChart3 },
+    { name: "Opportunities", href: "/opportunities", icon: Lightbulb },
+    { name: "Data Integrations", href: "/data-integrations", icon: Database },
     { name: "Alerts", href: "/alerts", icon: Bell },
     { name: "Reports", href: "/reports", icon: BarChart3 },
     { name: "Settings", href: "/settings", icon: Settings },

@@ -13,6 +13,7 @@ import ForecastingPage from "@/pages/forecasting-page";
 import ReportsPage from "@/pages/reports-page";
 import AlertsPage from "@/pages/alerts-page";
 import SettingsPage from "@/pages/settings-page";
+import DataIntegrationsPage from "@/pages/data-integrations-page";
 import { ProtectedRoute } from "./lib/protected-route";
 import { AuthProvider } from "@/hooks/use-auth";
 
@@ -24,6 +25,7 @@ function Router() {
       <ProtectedRoute path="/competitor-intelligence" component={CompetitorIntelligencePage} />
       <ProtectedRoute path="/opportunities" component={OpportunitiesPage} />
       <ProtectedRoute path="/forecasting" component={ForecastingPage} />
+      <ProtectedRoute path="/data-integrations" component={DataIntegrationsPage} />
       <ProtectedRoute path="/reports" component={ReportsPage} />
       <ProtectedRoute path="/alerts" component={AlertsPage} />
       <ProtectedRoute path="/settings" component={SettingsPage} />
