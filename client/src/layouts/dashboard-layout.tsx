@@ -94,11 +94,20 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     else if (location === "/forecasting") pageTitle = "Forecasting";
     else if (location === "/reports") pageTitle = "Reports";
     else if (location === "/alerts") pageTitle = "Alerts";
+    else if (location === "/settings") pageTitle = "Settings";
     
     document.title = `MarketInsight AI | ${pageTitle}`;
   }, [location]);
   
-  // Close sidebar on mobile when navigating
+  // Close sidebar on mobile only when clicking the menu toggle or backdrop
+  // We don't want to close it on every navigation change to maintain the current selection
+  const closeSidebar = () => {
+    if (isMobile) {
+      setIsSidebarOpen(false);
+    }
+  };
+  
+  // Monitor mobile state changes
   useEffect(() => {
     if (isMobile) {
       setIsSidebarOpen(false);
@@ -131,7 +140,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={() => setIsSidebarOpen(false)}
+            onClick={closeSidebar}
             className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           >
             <X className="h-5 w-5" />
@@ -168,43 +177,64 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 icon={<LayoutDashboard />} 
                 label="Dashboard" 
                 active={location === '/'} 
-                onClick={() => navigate('/')}
+                onClick={() => {
+                  navigate('/');
+                  // Do not close sidebar on navigation
+                }}
               />
               <NavItem 
                 icon={<BarChartHorizontal />} 
                 label="Market Analysis" 
                 active={location === '/market-analysis'}
-                onClick={() => navigate('/market-analysis')}
+                onClick={() => {
+                  navigate('/market-analysis');
+                  // Keep sidebar open on navigation
+                }}
               />
               <NavItem 
                 icon={<UserSearch />} 
                 label="Competitor Intelligence" 
                 active={location === '/competitor-intelligence'}
-                onClick={() => navigate('/competitor-intelligence')}
+                onClick={() => {
+                  navigate('/competitor-intelligence');
+                  // Keep sidebar open on navigation
+                }}
               />
               <NavItem 
                 icon={<LightbulbIcon />} 
                 label="Opportunities" 
                 active={location === '/opportunities'}
-                onClick={() => navigate('/opportunities')}
+                onClick={() => {
+                  navigate('/opportunities');
+                  // Keep sidebar open on navigation
+                }}
               />
               <NavItem 
                 icon={<LineChart />} 
                 label="Forecasting" 
                 active={location === '/forecasting'}
-                onClick={() => navigate('/forecasting')}
+                onClick={() => {
+                  navigate('/forecasting');
+                  // Keep sidebar open on navigation
+                }}
               />
               <NavItem 
                 icon={<FileText />} 
                 label="Reports" 
                 active={location === '/reports'}
-                onClick={() => navigate('/reports')}
+                onClick={() => {
+                  navigate('/reports');
+                  // Keep sidebar open on navigation
+                }}
               />
               <NavItem 
                 icon={<Bell />} 
                 label="Alerts" 
                 active={location === '/alerts'}
-                onClick={() => navigate('/alerts')}
+                onClick={() => {
+                  navigate('/alerts');
+                  // Keep sidebar open on navigation
+                }}
                 badge={3}
               />
             </div>
@@ -243,7 +273,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 variant="ghost" 
                 size="sm" 
                 className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                onClick={() => navigate('/settings')}
+                onClick={() => {
+                  navigate('/settings');
+                  // Keep sidebar open on navigation
+                }}
               >
                 <Settings className="mr-2 h-4 w-4" />
                 Settings
@@ -264,7 +297,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 variant="ghost" 
                 size="icon" 
                 className="md:hidden mr-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" 
-                onClick={() => setIsSidebarOpen(true)}
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               >
                 <Menu className="h-5 w-5" />
               </Button>
