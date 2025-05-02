@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import fetch from 'node-fetch';
 
 interface MarketTrend {
   name: string;
@@ -30,28 +31,47 @@ class OpenRouterService {
         "X-Title": "MarketInsight AI"
       };
       
-      console.log('Sending request to OpenRouter API...');
+      console.log('Sending request to OpenRouter API with prompt:', prompt.substring(0, 50) + '...');
       
-      const completion = await this.client.chat.completions.create({
-        model: "openai/gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: "You are an expert market analyst providing accurate and detailed market intelligence. Return answers as structured JSON."
-          },
-          {
-            role: "user",
-            content: prompt
-          }
-        ],
-        response_format: { type: "json_object" }
-      }, { headers });
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          'HTTP-Referer': 'https://marketinsight-ai.replit.app',
+          'X-Title': 'MarketInsight AI'
+        },
+        body: JSON.stringify({
+          model: 'openai/gpt-4o',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an expert market analyst providing accurate and detailed market intelligence. Return answers as structured JSON.'
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          response_format: { type: 'json_object' }
+        })
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('OpenRouter API error status:', response.status, errorText);
+        throw new Error(`OpenRouter API returned status ${response.status}: ${errorText}`);
+      }
+      
+      const completion = await response.json();
 
       console.log('Response received from OpenRouter');
       
+      console.log('OpenRouter response:', JSON.stringify(completion, null, 2).substring(0, 500) + '...');
+      
       // Safely access the content with null checks
-      if (!completion || !completion.choices || completion.choices.length === 0) {
-        console.error('Empty or invalid response from OpenRouter:', completion);
+      if (!completion || !completion.choices || !Array.isArray(completion.choices) || completion.choices.length === 0) {
+        console.error('Empty or invalid response from OpenRouter');
         return {
           title: "Market Analysis",
           description: "Analysis could not be generated at this time.",

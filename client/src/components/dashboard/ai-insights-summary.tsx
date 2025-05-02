@@ -172,22 +172,17 @@ export function AIInsightsSummary({ industryId }: AIInsightsSummaryProps) {
             {insight.timeline && typeof insight.timeline === 'object' && (
               <>
                 <div className="mt-2 flex justify-between text-xs">
-                  {(() => {
-                    const timeline = insight.timeline as Record<string, any>;
-                    if (Array.isArray(timeline.quarters)) {
-                      return timeline.quarters.map((quarter: string, index: number) => (
-                        <span key={index}>{quarter}</span>
-                      ));
-                    }
-                    return null;
-                  })() as React.ReactNode}
+                  {/* Using a simpler approach to render quarters */}
+                  {typeof insight.timeline === 'object' && 'quarters' in insight.timeline &&
+                    Array.isArray((insight.timeline as any).quarters) &&
+                    (insight.timeline as any).quarters.map((quarter: string, index: number) => (
+                      <span key={index}>{quarter}</span>
+                    ))}
                 </div>
                 <p className="mt-2 text-sm">
                   Optimal market entry window: <span className="font-medium">
-                    {(() => {
-                      const timeline = insight.timeline as Record<string, any>;
-                      return timeline.optimalEntry ? String(timeline.optimalEntry) : 'Not available';
-                    })() as React.ReactNode}
+                    {typeof insight.timeline === 'object' && 'optimalEntry' in insight.timeline ? 
+                      String((insight.timeline as any).optimalEntry) : 'Not available'}
                   </span>
                 </p>
               </>

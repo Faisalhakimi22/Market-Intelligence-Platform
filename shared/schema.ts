@@ -100,22 +100,4 @@ export type MarketTrend = typeof marketTrends.$inferSelect;
 export type Opportunity = typeof opportunities.$inferSelect;
 export type Competitor = typeof competitors.$inferSelect;
 export type Alert = typeof alerts.$inferSelect;
-// Define the types for the JSON fields in aiInsights
-type InsightTrend = {
-  name: string;
-  growth: string;
-  trend: string;
-};
-
-type Timeline = {
-  quarters: string[];
-  optimalEntry: string;
-};
-
-type AiInsightBase = typeof aiInsights.$inferSelect;
-
-// Extend the base type with more specific types for the JSON fields
-export type AiInsight = Omit<AiInsightBase, 'trends' | 'timeline'> & {
-  trends: MarketTrend[];
-  timeline: Timeline;
-};
+export type AiInsight = typeof aiInsights.$inferSelect;
