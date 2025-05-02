@@ -180,14 +180,14 @@ export function AIInsightsSummary({ industryId }: AIInsightsSummaryProps) {
                       ));
                     }
                     return null;
-                  })()}
+                  })() as React.ReactNode}
                 </div>
                 <p className="mt-2 text-sm">
                   Optimal market entry window: <span className="font-medium">
                     {(() => {
                       const timeline = insight.timeline as Record<string, any>;
                       return timeline.optimalEntry ? String(timeline.optimalEntry) : 'Not available';
-                    })()}
+                    })() as React.ReactNode}
                   </span>
                 </p>
               </>
