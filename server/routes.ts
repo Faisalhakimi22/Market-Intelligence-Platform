@@ -905,6 +905,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const period = req.query.period as string || 'today 12-m';
       
       try {
+        // Ensure googleTrendsService is correctly imported at the top of the file
         const trendsData = await googleTrendsService.getInterestOverTime(keywords, period);
         res.json(trendsData);
       } catch (error) {
@@ -913,6 +914,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: 'Could not retrieve interest over time data', 
           error: error instanceof Error ? error.message : String(error)
         });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  // New Google Trends Routes for the Data Integrations page
+  app.get("/api/google-trends/interest/:keywords/:period", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const { keywords, period } = req.params;
+      const keywordArray = keywords.split(',');
+      
+      try {
+        const interestData = await googleTrendsService.getInterestOverTime(keywordArray, period);
+        res.json({
+          keywords: keywordArray,
+          data: interestData,
+          periodDisplay: period
+        });
+      } catch (error) {
+        console.error('Error fetching interest over time:', error);
+        res.status(500).json({ message: 'Could not retrieve interest data' });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  app.get("/api/google-trends/related/:keyword/:period", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const { keyword, period } = req.params;
+      
+      try {
+        const [relatedQueries, relatedTopics] = await Promise.all([
+          googleTrendsService.getRelatedQueries(keyword, period),
+          googleTrendsService.getRelatedTopics(keyword, period)
+        ]);
+        
+        res.json({
+          relatedQueries,
+          relatedTopics
+        });
+      } catch (error) {
+        console.error('Error fetching related data:', error);
+        res.status(500).json({ message: 'Could not retrieve related data' });
       }
     } catch (error) {
       next(error);
