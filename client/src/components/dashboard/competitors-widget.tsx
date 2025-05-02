@@ -162,9 +162,13 @@ function CompetitorRow({ competitor }: { competitor: Competitor }) {
         </div>
       </td>
       <td className="px-4 py-3 whitespace-nowrap text-sm">
-        <span className={cn("px-2 py-1 text-xs rounded-full", getActivityBadgeColor(competitor.recentActivity || ""))}>
-          {competitor.recentActivity}
-        </span>
+        {competitor.recentActivity ? (
+          <span className={cn("px-2 py-1 text-xs rounded-full", getActivityBadgeColor(competitor.recentActivity))}>
+            {competitor.recentActivity}
+          </span>
+        ) : (
+          <span className="text-gray-400 dark:text-gray-500">No recent activity</span>
+        )}
       </td>
     </tr>
   );
