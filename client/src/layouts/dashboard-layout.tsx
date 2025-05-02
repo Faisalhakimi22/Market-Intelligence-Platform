@@ -1,360 +1,168 @@
-import { useState, useEffect } from "react";
-import { useAuth } from "@/hooks/use-auth";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { useLocation, Link } from "wouter";
-import { Button } from "@/components/ui/button";
+import { ReactNode } from "react";
+import { Link, useLocation } from "wouter";
 import { 
-  LayoutDashboard, 
-  BarChartHorizontal, 
-  UserSearch, 
-  LightbulbIcon, 
-  LineChart, 
-  FileText, 
+  BarChart3, 
+  TrendingUp, 
+  Users, 
   Bell, 
   Settings, 
-  LogOut,
+  Search,
   Menu,
   X,
-  Search
+  LogOut
 } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-
-interface NavItemProps {
-  icon: React.ReactNode;
-  label: string;
-  active?: boolean;
-  onClick?: () => void;
-  badge?: number;
-}
-
-const NavItem = ({ icon, label, active, onClick, badge }: NavItemProps) => (
-  <a 
-    href="#" 
-    onClick={(e) => { 
-      e.preventDefault(); 
-      onClick && onClick();
-    }}
-    className={cn(
-      "flex items-center px-3 py-2 text-sm font-medium rounded-md",
-      active 
-        ? "bg-primary-500 text-white" 
-        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-    )}
-  >
-    <span className="mr-3 text-lg">{icon}</span>
-    {label}
-    {badge && (
-      <Badge variant="destructive" className="ml-auto">
-        {badge}
-      </Badge>
-    )}
-  </a>
-);
-
-const IndustryItem = ({ name, color, active, onClick }: { name: string; color: string; active?: boolean; onClick?: () => void; }) => (
-  <a 
-    href="#" 
-    onClick={(e) => { 
-      e.preventDefault(); 
-      onClick && onClick();
-    }}
-    className={cn(
-      "flex items-center px-3 py-2 text-sm font-medium rounded-md",
-      active 
-        ? "bg-gray-100 dark:bg-gray-700" 
-        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-    )}
-  >
-    <span className={`w-2 h-2 mr-3 bg-${color} rounded-full`}></span>
-    {name}
-  </a>
-);
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
+import { useState } from "react";
 
 interface DashboardLayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const [location] = useLocation();
   const { user, logoutMutation } = useAuth();
-  const isMobile = useIsMobile();
-  const [location, navigate] = useLocation();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
-  const [activeIndustry, setActiveIndustry] = useState<{id: number; name: string; color: string}>({id: 1, name: 'Healthcare', color: 'primary-400'});
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
-  // Update the page title based on current location
-  useEffect(() => {
-    let pageTitle = "Dashboard";
-    
-    if (location === "/market-analysis") pageTitle = "Market Analysis";
-    else if (location === "/competitor-intelligence") pageTitle = "Competitor Intelligence";
-    else if (location === "/opportunities") pageTitle = "Opportunities";
-    else if (location === "/forecasting") pageTitle = "Forecasting";
-    else if (location === "/reports") pageTitle = "Reports";
-    else if (location === "/alerts") pageTitle = "Alerts";
-    else if (location === "/settings") pageTitle = "Settings";
-    
-    document.title = `MarketInsight AI | ${pageTitle}`;
-  }, [location]);
+  const navigation = [
+    { name: "Dashboard", href: "/", icon: BarChart3 },
+    { name: "Market Analysis", href: "/market-analysis", icon: Search },
+    { name: "Forecasting", href: "/forecasting", icon: TrendingUp },
+    { name: "Competitors", href: "/competitor-intelligence", icon: Users },
+    { name: "Opportunities", href: "/opportunities", icon: BarChart3 },
+    { name: "Alerts", href: "/alerts", icon: Bell },
+    { name: "Reports", href: "/reports", icon: BarChart3 },
+    { name: "Settings", href: "/settings", icon: Settings },
+  ];
   
-  // Close sidebar on mobile only when clicking the menu toggle or backdrop
-  // We don't want to close it on every navigation change to maintain the current selection
-  const closeSidebar = () => {
-    if (isMobile) {
-      setIsSidebarOpen(false);
-    }
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-  
-  // Monitor mobile state changes
-  useEffect(() => {
-    if (isMobile) {
-      setIsSidebarOpen(false);
-    }
-  }, [isMobile]);
-  
+
   const handleLogout = () => {
     logoutMutation.mutate();
   };
   
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
-      {/* Sidebar */}
-      <aside 
-        className={cn(
-          "w-full md:w-64 md:flex-shrink-0 md:fixed md:h-full md:overflow-y-auto bg-white dark:bg-gray-800 shadow-lg md:shadow-md z-10 transition-all",
-          isSidebarOpen 
-            ? "h-screen fixed inset-0 z-40" 
-            : "h-auto relative hidden md:block"
-        )}
-      >
-        {/* Mobile Header */}
-        <div className="md:hidden flex items-center justify-between p-4 border-b dark:border-gray-700">
-          <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 rounded-md bg-primary-500 flex items-center justify-center text-white">
-              <LightbulbIcon className="h-5 w-5" />
-            </div>
-            <span className="font-heading font-semibold text-lg">MarketInsight AI</span>
+    <div className="flex h-screen bg-gray-50">
+      {/* Sidebar for desktop */}
+      <aside className="hidden md:flex md:flex-col md:w-64 bg-white border-r">
+        <div className="flex flex-col flex-1 min-h-0 overflow-y-auto">
+          <div className="flex items-center h-16 flex-shrink-0 px-4 border-b">
+            <Link href="/" className="flex items-center text-lg font-semibold">
+              <BarChart3 className="h-6 w-6 mr-2 text-primary" />
+              <span>Market Intel</span>
+            </Link>
           </div>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={closeSidebar}
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-          >
-            <X className="h-5 w-5" />
-          </Button>
-        </div>
-        
-        <div className="h-full flex flex-col">
-          {/* Logo and Brand (desktop) */}
-          <div className="hidden md:flex items-center space-x-3 p-4 border-b dark:border-gray-700">
-            <div className="h-8 w-8 rounded-md bg-primary-500 flex items-center justify-center text-white">
-              <LightbulbIcon className="h-5 w-5" />
-            </div>
-            <span className="font-heading font-semibold text-lg">MarketInsight AI</span>
-          </div>
-          
-          {/* User Profile */}
-          <div className="p-4 border-b dark:border-gray-700">
-            <div className="flex items-center">
-              <Avatar>
-                <AvatarImage src="https://ui.shadcn.com/avatars/01.png" alt={user?.name} />
-                <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
-              </Avatar>
-              <div className="ml-3">
-                <p className="font-medium text-sm">{user?.name}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{user?.role}</p>
-              </div>
-            </div>
-          </div>
-          
-          {/* Navigation */}
-          <nav className="flex-1 p-2 overflow-y-auto">
-            <div className="space-y-1">
-              <NavItem 
-                icon={<LayoutDashboard />} 
-                label="Dashboard" 
-                active={location === '/'} 
-                onClick={() => {
-                  navigate('/');
-                  // Do not close sidebar on navigation
-                }}
-              />
-              <NavItem 
-                icon={<BarChartHorizontal />} 
-                label="Market Analysis" 
-                active={location === '/market-analysis'}
-                onClick={() => {
-                  navigate('/market-analysis');
-                  // Keep sidebar open on navigation
-                }}
-              />
-              <NavItem 
-                icon={<UserSearch />} 
-                label="Competitor Intelligence" 
-                active={location === '/competitor-intelligence'}
-                onClick={() => {
-                  navigate('/competitor-intelligence');
-                  // Keep sidebar open on navigation
-                }}
-              />
-              <NavItem 
-                icon={<LightbulbIcon />} 
-                label="Opportunities" 
-                active={location === '/opportunities'}
-                onClick={() => {
-                  navigate('/opportunities');
-                  // Keep sidebar open on navigation
-                }}
-              />
-              <NavItem 
-                icon={<LineChart />} 
-                label="Forecasting" 
-                active={location === '/forecasting'}
-                onClick={() => {
-                  navigate('/forecasting');
-                  // Keep sidebar open on navigation
-                }}
-              />
-              <NavItem 
-                icon={<FileText />} 
-                label="Reports" 
-                active={location === '/reports'}
-                onClick={() => {
-                  navigate('/reports');
-                  // Keep sidebar open on navigation
-                }}
-              />
-              <NavItem 
-                icon={<Bell />} 
-                label="Alerts" 
-                active={location === '/alerts'}
-                onClick={() => {
-                  navigate('/alerts');
-                  // Keep sidebar open on navigation
-                }}
-                badge={3}
-              />
-            </div>
-            
-            <div className="mt-8 pt-4 border-t dark:border-gray-700">
-              <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Industry Focus
-              </h3>
-              <div className="mt-1 space-y-1">
-                <IndustryItem 
-                  name="Healthcare" 
-                  color="primary-400" 
-                  active={activeIndustry.name === 'Healthcare'} 
-                  onClick={() => setActiveIndustry({id: 1, name: 'Healthcare', color: 'primary-400'})} 
-                />
-                <IndustryItem 
-                  name="Technology" 
-                  color="secondary-500" 
-                  active={activeIndustry.name === 'Technology'} 
-                  onClick={() => setActiveIndustry({id: 2, name: 'Technology', color: 'secondary-500'})} 
-                />
-                <IndustryItem 
-                  name="Education" 
-                  color="success-500" 
-                  active={activeIndustry.name === 'Education'} 
-                  onClick={() => setActiveIndustry({id: 3, name: 'Education', color: 'success-500'})} 
-                />
-              </div>
-            </div>
+          <nav className="flex-1 px-2 py-4 space-y-1">
+            {navigation.map((item) => {
+              const isActive = location === item.href;
+              return (
+                <Link 
+                  key={item.name} 
+                  href={item.href}
+                  className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive ? "bg-primary text-primary-foreground" : "text-gray-700 hover:bg-gray-100"}`}
+                >
+                  <item.icon className={`h-5 w-5 mr-3 ${isActive ? "text-primary-foreground" : "text-gray-500"}`} />
+                  {item.name}
+                </Link>
+              );
+            })}
           </nav>
-          
-          {/* Settings and Theme Toggle */}
-          <div className="p-4 border-t dark:border-gray-700">
-            <div className="flex items-center justify-between">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                onClick={() => {
-                  navigate('/settings');
-                  // Keep sidebar open on navigation
-                }}
-              >
-                <Settings className="mr-2 h-4 w-4" />
-                Settings
-              </Button>
-              <ThemeToggle />
+          <div className="flex-shrink-0 flex border-t p-4">
+            <div className="flex-shrink-0 w-full group block">
+              <div className="flex items-center">
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-gray-700">
+                    {user?.name || user?.username}
+                  </p>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-xs text-gray-500 mt-1"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="h-3 w-3 mr-1" />
+                    Sign out
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </aside>
-      
-      {/* Main Content */}
-      <main className="flex-1 md:ml-64 min-h-screen">
-        {/* Top Navigation Bar */}
-        <header className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-10">
-          <div className="flex items-center justify-between h-16 px-4 md:px-6">
-            <div className="flex items-center">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="md:hidden mr-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" 
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+
+      {/* Mobile menu overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black/20 z-40"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Mobile sidebar */}
+      <div 
+        className={`fixed inset-y-0 left-0 z-50 w-full md:hidden bg-white transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out`}
+        style={{ maxWidth: "250px" }}
+      >
+        <div className="flex items-center justify-between h-16 px-4 border-b">
+          <Link href="/" className="flex items-center text-lg font-semibold">
+            <BarChart3 className="h-6 w-6 mr-2 text-primary" />
+            <span>Market Intel</span>
+          </Link>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleMobileMenu}
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        </div>
+        <nav className="px-2 py-4 space-y-1 overflow-y-auto max-h-[calc(100vh-64px)]">
+          {navigation.map((item) => {
+            const isActive = location === item.href;
+            return (
+              <Link 
+                key={item.name} 
+                href={item.href}
+                className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive ? "bg-primary text-primary-foreground" : "text-gray-700 hover:bg-gray-100"}`}
+                onClick={() => setIsMobileMenuOpen(false)}
               >
-                <Menu className="h-5 w-5" />
-              </Button>
-              <h1 className="text-xl font-heading font-semibold">
-                {location === "/" && "Market Intelligence Dashboard"}
-                {location === "/market-analysis" && "Market Analysis"}
-                {location === "/competitor-intelligence" && "Competitor Intelligence"}
-                {location === "/opportunities" && "Opportunities"}
-                {location === "/forecasting" && "Forecasting"}
-                {location === "/reports" && "Reports"}
-                {location === "/alerts" && "Alerts"}
-                {location === "/settings" && "Settings"}
-              </h1>
-            </div>
-            
-            <div className="flex items-center space-x-3">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="relative flex-shrink-0 p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full"
-                onClick={() => {
-                  // Add search functionality
-                  alert('Search feature coming soon!');
-                }}
-              >
-                <span className="sr-only">Search</span>
-                <Search className="h-5 w-5" />
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="relative flex-shrink-0 p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full"
-                onClick={() => {
-                  // Navigate to alerts page
-                  navigate('/alerts');
-                }}
-              >
-                <span className="sr-only">Notifications</span>
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-destructive"></span>
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="hidden md:flex p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full"
-                onClick={handleLogout}
-              >
-                <span className="sr-only">Log out</span>
-                <LogOut className="h-5 w-5" />
-              </Button>
-            </div>
+                <item.icon className={`h-5 w-5 mr-3 ${isActive ? "text-primary-foreground" : "text-gray-500"}`} />
+                {item.name}
+              </Link>
+            );
+          })}
+          <div className="pt-4 mt-4 border-t">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full justify-start"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign out
+            </Button>
           </div>
-        </header>
-        
-        {/* Page Content */}
-        {children}
-      </main>
+        </nav>
+      </div>
+
+      {/* Main content */}
+      <div className="flex flex-col flex-1 w-0 overflow-hidden">
+        <div className="md:hidden flex items-center h-16 flex-shrink-0 px-4 border-b">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleMobileMenu}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+          <div className="ml-4 text-lg font-semibold">Market Intel</div>
+        </div>
+        <main className="flex-1 relative overflow-y-auto focus:outline-none bg-gray-50">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

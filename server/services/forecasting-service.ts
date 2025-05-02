@@ -247,11 +247,47 @@ class ForecastingService {
     // Extract values and create numeric time index
     const y = data.map(d => d.value);
     const x = Array.from({length: data.length}, (_, i) => i);
+
+    // Prepare data for linear regression
+    const xMatrix = x.map(val => [1, val]); // Add constant term
     
     // Fit linear regression
-    const regression = ss.linearRegression(x.map(val => [1, val]), y);
-    const slope = regression.b[1];
-    const intercept = regression.b[0];
+    // Handle potential type issues with simple-statistics linearRegression
+    let slope = 0;
+    let intercept = 0;
+    
+    try {
+      const regression = ss.linearRegression(xMatrix, y);
+      // Access regression coefficients safely
+      if (Array.isArray(regression.b) && regression.b.length >= 2) {
+        intercept = regression.b[0] || 0;
+        slope = regression.b[1] || 0;
+      } else {
+        // Fallback to simple calculation if regression.b is not as expected
+        const xMean = ss.mean(x);
+        const yMean = ss.mean(y);
+        
+        let numerator = 0;
+        let denominator = 0;
+        
+        for (let i = 0; i < x.length; i++) {
+          numerator += (x[i] - xMean) * (y[i] - yMean);
+          denominator += Math.pow(x[i] - xMean, 2);
+        }
+        
+        slope = denominator !== 0 ? numerator / denominator : 0;
+        intercept = yMean - slope * xMean;
+      }
+    } catch (error) {
+      console.warn('Error in regression calculation, using simple trend estimation:', error);
+      // Simple trend estimate using first and last points
+      if (data.length >= 2) {
+        const firstVal = y[0];
+        const lastVal = y[y.length - 1];
+        slope = (lastVal - firstVal) / (x.length - 1 || 1);
+        intercept = firstVal;
+      }
+    }
     
     // Calculate fitted values and residuals
     const fittedValues = x.map(xi => intercept + slope * xi);
