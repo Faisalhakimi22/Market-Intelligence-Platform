@@ -30,11 +30,23 @@ export function AIInsightsSummary({ industryId }: AIInsightsSummaryProps) {
     setIsRefreshing(true);
     try {
       // Request live data from the API
-      await fetch(`/api/industries/${industryId}/insights?live=true`)
-        .then(res => res.json())
-        .then(() => refetch());
+      const response = await fetch(`/api/industries/${industryId}/insights?live=true`);
+      const data = await response.json();
+      
+      if (!response.ok) {
+        // Handle API errors
+        if (data.error === 'PERPLEXITY_AUTH_ERROR') {
+          alert('Cannot generate insights: Perplexity API key is invalid or missing. Please contact the administrator.');
+        } else {
+          alert(`Error: ${data.message || 'Failed to generate insights'}`);
+        }
+      } else {
+        // Success - refresh the data
+        await refetch();
+      }
     } catch (error) {
       console.error('Error refreshing insights:', error);
+      alert('Failed to connect to the server. Please try again later.');
     } finally {
       setIsRefreshing(false);
     }
@@ -66,7 +78,12 @@ export function AIInsightsSummary({ industryId }: AIInsightsSummaryProps) {
           <RocketIcon className="h-12 w-12 mx-auto mb-4 text-blue-100" />
           <h2 className="text-xl font-semibold mb-2">No AI Insights Available</h2>
           <p className="mb-4 text-blue-100">We don't have insights for this industry yet.</p>
-          <Button variant="secondary">Generate Insights</Button>
+          <Button 
+            variant="secondary"
+            onClick={handleRefresh}
+          >
+            {isRefreshing ? 'Generating...' : 'Generate Insights'}
+          </Button>
         </CardContent>
       </Card>
     );
@@ -179,7 +196,13 @@ export function AIInsightsSummary({ industryId }: AIInsightsSummaryProps) {
         </div>
         
         <div className="mt-4 flex justify-end">
-          <Button variant="secondary">
+          <Button 
+            variant="secondary"
+            onClick={() => {
+              // Placeholder for detailed analysis view
+              alert('Full analysis will be available in the next update.');
+            }}
+          >
             View Full Analysis
           </Button>
         </div>

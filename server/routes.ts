@@ -479,6 +479,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
             });
           }
           
+          // Check for auth errors
+          if (perplexityError.message && perplexityError.message.includes('401')) {
+            return res.status(401).json({ 
+              message: "Perplexity API authentication failed. Please check your API key.",
+              error: "PERPLEXITY_AUTH_ERROR",
+              solution: "Please contact administrator to update the Perplexity API key."
+            });
+          }
+          
           // Otherwise return the error
           return res.status(500).json({ 
             message: "Failed to retrieve live market intelligence",
