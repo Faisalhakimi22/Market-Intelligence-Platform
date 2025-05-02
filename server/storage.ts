@@ -110,7 +110,12 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentId.users++;
-    const user: User = { ...insertUser, id, createdAt: new Date() };
+    const user: User = { 
+      ...insertUser, 
+      id, 
+      role: insertUser.role || null,
+      createdAt: new Date() 
+    };
     this.users.set(id, user);
     return user;
   }
@@ -128,7 +133,12 @@ export class MemStorage implements IStorage {
 
   async createIndustry(industry: InsertIndustry): Promise<Industry> {
     const id = this.currentId.industries++;
-    const newIndustry: Industry = { ...industry, id };
+    const newIndustry: Industry = { 
+      ...industry, 
+      id, 
+      isActive: industry.isActive || null,
+      userId: industry.userId || null 
+    };
     this.industries.set(id, newIndustry);
     return newIndustry;
   }
@@ -151,7 +161,11 @@ export class MemStorage implements IStorage {
 
   async createMarketTrend(trend: InsertMarketTrend): Promise<MarketTrend> {
     const id = this.currentId.marketTrends++;
-    const newTrend: MarketTrend = { ...trend, id };
+    const newTrend: MarketTrend = { 
+      ...trend, 
+      id, 
+      industryId: trend.industryId || null 
+    };
     this.marketTrends.set(id, newTrend);
     return newTrend;
   }
@@ -165,7 +179,11 @@ export class MemStorage implements IStorage {
 
   async createOpportunity(opportunity: InsertOpportunity): Promise<Opportunity> {
     const id = this.currentId.opportunities++;
-    const newOpportunity: Opportunity = { ...opportunity, id };
+    const newOpportunity: Opportunity = { 
+      ...opportunity, 
+      id,
+      industryId: opportunity.industryId || null 
+    };
     this.opportunities.set(id, newOpportunity);
     return newOpportunity;
   }
@@ -179,7 +197,12 @@ export class MemStorage implements IStorage {
 
   async createCompetitor(competitor: InsertCompetitor): Promise<Competitor> {
     const id = this.currentId.competitors++;
-    const newCompetitor: Competitor = { ...competitor, id };
+    const newCompetitor: Competitor = { 
+      ...competitor, 
+      id,
+      industryId: competitor.industryId || null,
+      recentActivity: competitor.recentActivity || null
+    };
     this.competitors.set(id, newCompetitor);
     return newCompetitor;
   }
@@ -376,8 +399,7 @@ export const storage = new DatabaseStorage();
       password: hashedPassword,
       name: "Alex Morgan",
       email: "alex@example.com",
-      role: "Enterprise Analyst",
-      createdAt: new Date()
+      role: "Enterprise Analyst"
     });
     
     // Create some initial industries for the demo user

@@ -123,9 +123,7 @@ export function AIInsightsSummary({ industryId }: AIInsightsSummaryProps) {
               <LineChartIcon className="text-success-500 text-xl" />
             </div>
             <ul className="mt-2 space-y-2">
-              {insight.trends && 
-               typeof insight.trends === 'object' && 
-               Array.isArray(insight.trends) && 
+              {Array.isArray(insight.trends) && 
                insight.trends.map((trend: {name: string; growth: string; trend: string}, index: number) => (
                 <li key={index} className="flex items-center text-sm">
                   {trend.trend === 'up' ? (
@@ -150,19 +148,19 @@ export function AIInsightsSummary({ industryId }: AIInsightsSummaryProps) {
               <div className="h-2 bg-white/70 flex-1"></div>
               <div className="h-2 rounded-r-full bg-white/90 flex-1"></div>
             </div>
-            {insight.timeline && 
-             typeof insight.timeline === 'object' && 
-             'quarters' in insight.timeline && 
-             Array.isArray(insight.timeline.quarters) && 
-             'optimalEntry' in insight.timeline && (
+            {insight.timeline && typeof insight.timeline === 'object' && (
               <>
                 <div className="mt-2 flex justify-between text-xs">
-                  {insight.timeline.quarters.map((quarter: string, index: number) => (
-                    <span key={index}>{quarter}</span>
-                  ))}
+                  {Array.isArray((insight.timeline as any).quarters) && 
+                    (insight.timeline as any).quarters.map((quarter: string, index: number) => (
+                      <span key={index}>{quarter}</span>
+                    ))
+                  }
                 </div>
                 <p className="mt-2 text-sm">
-                  Optimal market entry window: <span className="font-medium">{String(insight.timeline.optimalEntry)}</span>
+                  Optimal market entry window: <span className="font-medium">
+                    {(insight.timeline as any).optimalEntry ? String((insight.timeline as any).optimalEntry) : 'Not available'}
+                  </span>
                 </p>
               </>
             )}
