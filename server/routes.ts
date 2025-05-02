@@ -1,6 +1,8 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { dataIntegrationService } from "./services/data-integration-service";
+import { googleTrendsService } from "./services/google-trends-service";
+import { yahooFinanceService } from "./services/yahoo-finance-service";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import { insertIndustrySchema, insertOpportunitySchema, insertCompetitorSchema, insertAlertSchema, insertAiInsightSchema } from "@shared/schema";

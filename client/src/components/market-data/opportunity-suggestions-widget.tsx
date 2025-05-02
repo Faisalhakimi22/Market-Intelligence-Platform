@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader2, Search, Lightbulb, TrendingUp, ArrowRight } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ArrowUpRight, Lightbulb, TrendingUp, Search } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Opportunity {
   type: string;
   name: string;
   growth: string | number;
   source: string;
+  description: string;
 }
 
 interface OpportunitySuggestionsWidgetProps {
@@ -20,130 +21,123 @@ interface OpportunitySuggestionsWidgetProps {
 
 export default function OpportunitySuggestionsWidget({ initialIndustry = 'Technology' }: OpportunitySuggestionsWidgetProps) {
   const [industry, setIndustry] = useState(initialIndustry);
-  const [searchIndustry, setSearchIndustry] = useState(initialIndustry);
-  const { toast } = useToast();
   
-  const { data, isLoading, isError, error, refetch } = useQuery<{ status: string; industry: string; opportunities: Opportunity[] }>({
+  // Industry options for select dropdown
+  const industries = [
+    'Technology',
+    'Healthcare',
+    'Finance',
+    'Education',
+    'Retail',
+    'Manufacturing',
+    'Entertainment',
+    'Food & Beverage',
+    'Real Estate',
+    'Transportation'
+  ];
+  
+  // Query for opportunity suggestions based on industry
+  const { data: opportunities, isLoading, isError } = useQuery<Opportunity[]>({
     queryKey: [`/api/opportunities/suggestions/${industry}`],
-    enabled: !!industry,
+    enabled: !!industry
   });
   
-  const handleSearch = () => {
-    if (!searchIndustry) {
-      toast({
-        title: 'Error',
-        description: 'Please enter an industry name',
-        variant: 'destructive',
-      });
-      return;
-    }
-    
-    setIndustry(searchIndustry);
-  };
-  
-  const getGrowthBadge = (growth: string | number) => {
-    let numericGrowth: number;
-    
-    if (typeof growth === 'string') {
-      // Handle 'Breakout' or other special cases
-      if (growth === 'Breakout') return <Badge className="bg-blue-600">Breakout 🚀</Badge>;
-      
-      // Try to parse numeric value from string
-      const match = growth.match(/(\d+)/);
-      numericGrowth = match ? parseInt(match[1]) : 0;
-    } else {
-      numericGrowth = growth as number;
-    }
-    
-    if (numericGrowth > 4000) return <Badge className="bg-blue-600">Breakout 🚀</Badge>;
-    if (numericGrowth > 1000) return <Badge className="bg-green-600">Very High 📈</Badge>;
-    if (numericGrowth > 500) return <Badge className="bg-green-500">High</Badge>;
-    if (numericGrowth > 200) return <Badge className="bg-yellow-500">Medium</Badge>;
-    return <Badge className="bg-stone-500">Low</Badge>;
-  };
-  
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <div className="flex justify-between items-center flex-wrap gap-2">
-          <div>
-            <CardTitle>Market Opportunity Insights</CardTitle>
-            <CardDescription>AI-powered opportunity detection from Google Trends</CardDescription>
-          </div>
-          <div className="flex gap-2">
-            <Input
-              placeholder="Enter industry"
-              value={searchIndustry}
-              onChange={(e) => setSearchIndustry(e.target.value)}
-              className="w-40 md:w-60"
-            />
-            <Button size="sm" onClick={handleSearch}>
-              <Search className="h-4 w-4 mr-1" />
-              Search
-            </Button>
-          </div>
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between">
+        <div>
+          <h3 className="text-lg font-semibold">Opportunity Insights</h3>
+          <p className="text-sm text-muted-foreground">
+            AI-powered market opportunity suggestions based on search trends and user interest.
+          </p>
         </div>
-      </CardHeader>
-      <CardContent>
-        {isLoading ? (
-          <div className="flex justify-center items-center h-60">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
-        ) : isError ? (
-          <div className="text-center p-4 text-destructive">
-            Error loading opportunity data: {error instanceof Error ? error.message : 'Unknown error'}
-          </div>
-        ) : data?.opportunities && data.opportunities.length > 0 ? (
-          <div className="space-y-4">
-            <h3 className="text-xl font-medium flex items-center gap-2">
-              <Lightbulb className="h-5 w-5 text-yellow-500" />
-              Opportunities in {data.industry}
-            </h3>
-            
-            <div className="grid gap-4">
-              {data.opportunities.map((opportunity, index) => (
-                <div key={index} className="bg-card border rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="text-lg font-medium flex items-center gap-2">
-                        <span className="text-primary">{opportunity.name}</span>
-                      </h4>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {opportunity.type === 'trending_query' ? 'Rising Search Query' : 'Trending Topic'}
-                      </p>
-                    </div>
-                    <div>
-                      {getGrowthBadge(opportunity.growth)}
-                    </div>
-                  </div>
-                  <div className="mt-3 text-sm flex justify-between items-center">
-                    <span className="text-muted-foreground">{opportunity.source}</span>
-                    <Button variant="ghost" size="sm" className="text-primary">
-                      <span>Research</span>
-                      <ArrowRight className="ml-1 h-4 w-4" />
-                    </Button>
+        
+        <div className="w-full sm:w-56">
+          <Select value={industry} onValueChange={setIndustry}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select an industry" />
+            </SelectTrigger>
+            <SelectContent>
+              {industries.map((ind) => (
+                <SelectItem key={ind} value={ind}>{ind}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      
+      {isLoading ? (
+        <div className="space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <Card key={i}>
+              <CardContent className="p-6">
+                <div className="flex justify-between items-start">
+                  <div className="space-y-2 w-full">
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-2/3" />
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className="text-center p-4">
-            <p>No opportunity suggestions available</p>
-            <p className="text-sm text-muted-foreground mt-1">Try searching for a different industry</p>
-          </div>
-        )}
-      </CardContent>
-      <CardFooter className="justify-between flex-wrap">
-        <div className="text-muted-foreground text-sm flex gap-1 items-center">
-          <TrendingUp className="h-4 w-4" />
-          <span>Based on rising search trends and topics</span>
+              </CardContent>
+            </Card>
+          ))}
         </div>
-        <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isLoading}>
-          {isLoading ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Search className="h-4 w-4 mr-1" />}
-          Refresh
-        </Button>
-      </CardFooter>
-    </Card>
+      ) : isError ? (
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-center py-10">
+              <p className="text-red-500">Error loading opportunities. Please try a different industry.</p>
+            </div>
+          </CardContent>
+        </Card>
+      ) : opportunities && opportunities.length > 0 ? (
+        <div className="space-y-4">
+          {opportunities.map((opp, index) => (
+            <Card key={index} className="overflow-hidden transition-all hover:shadow-md">
+              <CardContent className="p-0">
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex items-center">
+                      <Lightbulb className="h-5 w-5 mr-2 text-amber-500" />
+                      <h4 className="text-lg font-medium">{opp.name}</h4>
+                    </div>
+                    <div className="flex items-center bg-green-50 text-green-700 text-sm font-medium px-2.5 py-0.5 rounded">
+                      <TrendingUp className="h-3.5 w-3.5 mr-1" />
+                      {typeof opp.growth === 'number' ? `${opp.growth}%` : opp.growth}
+                    </div>
+                  </div>
+                  
+                  <p className="text-sm text-gray-600 mb-4">{opp.description}</p>
+                  
+                  <div className="flex justify-between items-center pt-2 text-xs text-gray-500 border-t">
+                    <div>
+                      <span className="font-medium">Source:</span> {opp.source}
+                    </div>
+                    <div className="flex items-center">
+                      <Search className="h-3 w-3 mr-1" />
+                      <span className="font-medium">Trend Category:</span> {opp.type}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-center py-10">
+              <p className="text-muted-foreground">No opportunity suggestions available for {industry}. Try a different industry.</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      <div className="flex justify-end">
+        <p className="text-xs text-muted-foreground italic">
+          Opportunity suggestions powered by Google Trends and OpenRouter AI. Last updated: {new Date().toLocaleDateString()}
+        </p>
+      </div>
+    </div>
   );
 }
