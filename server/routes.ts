@@ -598,7 +598,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error(`Error fetching company profile for ${symbol}:`, error);
         res.status(500).json({ 
           message: `Could not retrieve company profile for ${symbol}`,
-          error: error.message
+          error: error instanceof Error ? error.message : String(error)
         });
       }
     } catch (error) {
@@ -619,7 +619,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error(`Error fetching competitors for ${symbol}:`, error);
         res.status(500).json({ 
           message: `Could not retrieve competitors for ${symbol}`,
-          error: error.message
+          error: error instanceof Error ? error.message : String(error)
         });
       }
     } catch (error) {
@@ -638,7 +638,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error('Error fetching industry performance:', error);
         res.status(500).json({ 
           message: 'Could not retrieve industry performance data',
-          error: error.message
+          error: error instanceof Error ? error.message : String(error)
         });
       }
     } catch (error) {
@@ -657,7 +657,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error('Error fetching market news:', error);
         res.status(500).json({ 
           message: 'Could not retrieve market news',
-          error: error.message
+          error: error instanceof Error ? error.message : String(error)
         });
       }
     } catch (error) {

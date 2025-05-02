@@ -138,7 +138,7 @@ class MarketDataService {
       try {
         const marketData = await financialModelingPrepService.getMarketData(symbol);
         if (marketData && Array.isArray(marketData) && marketData.length > 0) {
-          const data = marketData[0];
+          const data = marketData[0] as any;
           return {
             symbol: data.symbol,
             name: data.name,
@@ -152,9 +152,9 @@ class MarketDataService {
       }
       
       try {
-        const stockData = await alphaVantageService.getStockData(symbol);
+        const stockData = await alphaVantageService.getStockData(symbol) as any;
         if (stockData && stockData['Global Quote']) {
-          const data = stockData['Global Quote'];
+          const data = stockData['Global Quote'] as any;
           return {
             symbol: data['01. symbol'],
             name: symbol, // Alpha Vantage doesn't provide company name in this endpoint
@@ -193,7 +193,7 @@ class MarketDataService {
    */
   async getIndustryPerformance() {
     try {
-      const sectorData = await alphaVantageService.getSectorPerformance();
+      const sectorData = await alphaVantageService.getSectorPerformance() as any;
       
       if (!sectorData || Object.keys(sectorData).length === 0) {
         throw new Error('No sector performance data available');
@@ -214,10 +214,10 @@ class MarketDataService {
       const selectedTimeFrame = timeFrames[0]; // Use real-time performance by default
       
       if (sectorData[selectedTimeFrame]) {
-        const sectorPerformance = sectorData[selectedTimeFrame];
+        const sectorPerformance = sectorData[selectedTimeFrame] as Record<string, string>;
         
         for (const [sector, performance] of Object.entries(sectorPerformance)) {
-          const performanceValue = parseFloat((performance as string).replace('%', ''));
+          const performanceValue = parseFloat((performance).replace('%', ''));
           sectors.push({
             name: sector,
             performance: performanceValue,
@@ -238,7 +238,7 @@ class MarketDataService {
    */
   async getMarketNews() {
     try {
-      const news = await finnhubService.getMarketNews();
+      const news = await finnhubService.getMarketNews() as any[];
       
       if (!news || !Array.isArray(news) || news.length === 0) {
         throw new Error('No market news available');
@@ -267,7 +267,7 @@ class MarketDataService {
    */
   async getCompanyNews(symbol: string) {
     try {
-      const news = await finnhubService.getCompanyNews(symbol);
+      const news = await finnhubService.getCompanyNews(symbol) as any[];
       
       if (!news || !Array.isArray(news) || news.length === 0) {
         throw new Error(`No news available for ${symbol}`);
@@ -295,7 +295,7 @@ class MarketDataService {
    */
   async getEconomicEvents() {
     try {
-      const events = await finnhubService.getEconomicCalendar();
+      const events = await finnhubService.getEconomicCalendar() as any;
       
       if (!events || !events.economicCalendar || !Array.isArray(events.economicCalendar.events)) {
         throw new Error('No economic events available');
@@ -303,9 +303,9 @@ class MarketDataService {
       
       // Return the 10 most significant upcoming events
       return events.economicCalendar.events
-        .filter(event => event.impact === 'high') // Filter to high-impact events
+        .filter((event: any) => event.impact === 'high') // Filter to high-impact events
         .slice(0, 10)
-        .map(event => ({
+        .map((event: any) => ({
           id: `${event.country}-${event.time}-${event.event}`,
           country: event.country,
           event: event.event,
