@@ -7,6 +7,10 @@ import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { perplexityService } from "./services/perplexity-service";
 import { openRouterService } from "./services/openrouter-service";
+import { marketDataService } from "./services/market-data-service";
+import { alphaVantageService } from "./services/alpha-vantage-service";
+import { financialModelingPrepService } from "./services/financial-modeling-prep-service";
+import { finnhubService } from "./services/finnhub-service";
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -574,6 +578,153 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(400).json({ message: validationError.message });
         }
         throw err;
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  // Market Data API endpoints
+  app.get("/api/market/company/:symbol", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const { symbol } = req.params;
+      
+      try {
+        const companyProfile = await marketDataService.getCompanyProfile(symbol);
+        res.json(companyProfile);
+      } catch (error) {
+        console.error(`Error fetching company profile for ${symbol}:`, error);
+        res.status(500).json({ 
+          message: `Could not retrieve company profile for ${symbol}`,
+          error: error.message
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  app.get("/api/market/competitors/:symbol", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const { symbol } = req.params;
+      
+      try {
+        const competitors = await marketDataService.getCompetitors(symbol);
+        res.json(competitors);
+      } catch (error) {
+        console.error(`Error fetching competitors for ${symbol}:`, error);
+        res.status(500).json({ 
+          message: `Could not retrieve competitors for ${symbol}`,
+          error: error.message
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  app.get("/api/market/industry-performance", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      try {
+        const performance = await marketDataService.getIndustryPerformance();
+        res.json(performance);
+      } catch (error) {
+        console.error('Error fetching industry performance:', error);
+        res.status(500).json({ 
+          message: 'Could not retrieve industry performance data',
+          error: error.message
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  app.get("/api/market/news", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      try {
+        const news = await marketDataService.getMarketNews();
+        res.json(news);
+      } catch (error) {
+        console.error('Error fetching market news:', error);
+        res.status(500).json({ 
+          message: 'Could not retrieve market news',
+          error: error.message
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  app.get("/api/market/company-news/:symbol", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const { symbol } = req.params;
+      
+      try {
+        const news = await marketDataService.getCompanyNews(symbol);
+        res.json(news);
+      } catch (error) {
+        console.error(`Error fetching news for ${symbol}:`, error);
+        res.status(500).json({ 
+          message: `Could not retrieve news for ${symbol}`,
+          error: error.message
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  app.get("/api/market/economic-events", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      try {
+        const events = await marketDataService.getEconomicEvents();
+        res.json(events);
+      } catch (error) {
+        console.error('Error fetching economic events:', error);
+        res.status(500).json({ 
+          message: 'Could not retrieve economic events',
+          error: error.message
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  // Stock search endpoint
+  app.get("/api/market/search", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const { query } = req.query;
+      
+      if (!query || typeof query !== 'string') {
+        return res.status(400).json({ message: 'Query parameter is required' });
+      }
+      
+      try {
+        const results = await alphaVantageService.searchCompanies(query);
+        res.json(results);
+      } catch (error) {
+        console.error(`Error searching for companies with query ${query}:`, error);
+        res.status(500).json({ 
+          message: 'Could not search for companies',
+          error: error.message
+        });
       }
     } catch (error) {
       next(error);
