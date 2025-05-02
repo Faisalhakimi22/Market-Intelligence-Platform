@@ -80,8 +80,9 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { user, logoutMutation } = useAuth();
   const isMobile = useIsMobile();
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
+  const [activeIndustry, setActiveIndustry] = useState<{id: number; name: string; color: string}>({id: 1, name: 'Healthcare', color: 'primary-400'});
   
   // Close sidebar on mobile when navigating
   useEffect(() => {
@@ -152,31 +153,44 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               <NavItem 
                 icon={<LayoutDashboard />} 
                 label="Dashboard" 
-                active={true} 
+                active={location === '/'} 
+                onClick={() => navigate('/')}
               />
               <NavItem 
                 icon={<BarChartHorizontal />} 
                 label="Market Analysis" 
+                active={location === '/market-analysis'}
+                onClick={() => navigate('/market-analysis')}
               />
               <NavItem 
                 icon={<UserSearch />} 
                 label="Competitor Intelligence" 
+                active={location === '/competitor-intelligence'}
+                onClick={() => navigate('/competitor-intelligence')}
               />
               <NavItem 
                 icon={<LightbulbIcon />} 
                 label="Opportunities" 
+                active={location === '/opportunities'}
+                onClick={() => navigate('/opportunities')}
               />
               <NavItem 
                 icon={<LineChart />} 
                 label="Forecasting" 
+                active={location === '/forecasting'}
+                onClick={() => navigate('/forecasting')}
               />
               <NavItem 
                 icon={<FileText />} 
                 label="Reports" 
+                active={location === '/reports'}
+                onClick={() => navigate('/reports')}
               />
               <NavItem 
                 icon={<Bell />} 
                 label="Alerts" 
+                active={location === '/alerts'}
+                onClick={() => navigate('/alerts')}
                 badge={3}
               />
             </div>
@@ -186,9 +200,24 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 Industry Focus
               </h3>
               <div className="mt-1 space-y-1">
-                <IndustryItem name="Healthcare" color="primary-400" active={true} />
-                <IndustryItem name="Technology" color="secondary-500" />
-                <IndustryItem name="Education" color="success-500" />
+                <IndustryItem 
+                  name="Healthcare" 
+                  color="primary-400" 
+                  active={activeIndustry.name === 'Healthcare'} 
+                  onClick={() => setActiveIndustry({id: 1, name: 'Healthcare', color: 'primary-400'})} 
+                />
+                <IndustryItem 
+                  name="Technology" 
+                  color="secondary-500" 
+                  active={activeIndustry.name === 'Technology'} 
+                  onClick={() => setActiveIndustry({id: 2, name: 'Technology', color: 'secondary-500'})} 
+                />
+                <IndustryItem 
+                  name="Education" 
+                  color="success-500" 
+                  active={activeIndustry.name === 'Education'} 
+                  onClick={() => setActiveIndustry({id: 3, name: 'Education', color: 'success-500'})} 
+                />
               </div>
             </div>
           </nav>
