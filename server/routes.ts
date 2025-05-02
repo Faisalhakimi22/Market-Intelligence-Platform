@@ -1,5 +1,6 @@
-import type { Express } from "express";
+import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
+import { dataIntegrationService } from "./services/data-integration-service";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import { insertIndustrySchema, insertOpportunitySchema, insertCompetitorSchema, insertAlertSchema, insertAiInsightSchema } from "@shared/schema";
@@ -820,6 +821,162 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error('Error comparing forecasting models:', error);
         res.status(500).json({ 
           message: 'Could not compare forecasting models',
+          error: error instanceof Error ? error.message : String(error)
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  // Yahoo Finance Integration API
+  app.get("/api/yahoo/stock/:symbol", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const symbol = req.params.symbol;
+      const period = req.query.period as string || '1mo';
+      
+      try {
+        const stockData = await dataIntegrationService.getEnhancedStockData(symbol, period);
+        res.json(stockData);
+      } catch (error) {
+        console.error(`Error fetching stock data for ${symbol}:`, error);
+        res.status(500).json({ 
+          message: `Could not retrieve stock data for ${symbol}`, 
+          error: error instanceof Error ? error.message : String(error)
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  app.get("/api/yahoo/market/summary", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      try {
+        const marketOverview = await dataIntegrationService.getMarketOverview();
+        res.json(marketOverview);
+      } catch (error) {
+        console.error('Error fetching market overview:', error);
+        res.status(500).json({ 
+          message: 'Could not retrieve market overview', 
+          error: error instanceof Error ? error.message : String(error)
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  app.get("/api/yahoo/industry/performance", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      try {
+        const industryPerformance = await dataIntegrationService.getIndustryPerformanceWithTrends();
+        res.json(industryPerformance);
+      } catch (error) {
+        console.error('Error fetching industry performance:', error);
+        res.status(500).json({ 
+          message: 'Could not retrieve industry performance', 
+          error: error instanceof Error ? error.message : String(error)
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  // Google Trends Integration API
+  app.get("/api/trends/interest", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      if (!req.query.keywords) {
+        return res.status(400).json({ message: 'Keywords parameter is required' });
+      }
+      
+      const keywords = (req.query.keywords as string).split(',');
+      const period = req.query.period as string || 'today 12-m';
+      
+      try {
+        const trendsData = await googleTrendsService.getInterestOverTime(keywords, period);
+        res.json(trendsData);
+      } catch (error) {
+        console.error('Error fetching interest over time:', error);
+        res.status(500).json({ 
+          message: 'Could not retrieve interest over time data', 
+          error: error instanceof Error ? error.message : String(error)
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  app.get("/api/trends/related-queries", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      if (!req.query.keyword) {
+        return res.status(400).json({ message: 'Keyword parameter is required' });
+      }
+      
+      const keyword = req.query.keyword as string;
+      const period = req.query.period as string || 'today 12-m';
+      
+      try {
+        const relatedQueries = await googleTrendsService.getRelatedQueries(keyword, period);
+        res.json(relatedQueries);
+      } catch (error) {
+        console.error('Error fetching related queries:', error);
+        res.status(500).json({ 
+          message: 'Could not retrieve related queries', 
+          error: error instanceof Error ? error.message : String(error)
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  app.get("/api/trends/trending-searches", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const geo = req.query.geo as string || 'US';
+      
+      try {
+        const trendingSearches = await googleTrendsService.getTrendingSearches(geo);
+        res.json(trendingSearches);
+      } catch (error) {
+        console.error('Error fetching trending searches:', error);
+        res.status(500).json({ 
+          message: 'Could not retrieve trending searches', 
+          error: error instanceof Error ? error.message : String(error)
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  app.get("/api/opportunities/suggestions/:industry", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const industry = req.params.industry;
+      
+      try {
+        const suggestions = await dataIntegrationService.getOpportunitySuggestions(industry);
+        res.json(suggestions);
+      } catch (error) {
+        console.error(`Error fetching opportunity suggestions for ${industry}:`, error);
+        res.status(500).json({ 
+          message: `Could not retrieve opportunity suggestions for ${industry}`, 
           error: error instanceof Error ? error.message : String(error)
         });
       }
