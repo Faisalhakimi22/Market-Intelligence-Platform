@@ -43,10 +43,11 @@ class OpenRouterService {
         },
         body: JSON.stringify({
           model: 'openai/gpt-4o',
+          max_tokens: 3000,
           messages: [
             {
               role: 'system',
-              content: 'You are an expert market analyst providing accurate and detailed market intelligence. Return answers as structured JSON.'
+              content: 'You are an expert market analyst providing accurate and real market intelligence based on factual industry data. Use specific data points, real statistics, and factual market information. Never fabricate or make assumptions about data. If certain data is unavailable, acknowledge that limitation. Return answers as structured JSON.'
             },
             {
               role: 'user',
@@ -60,6 +61,45 @@ class OpenRouterService {
       if (!response.ok) {
         const errorText = await response.text();
         console.error('OpenRouter API error status:', response.status, errorText);
+        
+        // Check if this is a credit limit error
+        if (response.status === 402 || errorText.includes('credits') || errorText.includes('max_tokens')) {
+          console.warn('OpenRouter API credit limit reached. Reducing token count and trying again...');
+          
+          // Try again with reduced max_tokens
+          const reducedResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+              'HTTP-Referer': 'https://marketinsight-ai.replit.app',
+              'X-Title': 'MarketInsight AI'
+            },
+            body: JSON.stringify({
+              model: 'openai/gpt-4o',
+              max_tokens: 1000, // Significantly reduced tokens
+              messages: [
+                {
+                  role: 'system',
+                  content: 'You are an expert market analyst. Be concise.'
+                },
+                {
+                  role: 'user',
+                  content: 'Provide a very brief summary of: ' + prompt
+                }
+              ],
+              response_format: { type: 'json_object' }
+            })
+          });
+          
+          if (reducedResponse.ok) {
+            console.log('Successfully received response with reduced tokens');
+            return await reducedResponse.json();
+          } else {
+            throw new Error(`OpenRouter API credit limit reached. Please upgrade your plan or try again later.`);
+          }
+        }
+        
         throw new Error(`OpenRouter API returned status ${response.status}: ${errorText}`);
       }
       
@@ -121,49 +161,51 @@ class OpenRouterService {
   }
 
   async getIndustryInsights(industry: string): Promise<IndustryInsights> {
-    const prompt = `You are a market analyst giving insights about the ${industry} industry. Return a JSON object with EXACTLY the following structure:
+    const prompt = `Provide fact-based market intelligence about the ${industry} industry. Use only real market research data, accurate statistics, and factual information. Never make up data or trends.
+
+Return a JSON object with EXACTLY the following structure:
 
 {
-  "title": "Summarizing the key market opportunity (short, concise title)",
-  "description": "Detailed description of the market opportunity (150-200 words)",
+  "title": "Summarizing the key market opportunity based on real data",
+  "description": "Detailed explanation with accurate market statistics (150-200 words)",
   "trends": [
     {
-      "name": "Name of trend 1",
-      "growth": "+XX% YoY",
-      "direction": "up" or "down"
+      "name": "A real, documented industry trend",
+      "growth": "Actual percentage growth rate with source if available",
+      "direction": "up" or "down" based on factual data
     },
-    { 2 more trend objects following the same pattern }
+    { 2 more trend objects with factual, researched trends }
   ],
-  "optimalTimeToEnter": "Q2 2024" or similar quarter
+  "optimalTimeToEnter": "Best entry quarter based on market analysis"
 }
 
-Be factual, provide specific data points, and ensure the response is valid JSON. Choose 3 real trends in the industry, with realistic growth percentages. Specify one quarter in 2024 or 2025 as the optimal time to enter.`;
+Provide ONLY real market data and trends that can be verified. Include precise growth figures where available. Cite specific statistics when possible. Be clear if certain data is estimated or projected. If specific data is unavailable, say so rather than making up numbers.`;
 
     return await this.queryOpenRouter(prompt);
   }
 
   async getCompetitorAnalysis(industry: string, competitorName?: string): Promise<any> {
     const prompt = competitorName
-      ? `Provide a detailed analysis of ${competitorName} in the ${industry} industry. Include their market position, strengths, weaknesses, and current strategies.`
-      : `Identify and analyze the top 3 competitors in the ${industry} industry. For each, provide their market position, strengths, weaknesses, and current strategies.`;
+      ? `Provide a detailed analysis of ${competitorName} in the ${industry} industry based on verifiable market data and public financial information. Include accurate information about their market position, documented strengths and weaknesses, and current strategies as reported in quarterly reports or industry analyses. Cite specific metrics and data points where available. Be transparent about information gaps rather than making assumptions.`
+      : `Using real market data, identify and analyze the top 3 competitors in the ${industry} industry. For each, provide factual information about their market position (market share percentages if available), documented strengths and weaknesses from industry reports, and current strategies as reported in public sources. Cite specific metrics where available and be transparent about information gaps rather than making assumptions.`;
 
     return await this.queryOpenRouter(prompt);
   }
 
   async getMarketOpportunities(industry: string): Promise<any> {
-    const prompt = `Identify and analyze 3 emerging market opportunities in the ${industry} industry. For each opportunity, provide a title, description, estimated market size, growth potential, and key success factors.`;
+    const prompt = `Based on real market research and industry reports, identify and analyze 3 emerging market opportunities in the ${industry} industry. For each opportunity, provide a factual title, description with specific data points, accurate market size figures from reputable sources, growth projections from industry analysts, and key success factors identified by market leaders. Cite sources where possible and be transparent when providing estimates vs. confirmed data.`;
 
     return await this.queryOpenRouter(prompt);
   }
 
   async getMarketForecasts(industry: string): Promise<any> {
-    const prompt = `Provide market forecasts for the ${industry} industry for the next 2 years. Include projected market size, growth rates, emerging trends, potential disruptions, and recommendations for businesses.`;
+    const prompt = `Provide market forecasts for the ${industry} industry for the next 2 years using only data from reputable market research firms, industry associations, and financial analysts. Include specific projected market size figures with sources, documented growth rates from market reports, emerging trends identified by industry experts, potential disruptions acknowledged in financial filings, and evidence-based recommendations. Be transparent about the reliability of projections and clearly distinguish between factual data and expert opinions.`;
 
     return await this.queryOpenRouter(prompt);
   }
 
   async getTrendAnalysis(industry: string): Promise<any> {
-    const prompt = `Analyze the current trends in the ${industry} industry. Identify the top 5 trends, their impact on the market, and their expected trajectory over the next 12-24 months.`;
+    const prompt = `Analyze current trends in the ${industry} industry using only factual data from industry reports, market research, and public financial information. Identify the top 5 trends with specific metrics, their measured impact on the market with percentage figures where available, and their expected trajectory over the next 12-24 months according to industry analysts and market projections. Cite specific data points, growth rates, and adoption metrics. Be transparent about confidence levels in projections and clearly indicate when information is estimated vs. confirmed by research.`;
 
     return await this.queryOpenRouter(prompt);
   }
