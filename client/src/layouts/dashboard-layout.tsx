@@ -84,6 +84,20 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
   const [activeIndustry, setActiveIndustry] = useState<{id: number; name: string; color: string}>({id: 1, name: 'Healthcare', color: 'primary-400'});
   
+  // Update the page title based on current location
+  useEffect(() => {
+    let pageTitle = "Dashboard";
+    
+    if (location === "/market-analysis") pageTitle = "Market Analysis";
+    else if (location === "/competitor-intelligence") pageTitle = "Competitor Intelligence";
+    else if (location === "/opportunities") pageTitle = "Opportunities";
+    else if (location === "/forecasting") pageTitle = "Forecasting";
+    else if (location === "/reports") pageTitle = "Reports";
+    else if (location === "/alerts") pageTitle = "Alerts";
+    
+    document.title = `MarketInsight AI | ${pageTitle}`;
+  }, [location]);
+  
   // Close sidebar on mobile when navigating
   useEffect(() => {
     if (isMobile) {
@@ -225,7 +239,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           {/* Settings and Theme Toggle */}
           <div className="p-4 border-t dark:border-gray-700">
             <div className="flex items-center justify-between">
-              <Button variant="ghost" size="sm" className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                onClick={() => navigate('/settings')}
+              >
                 <Settings className="mr-2 h-4 w-4" />
                 Settings
               </Button>
@@ -249,7 +268,16 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               >
                 <Menu className="h-5 w-5" />
               </Button>
-              <h1 className="text-xl font-heading font-semibold">Market Intelligence Dashboard</h1>
+              <h1 className="text-xl font-heading font-semibold">
+                {location === "/" && "Market Intelligence Dashboard"}
+                {location === "/market-analysis" && "Market Analysis"}
+                {location === "/competitor-intelligence" && "Competitor Intelligence"}
+                {location === "/opportunities" && "Opportunities"}
+                {location === "/forecasting" && "Forecasting"}
+                {location === "/reports" && "Reports"}
+                {location === "/alerts" && "Alerts"}
+                {location === "/settings" && "Settings"}
+              </h1>
             </div>
             
             <div className="flex items-center space-x-3">

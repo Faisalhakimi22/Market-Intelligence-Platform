@@ -12,6 +12,7 @@ import OpportunitiesPage from "@/pages/opportunities-page";
 import ForecastingPage from "@/pages/forecasting-page";
 import ReportsPage from "@/pages/reports-page";
 import AlertsPage from "@/pages/alerts-page";
+import SettingsPage from "@/pages/settings-page";
 import { ProtectedRoute } from "./lib/protected-route";
 import { AuthProvider } from "@/hooks/use-auth";
 
@@ -25,6 +26,7 @@ function Router() {
       <ProtectedRoute path="/forecasting" component={ForecastingPage} />
       <ProtectedRoute path="/reports" component={ReportsPage} />
       <ProtectedRoute path="/alerts" component={AlertsPage} />
+      <ProtectedRoute path="/settings" component={SettingsPage} />
       <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>
