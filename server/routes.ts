@@ -11,6 +11,7 @@ import { marketDataService } from "./services/market-data-service";
 import { alphaVantageService } from "./services/alpha-vantage-service";
 import { financialModelingPrepService } from "./services/financial-modeling-prep-service";
 import { finnhubService } from "./services/finnhub-service";
+import { forecastingService } from "./services/forecasting-service";
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -742,6 +743,96 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error(`Error searching for companies with query ${query}:`, error);
         res.status(500).json({ 
           message: 'Could not search for companies',
+          error: error instanceof Error ? error.message : String(error)
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  // Forecasting API endpoints
+  app.get("/api/forecast/industry/:id", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      const industryId = parseInt(req.params.id);
+      const industry = await storage.getIndustry(industryId);
+      
+      if (!industry) {
+        return res.status(404).json({ message: "Industry not found" });
+      }
+      
+      if (industry.userId !== req.user.id) {
+        return res.status(403).json({ message: "Not authorized to view forecasts for this industry" });
+      }
+      
+      try {
+        // Get the number of periods to forecast
+        const periodsToForecast = req.query.periods ? parseInt(req.query.periods as string) : 6;
+        
+        // Get the forecast interval
+        const interval = req.query.interval as ('day' | 'week' | 'month') || 'month';
+        
+        // Get market data based on the industry (in real app, would come from database)
+        // Currently using sample data until we get actual historical data
+        const historicalData = forecastingService.generateMarketGrowthData(24, interval);
+        
+        // Generate forecast
+        const forecastResult = await forecastingService.forecastDemandTrends(
+          industryId,
+          historicalData,
+          periodsToForecast
+        );
+        
+        res.json({
+          industry: industry.name,
+          historicalData,
+          forecast: forecastResult
+        });
+      } catch (error) {
+        console.error(`Error generating forecast for industry ${industryId}:`, error);
+        res.status(500).json({ 
+          message: 'Could not generate forecast',
+          error: error instanceof Error ? error.message : String(error)
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  app.get("/api/forecast/models", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.sendStatus(401);
+      
+      try {
+        // Get the number of data points to generate
+        const dataPoints = req.query.dataPoints ? parseInt(req.query.dataPoints as string) : 24;
+        
+        // Get the forecast interval
+        const interval = req.query.interval as ('day' | 'week' | 'month') || 'month';
+        
+        // Get the number of periods to forecast
+        const periodsToForecast = req.query.periods ? parseInt(req.query.periods as string) : 6;
+        
+        // Generate sample data (in real app, this would be actual historical data)
+        const sampleData = forecastingService.generateSampleTimeSeriesData(dataPoints, interval);
+        
+        // Compare different forecasting models
+        const { allModels } = await forecastingService.getBestForecast(
+          sampleData,
+          periodsToForecast
+        );
+        
+        res.json({
+          data: sampleData,
+          models: allModels
+        });
+      } catch (error) {
+        console.error('Error comparing forecasting models:', error);
+        res.status(500).json({ 
+          message: 'Could not compare forecasting models',
           error: error instanceof Error ? error.message : String(error)
         });
       }
