@@ -43,7 +43,7 @@ export function IndustryPerformance() {
         <CardDescription>Real-time sector performance data</CardDescription>
       </CardHeader>
       <CardContent>
-        {sectors && sectors.length > 0 ? (
+        {sectors && Array.isArray(sectors) && sectors.length > 0 ? (
           <div className="grid gap-2">
             {sectors.map((sector: any, index: number) => (
               <div 

@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import DashboardLayout from "@/layouts/dashboard-layout";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { MarketNews, IndustryPerformance, EconomicEvents } from "@/components/market-data";
 
 // Sample data for demonstration - this would come from the API in a real app
 const data = [
@@ -50,16 +51,16 @@ export default function MarketAnalysisPage() {
             </CardContent>
           </Card>
           
-          <Card>
-            <CardHeader>
-              <CardTitle>Market Segments</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-80 flex items-center justify-center">
-                <p className="text-gray-500">Segment distribution visualization will appear here</p>
-              </div>
-            </CardContent>
-          </Card>
+          <IndustryPerformance />
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div className="md:col-span-2">
+            <MarketNews />
+          </div>
+          <div>
+            <EconomicEvents />
+          </div>
         </div>
         
         <div className="grid grid-cols-1 gap-6 mb-6">

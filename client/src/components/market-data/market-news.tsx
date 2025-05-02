@@ -46,7 +46,7 @@ export function MarketNews() {
         <CardDescription>Latest news from the financial markets</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4 overflow-auto max-h-[500px]">
-        {news && news.length > 0 ? (
+        {news && Array.isArray(news) && news.length > 0 ? (
           news.map((item: any) => (
             <div key={item.id} className="pb-4 border-b last:border-0">
               <div className="flex justify-between items-start gap-2 mb-1">

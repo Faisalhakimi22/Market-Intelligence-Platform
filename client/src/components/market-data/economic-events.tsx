@@ -1,6 +1,6 @@
 import { useEconomicEvents } from "@/hooks/use-market-data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Trending, AlertTriangle, Check } from "lucide-react";
+import { Loader2, AlertTriangle, Check } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 
@@ -45,7 +45,7 @@ export function EconomicEvents() {
         <CardDescription>Upcoming high-impact economic events</CardDescription>
       </CardHeader>
       <CardContent>
-        {events && events.length > 0 ? (
+        {events && Array.isArray(events) && events.length > 0 ? (
           <div className="grid gap-3">
             {events.map((event: any) => (
               <div key={event.id} className="border rounded-lg p-3">
