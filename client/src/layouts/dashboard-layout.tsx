@@ -314,11 +314,27 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
             
             <div className="flex items-center space-x-3">
-              <Button variant="ghost" size="icon" className="relative flex-shrink-0 p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative flex-shrink-0 p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full"
+                onClick={() => {
+                  // Add search functionality
+                  alert('Search feature coming soon!');
+                }}
+              >
                 <span className="sr-only">Search</span>
                 <Search className="h-5 w-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="relative flex-shrink-0 p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative flex-shrink-0 p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full"
+                onClick={() => {
+                  // Navigate to alerts page
+                  navigate('/alerts');
+                }}
+              >
                 <span className="sr-only">Notifications</span>
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-destructive"></span>
