@@ -35,8 +35,8 @@ export function AIInsightsSummary({ industryId }: AIInsightsSummaryProps) {
       
       if (!response.ok) {
         // Handle API errors
-        if (data.error === 'PERPLEXITY_AUTH_ERROR') {
-          alert('Cannot generate insights: Perplexity API key is invalid or missing. Please contact the administrator.');
+        if (data.error === 'PERPLEXITY_AUTH_ERROR' || data.error === 'OPENROUTER_AUTH_ERROR') {
+          alert('Cannot generate insights: AI API key is invalid or missing. Please contact the administrator.');
         } else {
           alert(`Error: ${data.message || 'Failed to generate insights'}`);
         }

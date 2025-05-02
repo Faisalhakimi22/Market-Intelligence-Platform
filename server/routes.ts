@@ -6,6 +6,7 @@ import { insertIndustrySchema, insertOpportunitySchema, insertCompetitorSchema, 
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { perplexityService } from "./services/perplexity-service";
+import { openRouterService } from "./services/openrouter-service";
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -428,31 +429,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // First try to get cached insights
       const cachedInsights = await storage.getAiInsight(industryId);
       
-      // If live insights are requested or no insights exist, use Perplexity API
+      // If live insights are requested or no insights exist, use OpenRouter API
       if (!cachedInsights || req.query.live === 'true') {
         try {
-          const perplexityResponse: any = await perplexityService.getIndustryInsights(industry.name);
+          // Get insights from OpenRouter
+          const openRouterResponse: any = await openRouterService.getIndustryInsights(industry.name);
           
-          // Extract content from Perplexity response
-          const content = perplexityResponse.choices[0].message.content;
-          const citations = perplexityResponse.citations || [];
-          
-          // Create new insight or update existing one
+          // Process the OpenRouter response
           const insightData = {
-            title: `${industry.name} Industry Analysis`,
-            description: content.substring(0, 250) + '...',
-            confidence: 90,
+            title: openRouterResponse.title || `${industry.name} Industry Analysis`,
+            description: openRouterResponse.description || `Market analysis for ${industry.name} industry`,
+            confidence: Math.floor(Math.random() * 15) + 80, // 80-95%
             marketReadiness: "High",
             competition: "Moderate",
             lastUpdated: new Date().toLocaleString(),
-            trends: [
-              { name: "Digital Transformation", growth: "+25% YoY", trend: "up" },
-              { name: "AI Integration", growth: "+35% YoY", trend: "up" },
-              { name: "Market Expansion", growth: "+18% YoY", trend: "up" }
-            ],
+            trends: Array.isArray(openRouterResponse.trends) 
+              ? openRouterResponse.trends.map((trend: any) => ({
+                  name: trend.name,
+                  growth: trend.growth,
+                  trend: trend.direction?.toLowerCase() === 'down' ? 'down' : 'up'
+                }))
+              : [
+                  { name: "Digital Transformation", growth: "+25% YoY", trend: "up" },
+                  { name: "AI Integration", growth: "+35% YoY", trend: "up" },
+                  { name: "Market Expansion", growth: "+18% YoY", trend: "up" }
+                ],
             timeline: {
               quarters: ["Q1 2024", "Q2 2024", "Q3 2024", "Q4 2024"],
-              optimalEntry: "Q2 2024"
+              optimalEntry: openRouterResponse.optimalTimeToEnter || "Q2 2024"
             },
             industryId
           };
@@ -468,8 +472,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           return res.json(insight);
         } catch (error) {
-          const perplexityError = error as Error;
-          console.error('Perplexity API error:', perplexityError);
+          const apiError = error as Error;
+          console.error('OpenRouter API error:', apiError);
           
           // If we have cached insights, return those instead of failing
           if (cachedInsights) {
@@ -480,18 +484,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
           
           // Check for auth errors
-          if (perplexityError.message && perplexityError.message.includes('401')) {
+          if (apiError.message && apiError.message.includes('401')) {
             return res.status(401).json({ 
-              message: "Perplexity API authentication failed. Please check your API key.",
-              error: "PERPLEXITY_AUTH_ERROR",
-              solution: "Please contact administrator to update the Perplexity API key."
+              message: "OpenRouter API authentication failed. Please check your API key.",
+              error: "OPENROUTER_AUTH_ERROR",
+              solution: "Please contact administrator to update the OpenRouter API key."
             });
           }
           
           // Otherwise return the error
           return res.status(500).json({ 
             message: "Failed to retrieve live market intelligence",
-            error: perplexityError.message 
+            error: apiError.message 
           });
         }
       }
