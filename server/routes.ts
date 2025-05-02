@@ -774,22 +774,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Get the forecast interval
         const interval = req.query.interval as ('day' | 'week' | 'month') || 'month';
         
-        // Get market data based on the industry (in real app, would come from database)
-        // Currently using sample data until we get actual historical data
-        const historicalData = forecastingService.generateMarketGrowthData(24, interval);
-        
-        // Generate forecast
-        const forecastResult = await forecastingService.forecastDemandTrends(
+        // Get forecast data for the industry using our forecasting service
+        const forecastData = await forecastingService.getIndustryForecast(
           industryId,
-          historicalData,
+          interval,
           periodsToForecast
         );
         
-        res.json({
-          industry: industry.name,
-          historicalData,
-          forecast: forecastResult
-        });
+        res.json(forecastData);
       } catch (error) {
         console.error(`Error generating forecast for industry ${industryId}:`, error);
         res.status(500).json({ 
@@ -816,19 +808,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Get the number of periods to forecast
         const periodsToForecast = req.query.periods ? parseInt(req.query.periods as string) : 6;
         
-        // Generate sample data (in real app, this would be actual historical data)
-        const sampleData = forecastingService.generateSampleTimeSeriesData(dataPoints, interval);
-        
         // Compare different forecasting models
-        const { allModels } = await forecastingService.getBestForecast(
-          sampleData,
-          periodsToForecast
+        const modelComparison = await forecastingService.compareModels(
+          interval,
+          periodsToForecast,
+          dataPoints
         );
         
-        res.json({
-          data: sampleData,
-          models: allModels
-        });
+        res.json(modelComparison);
       } catch (error) {
         console.error('Error comparing forecasting models:', error);
         res.status(500).json({ 

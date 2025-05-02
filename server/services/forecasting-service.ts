@@ -1,17 +1,8 @@
-/**
- * Forecasting Service for market trend predictions
- * 
- * This service implements time-series forecasting models including:
- * - Moving Average (MA)
- * - Auto-Regressive Integrated Moving Average (ARIMA)
- * - Linear regression forecasting
- */
-
-import { Matrix } from 'ml-matrix';
 import * as ss from 'simple-statistics';
+import { Matrix } from 'ml-matrix';
 
 interface TimeSeriesDataPoint {
-  timestamp: Date;
+  timestamp: string;
   value: number;
 }
 
@@ -20,731 +11,523 @@ interface ForecastResult {
   upperBound?: TimeSeriesDataPoint[];
   lowerBound?: TimeSeriesDataPoint[];
   modelName: string;
-  rmse?: number; // Root Mean Square Error (measure of model accuracy)
-  mape?: number; // Mean Absolute Percentage Error
+  rmse?: number;
+  mape?: number;
 }
 
 /**
- * Time-series forecasting service for market trend analysis
+ * Forecasting service for time series analysis and prediction
+ * 
+ * Implements ARIMA (AutoRegressive Integrated Moving Average) models
+ * for demand forecasting and trend predictions
  */
 class ForecastingService {
+  
   /**
-   * Creates a simple moving average forecast
-   * 
-   * @param data - Historical time series data
-   * @param windowSize - Size of the moving average window
-   * @param periodsToForecast - Number of periods to forecast into the future
-   * @param confidenceInterval - Confidence interval for upper/lower bounds (0-1)
+   * Creates synthetic historical data for testing when real data is not available
+   * @param {number} size - Number of data points
+   * @param {string} interval - Interval between data points ('day', 'week', 'month')
+   * @param {number} initialValue - Starting value
+   * @param {number} trend - Trend factor (positive for upward, negative for downward)
+   * @param {number} seasonality - Seasonality factor
+   * @param {number} noise - Random noise factor
    */
-  async movingAverageForecast(
-    data: TimeSeriesDataPoint[], 
-    windowSize: number = 3, 
-    periodsToForecast: number = 6,
-    confidenceInterval: number = 0.95
-  ): Promise<ForecastResult> {
-    // Validate inputs
-    if (data.length < windowSize) {
-      throw new Error(`Not enough data points. Need at least ${windowSize} points for a window size of ${windowSize}`);
-    }
+  generateHistoricalData(size: number, interval: string, initialValue = 1000, trend = 10, seasonality = 0.2, noise = 0.05): TimeSeriesDataPoint[] {
+    const data: TimeSeriesDataPoint[] = [];
+    const now = new Date();
     
-    // Extract values
-    const values = data.map(d => d.value);
-    
-    // Calculate moving averages for historical data
-    const movingAverages = [];
-    for (let i = windowSize - 1; i < values.length; i++) {
-      const windowValues = values.slice(i - windowSize + 1, i + 1);
-      movingAverages.push(ss.mean(windowValues));
-    }
-    
-    // Calculate standard deviation for confidence intervals
-    const residuals = [];
-    for (let i = 0; i < movingAverages.length; i++) {
-      const actualIndex = i + windowSize - 1;
-      residuals.push(values[actualIndex] - movingAverages[i]);
-    }
-    
-    const stdDev = ss.standardDeviation(residuals);
-    const zScore = this.calculateZScore(confidenceInterval);
-    
-    // Generate forecast values
-    const lastValues = values.slice(-windowSize);
-    const forecast: TimeSeriesDataPoint[] = [];
-    const upperBound: TimeSeriesDataPoint[] = [];
-    const lowerBound: TimeSeriesDataPoint[] = [];
-    
-    // Determine the time interval between data points
-    const avgTimeDiff = this.calculateAverageTimeInterval(data);
-    const lastDate = data[data.length - 1].timestamp;
-    
-    // Generate forecast points
-    for (let i = 0; i < periodsToForecast; i++) {
-      // For first forecast point, use the last windowSize actual values
-      let forecastValues;
-      if (i === 0) {
-        forecastValues = lastValues;
-      } else {
-        // For subsequent forecast points, use the previous windowSize forecast points
-        forecastValues = forecast.slice(-windowSize).map(d => d.value);
+    for (let i = 0; i < size; i++) {
+      const date = new Date(now.getTime());
+      
+      // Move backward in time based on interval
+      if (interval === 'day') {
+        date.setDate(date.getDate() - (size - i));
+      } else if (interval === 'week') {
+        date.setDate(date.getDate() - (size - i) * 7);
+      } else { // month
+        date.setMonth(date.getMonth() - (size - i));
       }
       
-      const forecastValue = ss.mean(forecastValues);
-      const newDate = new Date(lastDate.getTime() + avgTimeDiff * (i + 1));
+      // Calculate value with trend, seasonality, and noise
+      const trendComponent = initialValue + trend * i;
+      const seasonalComponent = Math.sin((i / (size / 6)) * Math.PI) * seasonality * trendComponent;
+      const noiseComponent = (Math.random() - 0.5) * noise * 2 * trendComponent;
       
-      forecast.push({
-        timestamp: newDate,
-        value: forecastValue
-      });
+      const value = Math.max(0, trendComponent + seasonalComponent + noiseComponent);
       
-      upperBound.push({
-        timestamp: newDate,
-        value: forecastValue + zScore * stdDev
-      });
-      
-      lowerBound.push({
-        timestamp: newDate,
-        value: Math.max(0, forecastValue - zScore * stdDev) // Ensure non-negative values
+      data.push({
+        timestamp: date.toISOString(),
+        value: Math.round(value)
       });
     }
     
-    // Calculate error metrics
-    const rmse = this.calculateRMSE(data.slice(-movingAverages.length).map(d => d.value), movingAverages);
-    const mape = this.calculateMAPE(data.slice(-movingAverages.length).map(d => d.value), movingAverages);
+    return data;
+  }
+  
+  /**
+   * Creates forecast data for a particular industry
+   * @param {number} industryId - ID of the industry
+   * @param {string} interval - Time interval ('day', 'week', 'month')
+   * @param {number} periods - Number of periods to forecast
+   */
+  async getIndustryForecast(industryId: number, interval: string, periods: number): Promise<{ industry: string; historicalData: TimeSeriesDataPoint[]; forecast: ForecastResult }> {
+    // Get industry data from database or external API
+    // In a real implementation, this would be fetched from a database
+    const industryNames = [
+      'Healthcare', 'Technology', 'Education', 'Finance', 'Real Estate',
+      'Manufacturing', 'Retail', 'Transportation', 'Energy', 'Agriculture'
+    ];
+    
+    const industryName = industryNames[industryId - 1] || 'Unknown Industry';
+    
+    // Generate historical data
+    // In a real implementation, this would be fetched from a market data API
+    const dataPoints = interval === 'day' ? 60 : interval === 'week' ? 52 : 36;
+    const historicalData = this.generateHistoricalData(dataPoints, interval);
+    
+    // Apply ARIMA forecasting
+    const forecast = this.arima(historicalData, periods, interval);
     
     return {
-      forecast,
-      upperBound,
-      lowerBound,
-      modelName: `Moving Average (${windowSize}-period)`,
-      rmse,
-      mape
+      industry: industryName,
+      historicalData,
+      forecast
     };
   }
   
   /**
-   * Calculates forecast using Auto-Regressive Integrated Moving Average (ARIMA) model
-   * This is a simplified implementation of ARIMA(p,d,q) focusing on ARIMA(1,1,1)
-   * 
-   * @param data - Historical time series data
-   * @param periodsToForecast - Number of periods to forecast
-   * @param p - Autoregressive order
-   * @param d - Differencing order
-   * @param q - Moving average order
-   * @param confidenceInterval - Confidence interval for prediction bounds
+   * Compare different forecasting models on the same dataset
+   * @param {string} interval - Time interval ('day', 'week', 'month')
+   * @param {number} periods - Number of periods to forecast
+   * @param {number} dataPoints - Number of historical data points
    */
-  async arimaForecast(
-    data: TimeSeriesDataPoint[],
-    periodsToForecast: number = 6,
-    p: number = 1,
-    d: number = 1,
-    q: number = 1,
-    confidenceInterval: number = 0.95
-  ): Promise<ForecastResult> {
-    if (data.length < 10) {
-      throw new Error('Not enough data points for ARIMA. Need at least 10 data points.');
-    }
+  async compareModels(interval: string, periods: number, dataPoints: number): Promise<{ data: TimeSeriesDataPoint[]; models: ForecastResult[] }> {
+    // Generate historical data
+    const historicalData = this.generateHistoricalData(dataPoints, interval);
     
-    // Extract values
-    const values = data.map(d => d.value);
-    
-    // Apply differencing (d)
-    let diffValues = values;
-    for (let i = 0; i < d; i++) {
-      diffValues = this.difference(diffValues);
-    }
-    
-    // Fit ARIMA model using least squares regression
-    const arimaParams = this.fitARIMA(diffValues, p, q);
-    
-    // Generate forecasts
-    const forecast: TimeSeriesDataPoint[] = [];
-    const upperBound: TimeSeriesDataPoint[] = [];
-    const lowerBound: TimeSeriesDataPoint[] = [];
-    
-    // Determine the time interval between data points
-    const avgTimeDiff = this.calculateAverageTimeInterval(data);
-    const lastDate = data[data.length - 1].timestamp;
-    
-    // Create initial condition values for forecasting
-    const lastDiffValues = diffValues.slice(-Math.max(p, q));
-    const lastOrigValues = values.slice(-d);
-    
-    // Generate forecast points
-    let pastDiffPredictions = [...lastDiffValues];
-    let pastOrigPredictions = [...lastOrigValues];
-    
-    // Calculate residuals and standard deviation for confidence intervals
-    const fittedValues = this.calculateFittedValues(diffValues, arimaParams, p, q);
-    const residuals = diffValues.slice(Math.max(p, q)).map((v, i) => v - fittedValues[i]);
-    const stdDev = ss.standardDeviation(residuals);
-    const zScore = this.calculateZScore(confidenceInterval);
-    
-    for (let i = 0; i < periodsToForecast; i++) {
-      // ARIMA prediction for differenced series
-      const diffPrediction = this.predictNextARIMA(pastDiffPredictions, arimaParams, p, q);
-      pastDiffPredictions.push(diffPrediction);
-      pastDiffPredictions.shift(); // Keep array size constant
-      
-      // Invert differencing
-      let origPrediction = diffPrediction;
-      for (let j = 0; j < d; j++) {
-        origPrediction = origPrediction + pastOrigPredictions[pastOrigPredictions.length - 1 - j];
-      }
-      
-      pastOrigPredictions.push(origPrediction);
-      
-      // Calculate date for new point
-      const newDate = new Date(lastDate.getTime() + avgTimeDiff * (i + 1));
-      
-      forecast.push({
-        timestamp: newDate,
-        value: origPrediction
-      });
-      
-      upperBound.push({
-        timestamp: newDate,
-        value: origPrediction + zScore * stdDev
-      });
-      
-      lowerBound.push({
-        timestamp: newDate,
-        value: Math.max(0, origPrediction - zScore * stdDev) // Ensure non-negative values
-      });
-    }
-    
-    // Calculate error metrics using original values
-    const undiffFittedValues = this.undifference(fittedValues, values, d);
-    const testSet = values.slice(-undiffFittedValues.length);
-    const rmse = this.calculateRMSE(testSet, undiffFittedValues);
-    const mape = this.calculateMAPE(testSet, undiffFittedValues);
+    // Create forecasts with different models
+    const arimaForecast = this.arima(historicalData, periods, interval);
+    const holtwintersForecast = this.holtWinters(historicalData, periods, interval);
+    const linearRegressionForecast = this.linearRegression(historicalData, periods, interval);
     
     return {
-      forecast,
-      upperBound,
-      lowerBound,
-      modelName: `ARIMA(${p},${d},${q})`,
-      rmse,
-      mape
+      data: historicalData,
+      models: [arimaForecast, holtwintersForecast, linearRegressionForecast]
     };
   }
   
   /**
-   * Fit linear regression model and forecast future values
-   * 
-   * @param data - Historical time series data
-   * @param periodsToForecast - Number of periods to forecast
-   * @param confidenceInterval - Confidence interval for prediction bounds
+   * Implements ARIMA (AutoRegressive Integrated Moving Average) forecasting
+   * @param {TimeSeriesDataPoint[]} data - Historical time series data
+   * @param {number} periods - Number of periods to forecast
+   * @param {string} interval - Time interval ('day', 'week', 'month')
    */
-  async linearRegressionForecast(
-    data: TimeSeriesDataPoint[],
-    periodsToForecast: number = 6,
-    confidenceInterval: number = 0.95
-  ): Promise<ForecastResult> {
-    if (data.length < 3) {
-      throw new Error('Not enough data points for linear regression. Need at least 3 data points.');
-    }
+  arima(data: TimeSeriesDataPoint[], periods: number, interval: string): ForecastResult {
+    // Extract values from time series data
+    const values = data.map(d => d.value);
     
-    // Extract values and create numeric time index
-    const y = data.map(d => d.value);
-    const x = Array.from({length: data.length}, (_, i) => i);
-
-    // Prepare data for linear regression
-    const xMatrix = x.map(val => [1, val]); // Add constant term
+    // Differencing for stationarity (the 'I' in ARIMA)
+    const diff = this.difference(values, 1);
     
-    // Fit linear regression
-    // Handle potential type issues with simple-statistics linearRegression
-    let slope = 0;
-    let intercept = 0;
+    // Determine AR parameters
+    const arCoefficients = this.calculateARCoefficients(diff, 2); // p=2
     
-    try {
-      const regression = ss.linearRegression(xMatrix, y);
-      // Access regression coefficients safely
-      if (Array.isArray(regression.b) && regression.b.length >= 2) {
-        intercept = regression.b[0] || 0;
-        slope = regression.b[1] || 0;
-      } else {
-        // Fallback to simple calculation if regression.b is not as expected
-        const xMean = ss.mean(x);
-        const yMean = ss.mean(y);
-        
-        let numerator = 0;
-        let denominator = 0;
-        
-        for (let i = 0; i < x.length; i++) {
-          numerator += (x[i] - xMean) * (y[i] - yMean);
-          denominator += Math.pow(x[i] - xMean, 2);
-        }
-        
-        slope = denominator !== 0 ? numerator / denominator : 0;
-        intercept = yMean - slope * xMean;
-      }
-    } catch (error) {
-      console.warn('Error in regression calculation, using simple trend estimation:', error);
-      // Simple trend estimate using first and last points
-      if (data.length >= 2) {
-        const firstVal = y[0];
-        const lastVal = y[y.length - 1];
-        slope = (lastVal - firstVal) / (x.length - 1 || 1);
-        intercept = firstVal;
-      }
-    }
-    
-    // Calculate fitted values and residuals
-    const fittedValues = x.map(xi => intercept + slope * xi);
-    const residuals = y.map((yi, i) => yi - fittedValues[i]);
-    
-    // Calculate standard error for confidence intervals
-    const stdDev = ss.standardDeviation(residuals);
-    const zScore = this.calculateZScore(confidenceInterval);
+    // Determine MA parameters
+    const maCoefficients = this.calculateMACoefficients(diff, 1); // q=1
     
     // Generate forecast
     const forecast: TimeSeriesDataPoint[] = [];
-    const upperBound: TimeSeriesDataPoint[] = [];
-    const lowerBound: TimeSeriesDataPoint[] = [];
+    const forecastValues: number[] = [];
     
-    // Determine time interval between points
-    const avgTimeDiff = this.calculateAverageTimeInterval(data);
-    const lastDate = data[data.length - 1].timestamp;
+    // Use last observations and errors for forecasting
+    const observations = [...values.slice(-3)];
+    const errors = diff.slice(-2);
     
-    // Generate forecast points
-    for (let i = 0; i < periodsToForecast; i++) {
-      const forecastIndex = x.length + i;
-      const forecastValue = intercept + slope * forecastIndex;
-      const newDate = new Date(lastDate.getTime() + avgTimeDiff * (i + 1));
+    let lastTimestamp = new Date(data[data.length - 1].timestamp);
+    
+    for (let i = 0; i < periods; i++) {
+      // Move to next interval
+      const nextDate = new Date(lastTimestamp.getTime());
+      if (interval === 'day') {
+        nextDate.setDate(nextDate.getDate() + 1);
+      } else if (interval === 'week') {
+        nextDate.setDate(nextDate.getDate() + 7);
+      } else { // month
+        nextDate.setMonth(nextDate.getMonth() + 1);
+      }
+      lastTimestamp = nextDate;
       
+      // Calculate forecast using AR and MA terms
+      let forecastValue = observations[observations.length - 1];
+      
+      // AR component
+      for (let j = 0; j < arCoefficients.length; j++) {
+        if (observations.length > j) {
+          forecastValue += arCoefficients[j] * observations[observations.length - 1 - j];
+        }
+      }
+      
+      // MA component
+      for (let j = 0; j < maCoefficients.length; j++) {
+        if (errors.length > j) {
+          forecastValue += maCoefficients[j] * errors[errors.length - 1 - j];
+        }
+      }
+      
+      // Add random noise component (small amount)
+      const noise = forecastValue * 0.01 * (Math.random() - 0.5);
+      forecastValue += noise;
+      forecastValue = Math.max(0, forecastValue); // Ensure non-negative values
+      
+      // Add to observations for next iteration
+      observations.push(forecastValue);
+      observations.shift(); // Remove oldest observation
+      errors.push(noise);
+      errors.shift(); // Remove oldest error
+      
+      forecastValues.push(forecastValue);
       forecast.push({
-        timestamp: newDate,
-        value: forecastValue
-      });
-      
-      upperBound.push({
-        timestamp: newDate,
-        value: forecastValue + zScore * stdDev
-      });
-      
-      lowerBound.push({
-        timestamp: newDate,
-        value: Math.max(0, forecastValue - zScore * stdDev) // Ensure non-negative values
+        timestamp: nextDate.toISOString(),
+        value: Math.round(forecastValue)
       });
     }
     
+    // Calculate confidence intervals (upper/lower bounds)
+    const stdDev = ss.standardDeviation(values);
+    const upperBound = forecast.map(point => ({
+      timestamp: point.timestamp,
+      value: Math.round(point.value + 1.96 * stdDev)
+    }));
+    
+    const lowerBound = forecast.map(point => ({
+      timestamp: point.timestamp,
+      value: Math.max(0, Math.round(point.value - 1.96 * stdDev))
+    }));
+    
     // Calculate error metrics
-    const rmse = this.calculateRMSE(y, fittedValues);
-    const mape = this.calculateMAPE(y, fittedValues);
+    const rmse = this.calculateRMSE(values, forecastValues);
+    const mape = this.calculateMAPE(values, forecastValues);
     
     return {
       forecast,
       upperBound,
       lowerBound,
-      modelName: 'Linear Trend',
+      modelName: 'ARIMA(2,1,1)',
       rmse,
       mape
     };
   }
   
   /**
-   * Generate data samples for testing the forecasting models
-   * For real world applications, this would be replaced with actual historical data
+   * Implements Holt-Winters (Triple Exponential Smoothing) forecasting
+   * @param {TimeSeriesDataPoint[]} data - Historical time series data
+   * @param {number} periods - Number of periods to forecast
+   * @param {string} interval - Time interval ('day', 'week', 'month')
    */
-  generateSampleTimeSeriesData(count: number, interval: 'day' | 'week' | 'month' = 'month'): TimeSeriesDataPoint[] {
-    const result: TimeSeriesDataPoint[] = [];
-    const now = new Date();
-    const trend = 15; // Base upward trend
-    const seasonality = 20; // Seasonality magnitude
+  holtWinters(data: TimeSeriesDataPoint[], periods: number, interval: string): ForecastResult {
+    // Extract values from time series data
+    const values = data.map(d => d.value);
     
-    // Convert interval to milliseconds
-    let intervalMs: number;
-    switch (interval) {
-      case 'day':
-        intervalMs = 24 * 60 * 60 * 1000;
-        break;
-      case 'week':
-        intervalMs = 7 * 24 * 60 * 60 * 1000;
-        break;
-      default:
-      case 'month':
-        intervalMs = 30 * 24 * 60 * 60 * 1000;
-        break;
+    // Determine seasonality period based on interval
+    const seasonalPeriod = interval === 'day' ? 7 : interval === 'week' ? 4 : 12;
+    
+    // Initialize level, trend, and seasonal components
+    let level = values[0];
+    let trend = (values[1] - values[0]) / 1;
+    
+    // Seasonal components initialization
+    const seasonal: number[] = [];
+    for (let i = 0; i < seasonalPeriod; i++) {
+      if (i < values.length) {
+        seasonal.push(values[i] / level);
+      } else {
+        seasonal.push(1.0); // Default seasonal factor
+      }
     }
     
-    for (let i = 0; i < count; i++) {
-      // Start from the past and move forward
-      const timestamp = new Date(now.getTime() - (count - i) * intervalMs);
+    // Smoothing parameters (alpha, beta, gamma)
+    const alpha = 0.3; // Level smoothing
+    const beta = 0.2;  // Trend smoothing
+    const gamma = 0.3; // Seasonal smoothing
+    
+    // Smooth the values
+    for (let i = 1; i < values.length; i++) {
+      const oldLevel = level;
+      const oldTrend = trend;
+      const oldSeasonal = seasonal[i % seasonalPeriod];
       
-      // Calculate base trend with noise
-      const trendComponent = trend * (i / count);
+      // Update level
+      level = alpha * (values[i] / seasonal[i % seasonalPeriod]) + (1 - alpha) * (oldLevel + oldTrend);
       
-      // Add seasonality (higher in middle of year)
-      const month = timestamp.getMonth();
-      const seasonalFactor = Math.sin((month / 11) * Math.PI);
-      const seasonalComponent = seasonality * seasonalFactor;
+      // Update trend
+      trend = beta * (level - oldLevel) + (1 - beta) * oldTrend;
       
-      // Add random noise
-      const noise = (Math.random() - 0.5) * 10;
+      // Update seasonal component
+      seasonal[i % seasonalPeriod] = gamma * (values[i] / level) + (1 - gamma) * oldSeasonal;
+    }
+    
+    // Generate forecast
+    const forecast: TimeSeriesDataPoint[] = [];
+    const forecastValues: number[] = [];
+    
+    let lastTimestamp = new Date(data[data.length - 1].timestamp);
+    
+    for (let i = 0; i < periods; i++) {
+      // Move to next interval
+      const nextDate = new Date(lastTimestamp.getTime());
+      if (interval === 'day') {
+        nextDate.setDate(nextDate.getDate() + 1);
+      } else if (interval === 'week') {
+        nextDate.setDate(nextDate.getDate() + 7);
+      } else { // month
+        nextDate.setMonth(nextDate.getMonth() + 1);
+      }
+      lastTimestamp = nextDate;
       
-      // Combine components
-      const value = 100 + trendComponent + seasonalComponent + noise;
+      // Calculate forecast
+      const forecastValue = (level + (i + 1) * trend) * seasonal[(values.length + i) % seasonalPeriod];
+      forecastValues.push(forecastValue);
       
-      result.push({
-        timestamp,
-        value: Math.max(0, value) // Ensure non-negative values
+      forecast.push({
+        timestamp: nextDate.toISOString(),
+        value: Math.max(0, Math.round(forecastValue))
       });
     }
     
-    return result;
+    // Calculate confidence intervals
+    const stdDev = ss.standardDeviation(values);
+    const upperBound = forecast.map(point => ({
+      timestamp: point.timestamp,
+      value: Math.round(point.value + 1.96 * stdDev)
+    }));
+    
+    const lowerBound = forecast.map(point => ({
+      timestamp: point.timestamp,
+      value: Math.max(0, Math.round(point.value - 1.96 * stdDev))
+    }));
+    
+    // Calculate error metrics
+    const rmse = this.calculateRMSE(values, forecastValues);
+    const mape = this.calculateMAPE(values, forecastValues);
+    
+    return {
+      forecast,
+      upperBound,
+      lowerBound,
+      modelName: 'Holt-Winters',
+      rmse,
+      mape
+    };
   }
   
   /**
-   * Generate sample market growth data with a specified trend
-   * For real world applications, this would be replaced with actual historical data
+   * Implements Linear Regression forecasting
+   * @param {TimeSeriesDataPoint[]} data - Historical time series data
+   * @param {number} periods - Number of periods to forecast
+   * @param {string} interval - Time interval ('day', 'week', 'month')
    */
-  generateMarketGrowthData(
-    count: number, 
-    interval: 'day' | 'week' | 'month' = 'month',
-    growthRate: number = 0.05, // 5% average growth
-    volatility: number = 0.02 // 2% volatility
-  ): TimeSeriesDataPoint[] {
-    const result: TimeSeriesDataPoint[] = [];
-    const now = new Date();
+  linearRegression(data: TimeSeriesDataPoint[], periods: number, interval: string): ForecastResult {
+    // Extract values from time series data
+    const values = data.map(d => d.value);
     
-    // Convert interval to milliseconds
-    let intervalMs: number;
-    switch (interval) {
-      case 'day':
-        intervalMs = 24 * 60 * 60 * 1000;
-        break;
-      case 'week':
-        intervalMs = 7 * 24 * 60 * 60 * 1000;
-        break;
-      default:
-      case 'month':
-        intervalMs = 30 * 24 * 60 * 60 * 1000;
-        break;
-    }
+    // Create x-coordinates (time steps)
+    const x = Array.from({ length: values.length }, (_, i) => i);
     
-    let marketSize = 100; // Starting market size
+    // Perform linear regression
+    const { slope, intercept } = ss.linearRegression(x, values);
     
-    for (let i = 0; i < count; i++) {
-      // Start from the past and move forward
-      const timestamp = new Date(now.getTime() - (count - i) * intervalMs);
+    // Generate forecast
+    const forecast: TimeSeriesDataPoint[] = [];
+    const forecastValues: number[] = [];
+    
+    let lastTimestamp = new Date(data[data.length - 1].timestamp);
+    
+    for (let i = 0; i < periods; i++) {
+      // Move to next interval
+      const nextDate = new Date(lastTimestamp.getTime());
+      if (interval === 'day') {
+        nextDate.setDate(nextDate.getDate() + 1);
+      } else if (interval === 'week') {
+        nextDate.setDate(nextDate.getDate() + 7);
+      } else { // month
+        nextDate.setMonth(nextDate.getMonth() + 1);
+      }
+      lastTimestamp = nextDate;
       
-      // Calculate growth with random factor
-      const randomFactor = 1 + (Math.random() * volatility * 2 - volatility);
-      const periodGrowth = Math.pow(1 + growthRate, 1/12) * randomFactor;
+      // Calculate forecast using linear regression
+      const forecastValue = slope * (values.length + i) + intercept;
+      forecastValues.push(forecastValue);
       
-      // Update market size
-      marketSize *= periodGrowth;
-      
-      result.push({
-        timestamp,
-        value: marketSize
+      forecast.push({
+        timestamp: nextDate.toISOString(),
+        value: Math.max(0, Math.round(forecastValue))
       });
     }
     
-    return result;
-  }
-
-  /**
-   * Compare different forecasting models and select the best one based on error metrics
-   * 
-   * @param data - Historical time series data
-   * @param periodsToForecast - Number of periods to forecast
-   * @param confidenceInterval - Confidence interval for prediction bounds
-   */
-  async getBestForecast(
-    data: TimeSeriesDataPoint[],
-    periodsToForecast: number = 6,
-    confidenceInterval: number = 0.95
-  ): Promise<{bestModel: ForecastResult, allModels: ForecastResult[]}> {
-    // Need enough data for all models
-    if (data.length < 10) {
-      throw new Error('Not enough data points for forecasting. Need at least 10 data points.');
-    }
+    // Calculate confidence intervals
+    const residuals = x.map((_, i) => values[i] - (slope * x[i] + intercept));
+    const stdDev = ss.standardDeviation(residuals);
     
-    const models: ForecastResult[] = [];
+    const upperBound = forecast.map(point => ({
+      timestamp: point.timestamp,
+      value: Math.round(point.value + 1.96 * stdDev)
+    }));
     
-    try {
-      // Try different models
-      models.push(await this.movingAverageForecast(data, 3, periodsToForecast, confidenceInterval));
-      models.push(await this.arimaForecast(data, periodsToForecast, 1, 1, 1, confidenceInterval));
-      models.push(await this.linearRegressionForecast(data, periodsToForecast, confidenceInterval));
-    } catch (error) {
-      console.error('Error calculating forecasts:', error);
-      
-      // If any model fails, fall back to the simplest model (linear trend)
-      if (models.length === 0) {
-        models.push(await this.linearRegressionForecast(data, periodsToForecast, confidenceInterval));
-      }
-    }
+    const lowerBound = forecast.map(point => ({
+      timestamp: point.timestamp,
+      value: Math.max(0, Math.round(point.value - 1.96 * stdDev))
+    }));
     
-    // Select the best model based on MAPE (lower is better)
-    models.sort((a, b) => (a.mape || Infinity) - (b.mape || Infinity));
+    // Calculate error metrics
+    const rmse = this.calculateRMSE(values, forecastValues);
+    const mape = this.calculateMAPE(values, forecastValues);
     
     return {
-      bestModel: models[0],
-      allModels: models
+      forecast,
+      upperBound,
+      lowerBound,
+      modelName: 'Linear Regression',
+      rmse,
+      mape
     };
   }
-
+  
   /**
-   * Forecast demand trends for a specific industry using historical data
-   * 
-   * @param industryId - The industry to forecast
-   * @param historicalData - Historical time series data
-   * @param periodsToForecast - Number of periods to forecast
+   * Calculates difference between consecutive values in a series
+   * @param {number[]} values - Array of values
+   * @param {number} order - Order of differencing
    */
-  async forecastDemandTrends(
-    industryId: number,
-    historicalData: TimeSeriesDataPoint[],
-    periodsToForecast: number = 6
-  ): Promise<ForecastResult> {
-    // For real implementations, historical data would come from a database or API
-    // but for now we're using the provided historical data directly
+  difference(values: number[], order: number = 1): number[] {
+    if (order <= 0 || values.length <= 1) return values;
     
-    try {
-      // Get the best forecast model
-      const { bestModel } = await this.getBestForecast(historicalData, periodsToForecast);
-      return bestModel;
-    } catch (error) {
-      console.error(`Error forecasting demand trends for industry ${industryId}:`, error);
-      throw error;
-    }
-  }
-
-  // ------ Helper Methods ------
-
-  /**
-   * Calculate the average time interval between data points
-   */
-  private calculateAverageTimeInterval(data: TimeSeriesDataPoint[]): number {
-    if (data.length <= 1) return 30 * 24 * 60 * 60 * 1000; // Default to monthly if not enough points
-    
-    const timeDiffs = [];
-    for (let i = 1; i < data.length; i++) {
-      const diff = data[i].timestamp.getTime() - data[i-1].timestamp.getTime();
-      timeDiffs.push(diff);
-    }
-    
-    return ss.mean(timeDiffs);
-  }
-
-  /**
-   * Calculate the Z-score for a given confidence interval
-   */
-  private calculateZScore(confidenceInterval: number): number {
-    // Approximation of the probit function
-    const p = 1 - (1 - confidenceInterval) / 2;
-    const zScoreApprox = Math.sqrt(2) * this.erfInv(2 * p - 1);
-    return zScoreApprox;
-  }
-
-  /**
-   * Inverse error function approximation
-   */
-  private erfInv(x: number): number {
-    // Simplified approximation of inverse error function
-    // This is less accurate but doesn't depend on erf function
-    const a = 0.147; // Constant for approximation
-    const signX = Math.sign(x);
-    const absX = Math.abs(x);
-    
-    if (absX >= 1) {
-      return signX * Infinity;
-    }
-    
-    // Simple approximation for normal ranges
-    if (absX <= 0.7) {
-      // Linear approximation for smaller values
-      return signX * absX * 1.25;
-    }
-    
-    // Use simplified formula for larger values
-    const term = Math.sqrt(-Math.log(1 - absX));
-    
-    return signX * term;
-  }
-
-  /**
-   * Calculate first difference of a time series
-   */
-  private difference(values: number[]): number[] {
-    const result = [];
+    const diff = [];
     for (let i = 1; i < values.length; i++) {
-      result.push(values[i] - values[i-1]);
+      diff.push(values[i] - values[i - 1]);
     }
-    return result;
+    
+    if (order === 1) return diff;
+    return this.difference(diff, order - 1);
   }
-
+  
   /**
-   * Invert differencing to get original series values
+   * Calculate autoregressive (AR) coefficients
+   * @param {number[]} values - Array of values
+   * @param {number} p - AR order
    */
-  private undifference(diffValues: number[], origValues: number[], d: number): number[] {
-    if (d === 0) return diffValues;
+  calculateARCoefficients(values: number[], p: number): number[] {
+    // Yule-Walker equations using matrix operations
+    const n = values.length;
     
-    const startIdx = origValues.length - diffValues.length - d;
-    const undiff = [];
-    
-    // Use original values as starting points
-    let prev = origValues[startIdx];
-    
-    for (let i = 0; i < diffValues.length; i++) {
-      const curr = prev + diffValues[i];
-      undiff.push(curr);
-      prev = curr;
+    // Calculate autocorrelations
+    const r: number[] = [];
+    for (let k = 0; k <= p; k++) {
+      let sum = 0;
+      for (let i = 0; i < n - k; i++) {
+        sum += values[i] * values[i + k];
+      }
+      r.push(sum / (n - k));
     }
     
-    return undiff;
-  }
-
-  /**
-   * Fit ARIMA model parameters using least squares regression
-   */
-  private fitARIMA(diffValues: number[], p: number, q: number): number[] {
-    if (diffValues.length <= Math.max(p, q)) {
-      throw new Error('Not enough data points after differencing.');
-    }
-    
-    // Set up matrix for regression
-    const n = diffValues.length - Math.max(p, q);
-    const X = []; // Design matrix
-    const y = []; // Target values
-    
-    // Create design matrix for AR(p) and MA(q) terms
-    for (let i = Math.max(p, q); i < diffValues.length; i++) {
+    // Create Toeplitz matrix
+    const toeplitz = [];
+    for (let i = 0; i < p; i++) {
       const row = [];
-      
-      // Add AR terms
-      for (let j = 1; j <= p; j++) {
-        row.push(diffValues[i-j]);
-      }
-      
-      // Add MA terms (using residuals)
-      // Since we don't have true residuals yet, we'll use differenced values as initial approximation
-      for (let j = 1; j <= q; j++) {
-        row.push(diffValues[i-j]);
-      }
-      
-      X.push(row);
-      y.push(diffValues[i]);
-    }
-    
-    // Solve using simplified least squares approach
-    try {
-      const Xmatrix = new Matrix(X);
-      const Xt = Xmatrix.transpose();
-      const XtX = Xt.mmul(Xmatrix);
-      
-      // Manually compute pseudoinverse (simplified approach)
-      // Find coefficients using simple regression methods
-      let params: number[] = [];
-      
-      if (p > 0) {
-        // Simplified AR parameter estimation using autocorrelation
-        let sumProduct = 0;
-        let sumSquared = 0;
-        
-        for (let i = 1; i < diffValues.length; i++) {
-          sumProduct += diffValues[i] * diffValues[i-1];
-          sumSquared += diffValues[i-1] * diffValues[i-1];
-        }
-        
-        const arCoef = sumSquared !== 0 ? sumProduct / sumSquared : 0.5;
-        params.push(Math.min(Math.max(arCoef, -0.99), 0.99)); // Constrain for stability
-      }
-      
-      // Add MA parameters (simplified)
-      for (let i = 0; i < q; i++) {
-        params.push(0.1); // Small positive MA coefficient
-      }
-      
-      return params;
-    } catch (error) {
-      // If computation fails, return a simple AR(1) model
-      return [0.5, 0];
-    }
-  }
-
-  /**
-   * Calculate fitted values for ARIMA model
-   */
-  private calculateFittedValues(diffValues: number[], params: number[], p: number, q: number): number[] {
-    const fitted = [];
-    const maxLag = Math.max(p, q);
-    
-    for (let i = maxLag; i < diffValues.length; i++) {
-      let pred = 0;
-      
-      // Add AR terms
       for (let j = 0; j < p; j++) {
-        pred += params[j] * diffValues[i - j - 1];
+        row.push(r[Math.abs(i - j)]);
       }
-      
-      // Add MA terms (approximated as AR terms initially)
-      for (let j = 0; j < q; j++) {
-        pred += params[p + j] * diffValues[i - j - 1];
-      }
-      
-      fitted.push(pred);
+      toeplitz.push(row);
     }
     
-    return fitted;
+    // Convert to ML-Matrix format
+    const R = new Matrix(toeplitz);
+    const b = Matrix.columnVector(r.slice(1, p + 1));
+    
+    // Solve system of equations
+    try {
+      const phi = R.solve(b);
+      return phi.to1DArray();
+    } catch (e) {
+      // Fall back to simpler approach if matrix is singular
+      return new Array(p).fill(0.1); // Simple default values
+    }
   }
-
+  
   /**
-   * Predict next value using ARIMA model
+   * Calculate moving average (MA) coefficients
+   * @param {number[]} values - Array of values
+   * @param {number} q - MA order
    */
-  private predictNextARIMA(pastValues: number[], params: number[], p: number, q: number): number {
-    let pred = 0;
+  calculateMACoefficients(values: number[], q: number): number[] {
+    // This is a simplified approach as proper MA coefficient estimation requires iterative algorithms
+    // For simplicity, we use a heuristic approach based on autocorrelation of residuals
     
-    // Add AR terms
-    for (let j = 0; j < p; j++) {
-      if (j < pastValues.length) {
-        pred += params[j] * pastValues[pastValues.length - j - 1];
-      }
+    const n = values.length;
+    const residuals: number[] = [];
+    
+    // Create simple AR model and calculate residuals
+    const arCoeff = this.calculateARCoefficients(values, 1);
+    for (let i = 1; i < n; i++) {
+      const predicted = arCoeff[0] * values[i - 1];
+      residuals.push(values[i] - predicted);
     }
     
-    // Add MA terms
-    for (let j = 0; j < q; j++) {
-      if (p + j < params.length && j < pastValues.length) {
-        pred += params[p + j] * pastValues[pastValues.length - j - 1];
+    // Calculate autocorrelation of residuals
+    const theta: number[] = [];
+    for (let k = 1; k <= q; k++) {
+      let sum = 0;
+      for (let i = 0; i < residuals.length - k; i++) {
+        sum += residuals[i] * residuals[i + k];
       }
+      const autocorr = sum / (residuals.length - k) / ss.variance(residuals);
+      theta.push(-autocorr); // MA coefficients are negative of autocorrelations
     }
     
-    return pred;
+    return theta;
   }
-
+  
   /**
    * Calculate Root Mean Square Error
+   * @param {number[]} actual - Actual values
+   * @param {number[]} predicted - Predicted values
    */
-  private calculateRMSE(actual: number[], predicted: number[]): number {
-    if (actual.length !== predicted.length) {
-      throw new Error('Arrays must have the same length');
+  calculateRMSE(actual: number[], predicted: number[]): number {
+    // For simplicity, we compare the predicted values to the last few actual values
+    // This is not a true out-of-sample validation but gives some indication of accuracy
+    const n = Math.min(actual.length, predicted.length);
+    if (n === 0) return 0;
+    
+    const lastActual = actual.slice(-n);
+    const firstPredicted = predicted.slice(0, n);
+    
+    let sumSquaredError = 0;
+    for (let i = 0; i < n; i++) {
+      sumSquaredError += Math.pow(lastActual[i] - firstPredicted[i], 2);
     }
     
-    const squaredErrors = actual.map((val, i) => Math.pow(val - predicted[i], 2));
-    const mse = ss.mean(squaredErrors);
-    return Math.sqrt(mse);
+    return Math.sqrt(sumSquaredError / n);
   }
-
+  
   /**
    * Calculate Mean Absolute Percentage Error
+   * @param {number[]} actual - Actual values
+   * @param {number[]} predicted - Predicted values
    */
-  private calculateMAPE(actual: number[], predicted: number[]): number {
-    if (actual.length !== predicted.length) {
-      throw new Error('Arrays must have the same length');
-    }
+  calculateMAPE(actual: number[], predicted: number[]): number {
+    // For simplicity, similar to RMSE calculation
+    const n = Math.min(actual.length, predicted.length);
+    if (n === 0) return 0;
     
-    let sum = 0;
-    let count = 0;
+    const lastActual = actual.slice(-n);
+    const firstPredicted = predicted.slice(0, n);
     
-    for (let i = 0; i < actual.length; i++) {
-      if (actual[i] !== 0) { // Avoid division by zero
-        sum += Math.abs((actual[i] - predicted[i]) / actual[i]);
-        count++;
+    let sumAbsPercentageError = 0;
+    for (let i = 0; i < n; i++) {
+      if (lastActual[i] !== 0) {
+        sumAbsPercentageError += Math.abs((lastActual[i] - firstPredicted[i]) / lastActual[i]);
       }
     }
     
-    return (count > 0) ? (sum / count) * 100 : 0;
+    return (sumAbsPercentageError / n) * 100;
   }
 }
 
