@@ -22,6 +22,19 @@ export function EconomicEvents() {
   }
 
   if (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    let displayMessage = errorMessage;
+    let actionMessage = "";
+
+    // Provide more specific messages for different error cases
+    if (errorMessage.includes("premium") || errorMessage.includes("access") || errorMessage.includes("restricted")) {
+      displayMessage = "Premium API access required";
+      actionMessage = "The economic calendar data requires a premium Finnhub subscription.";
+    } else if (errorMessage.includes("API key not configured")) {
+      displayMessage = "Finnhub API key is missing or invalid";
+      actionMessage = "Please configure a valid Finnhub API key to access economic events data.";
+    }
+
     return (
       <Card className="h-full">
         <CardHeader>
@@ -31,7 +44,8 @@ export function EconomicEvents() {
         <CardContent>
           <div className="text-center p-6">
             <p className="text-destructive mb-2">Error loading economic events</p>
-            <p className="text-sm text-muted-foreground">{error instanceof Error ? error.message : String(error)}</p>
+            <p className="text-sm text-muted-foreground mb-2">{displayMessage}</p>
+            {actionMessage && <p className="text-xs text-muted-foreground">{actionMessage}</p>}
           </div>
         </CardContent>
       </Card>
