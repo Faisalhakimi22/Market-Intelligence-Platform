@@ -206,6 +206,18 @@ export class MemStorage implements IStorage {
     this.aiInsights.set(id, newInsight);
     return newInsight;
   }
+  
+  async updateAiInsight(industryId: number, insight: Partial<InsertAiInsight>): Promise<AiInsight | undefined> {
+    const existingInsight = Array.from(this.aiInsights.values()).find(
+      (insight) => insight.industryId === industryId
+    );
+    
+    if (!existingInsight) return undefined;
+    
+    const updatedInsight = { ...existingInsight, ...insight };
+    this.aiInsights.set(existingInsight.id, updatedInsight);
+    return updatedInsight;
+  }
 
   // Password handling
   async hashPassword(password: string): Promise<string> {

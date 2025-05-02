@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AiInsight } from "@shared/schema";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,14 +18,28 @@ interface AIInsightsSummaryProps {
 }
 
 export function AIInsightsSummary({ industryId }: AIInsightsSummaryProps) {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  
   const { data: insight, isLoading, refetch } = useQuery<AiInsight>({
     queryKey: [industryId ? `/api/industries/${industryId}/insights` : null],
     enabled: !!industryId,
   });
   
-  const handleRefresh = () => {
-    refetch();
+  const handleRefresh = async () => {
+    if (!industryId) return;
+    setIsRefreshing(true);
+    try {
+      // Request live data from the API
+      await fetch(`/api/industries/${industryId}/insights?live=true`)
+        .then(res => res.json())
+        .then(() => refetch());
+    } catch (error) {
+      console.error('Error refreshing insights:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
   };
+  
   
   if (isLoading) {
     return (
