@@ -632,6 +632,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!req.isAuthenticated()) return res.sendStatus(401);
       
       try {
+        // Check if we have a valid Alpha Vantage API key
+        if (!process.env.ALPHA_VANTAGE_API_KEY || process.env.ALPHA_VANTAGE_API_KEY.trim() === '') {
+          throw new Error('Alpha Vantage API key not configured');
+        }
+        
         const performance = await marketDataService.getIndustryPerformance();
         res.json(performance);
       } catch (error) {
@@ -691,14 +696,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!req.isAuthenticated()) return res.sendStatus(401);
       
       try {
+        // Check if we have a valid Finnhub API key
+        if (!process.env.FINNHUB_API_KEY || process.env.FINNHUB_API_KEY.trim() === '') {
+          throw new Error('Finnhub API key not configured or invalid');
+        }
+        
         const events = await marketDataService.getEconomicEvents();
         res.json(events);
       } catch (error) {
-        console.error('Error fetching economic events:', error);
-        res.status(500).json({ 
-          message: 'Could not retrieve economic events',
-          error: error instanceof Error ? error.message : String(error)
-        });
+        // Check if the error is related to API access permissions
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        if (errorMsg.includes("You don't have access to this resource")) {
+          res.status(500).json({
+            message: 'Could not retrieve economic events',
+            error: 'This endpoint requires a premium Finnhub subscription. API access is restricted.'
+          });
+        } else {
+          console.error('Error fetching economic events:', error);
+          res.status(500).json({ 
+            message: 'Could not retrieve economic events',
+            error: errorMsg
+          });
+        }
       }
     } catch (error) {
       next(error);

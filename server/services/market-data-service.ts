@@ -195,10 +195,6 @@ class MarketDataService {
     try {
       const sectorData = await alphaVantageService.getSectorPerformance() as any;
       
-      if (!sectorData || Object.keys(sectorData).length === 0) {
-        throw new Error('No sector performance data available');
-      }
-      
       // Transform the data into a more usable format
       const sectors = [];
       
@@ -211,19 +207,29 @@ class MarketDataService {
         'Rank E: 3 Month Performance',
       ];
       
-      const selectedTimeFrame = timeFrames[0]; // Use real-time performance by default
+      // Try each time frame in order until we find valid data
+      let foundData = false;
       
-      if (sectorData[selectedTimeFrame]) {
-        const sectorPerformance = sectorData[selectedTimeFrame] as Record<string, string>;
-        
-        for (const [sector, performance] of Object.entries(sectorPerformance)) {
-          const performanceValue = parseFloat((performance).replace('%', ''));
-          sectors.push({
-            name: sector,
-            performance: performanceValue,
-            trend: performanceValue >= 0 ? 'up' : 'down'
-          });
+      for (const timeFrame of timeFrames) {
+        if (sectorData[timeFrame] && Object.keys(sectorData[timeFrame]).length > 0) {
+          const sectorPerformance = sectorData[timeFrame] as Record<string, string>;
+          
+          for (const [sector, performance] of Object.entries(sectorPerformance)) {
+            const performanceValue = parseFloat((performance).replace('%', ''));
+            sectors.push({
+              name: sector,
+              performance: performanceValue,
+              trend: performanceValue >= 0 ? 'up' : 'down'
+            });
+          }
+          
+          foundData = true;
+          break;
         }
+      }
+      
+      if (!foundData || sectors.length === 0) {
+        throw new Error('No sector performance data available from Alpha Vantage');
       }
       
       return sectors;

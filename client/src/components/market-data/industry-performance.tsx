@@ -20,6 +20,19 @@ export function IndustryPerformance() {
   }
 
   if (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    let displayMessage = errorMessage;
+    let actionMessage = "";
+
+    // Provide more helpful messages for specific errors
+    if (errorMessage.includes("API key not configured")) {
+      displayMessage = "Alpha Vantage API key is missing or invalid";
+      actionMessage = "Please configure a valid Alpha Vantage API key to access sector performance data.";
+    } else if (errorMessage.includes("rate limit")) {
+      displayMessage = "API rate limit exceeded";
+      actionMessage = "The data provider's rate limit has been reached. Please try again later.";
+    }
+
     return (
       <Card className="h-full">
         <CardHeader>
@@ -29,7 +42,8 @@ export function IndustryPerformance() {
         <CardContent>
           <div className="text-center p-6">
             <p className="text-destructive mb-2">Error loading sector data</p>
-            <p className="text-sm text-muted-foreground">{error instanceof Error ? error.message : String(error)}</p>
+            <p className="text-sm text-muted-foreground mb-2">{displayMessage}</p>
+            {actionMessage && <p className="text-xs text-muted-foreground">{actionMessage}</p>}
           </div>
         </CardContent>
       </Card>

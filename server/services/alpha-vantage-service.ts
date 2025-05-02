@@ -53,7 +53,21 @@ class AlphaVantageService {
         throw new Error(`Alpha Vantage API error: ${response.status} ${errorText}`);
       }
       
-      return await response.json();
+      const data = await response.json() as Record<string, any>;
+      
+      // Check if we have a note about API limits
+      if (data && 'Note' in data && typeof data.Note === 'string' && data.Note.includes('API call frequency')) {
+        throw new Error('Alpha Vantage API rate limit exceeded. Please try again later.');
+      }
+
+      // Check if we actually have sector data
+      const realTimeKey = 'Rank A: Real-Time Performance';
+      if (!data || !(realTimeKey in data)) {
+        console.log('Unexpected API response format:', JSON.stringify(data, null, 2));
+        throw new Error('Invalid sector performance data format from Alpha Vantage');
+      }
+      
+      return data;
     } catch (error) {
       console.error('Error fetching sector performance:', error);
       throw error;
