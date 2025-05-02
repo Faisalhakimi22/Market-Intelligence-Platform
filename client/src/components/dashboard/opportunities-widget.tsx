@@ -1,10 +1,11 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Opportunity } from "@shared/schema";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, RefreshCcw } from "lucide-react";
 
 interface OpportunitiesWidgetProps {
   industryId: number | null;
@@ -12,18 +13,46 @@ interface OpportunitiesWidgetProps {
 }
 
 export function OpportunitiesWidget({ industryId, className }: OpportunitiesWidgetProps) {
-  const { data: opportunities, isLoading } = useQuery<Opportunity[]>({
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  const { data: opportunities, isLoading, refetch } = useQuery<Opportunity[]>({
     queryKey: [industryId ? `/api/industries/${industryId}/opportunities` : null],
     enabled: !!industryId,
   });
+  
+  const handleRefresh = async () => {
+    if (!industryId) return;
+    setIsRefreshing(true);
+    try {
+      // Request live data from the API
+      await fetch(`/api/industries/${industryId}/opportunities?live=true`)
+        .then(res => res.json())
+        .then(() => refetch());
+    } catch (error) {
+      console.error('Error refreshing opportunities:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
   
   return (
     <Card className={cn("overflow-hidden", className)}>
       <CardHeader className="p-4 border-b dark:border-gray-700 flex flex-row items-center justify-between space-y-0">
         <h3 className="font-medium">Key Opportunities</h3>
-        <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center space-x-1">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+          >
+            <RefreshCcw className={cn("h-4 w-4", isRefreshing && "animate-spin")} />
+          </Button>
+          <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="p-4">
         {isLoading ? (

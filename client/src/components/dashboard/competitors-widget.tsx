@@ -1,10 +1,11 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Competitor } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { Filter, Star, StarHalf } from "lucide-react";
+import { Filter, Star, StarHalf, RefreshCcw } from "lucide-react";
 
 interface CompetitorsWidgetProps {
   industryId: number | null;
@@ -12,10 +13,27 @@ interface CompetitorsWidgetProps {
 }
 
 export function CompetitorsWidget({ industryId, className }: CompetitorsWidgetProps) {
-  const { data: competitors, isLoading } = useQuery<Competitor[]>({
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  const { data: competitors, isLoading, refetch } = useQuery<Competitor[]>({
     queryKey: [industryId ? `/api/industries/${industryId}/competitors` : null],
     enabled: !!industryId,
   });
+  
+  const handleRefresh = async () => {
+    if (!industryId) return;
+    setIsRefreshing(true);
+    try {
+      // Request live data from the API
+      await fetch(`/api/industries/${industryId}/competitors?live=true`)
+        .then(res => res.json())
+        .then(() => refetch());
+    } catch (error) {
+      console.error('Error refreshing competitors:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
   
   return (
     <Card className={cn("overflow-hidden", className)}>
@@ -23,6 +41,15 @@ export function CompetitorsWidget({ industryId, className }: CompetitorsWidgetPr
         <h3 className="font-medium">Competitive Intelligence</h3>
         <div className="flex items-center">
           <span className="text-xs text-gray-500 dark:text-gray-400 mr-2">Healthcare Technology</span>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 mr-1"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+          >
+            <RefreshCcw className={cn("h-4 w-4", isRefreshing && "animate-spin")} />
+          </Button>
           <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
             <Filter className="h-4 w-4" />
           </Button>
@@ -135,7 +162,7 @@ function CompetitorRow({ competitor }: { competitor: Competitor }) {
         </div>
       </td>
       <td className="px-4 py-3 whitespace-nowrap text-sm">
-        <span className={cn("px-2 py-1 text-xs rounded-full", getActivityBadgeColor(competitor.recentActivity))}>
+        <span className={cn("px-2 py-1 text-xs rounded-full", getActivityBadgeColor(competitor.recentActivity || ""))}>
           {competitor.recentActivity}
         </span>
       </td>
