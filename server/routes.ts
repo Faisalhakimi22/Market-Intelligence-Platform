@@ -678,7 +678,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error(`Error fetching news for ${symbol}:`, error);
         res.status(500).json({ 
           message: `Could not retrieve news for ${symbol}`,
-          error: error.message
+          error: error instanceof Error ? error.message : String(error)
         });
       }
     } catch (error) {
@@ -697,7 +697,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error('Error fetching economic events:', error);
         res.status(500).json({ 
           message: 'Could not retrieve economic events',
-          error: error.message
+          error: error instanceof Error ? error.message : String(error)
         });
       }
     } catch (error) {
@@ -723,7 +723,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error(`Error searching for companies with query ${query}:`, error);
         res.status(500).json({ 
           message: 'Could not search for companies',
-          error: error.message
+          error: error instanceof Error ? error.message : String(error)
         });
       }
     } catch (error) {
