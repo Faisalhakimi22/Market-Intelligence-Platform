@@ -216,7 +216,11 @@ export class MemStorage implements IStorage {
 
   async createAlert(alert: InsertAlert): Promise<Alert> {
     const id = this.currentId.alerts++;
-    const newAlert: Alert = { ...alert, id };
+    const newAlert: Alert = { 
+      ...alert, 
+      id,
+      userId: alert.userId || null
+    };
     this.alerts.set(id, newAlert);
     return newAlert;
   }
@@ -230,7 +234,11 @@ export class MemStorage implements IStorage {
 
   async createAiInsight(insight: InsertAiInsight): Promise<AiInsight> {
     const id = this.currentId.aiInsights++;
-    const newInsight: AiInsight = { ...insight, id };
+    const newInsight: AiInsight = { 
+      ...insight, 
+      id,
+      industryId: insight.industryId || null
+    };
     this.aiInsights.set(id, newInsight);
     return newInsight;
   }

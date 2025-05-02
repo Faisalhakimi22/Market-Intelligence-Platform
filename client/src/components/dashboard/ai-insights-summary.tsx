@@ -123,17 +123,21 @@ export function AIInsightsSummary({ industryId }: AIInsightsSummaryProps) {
               <LineChartIcon className="text-success-500 text-xl" />
             </div>
             <ul className="mt-2 space-y-2">
-              {Array.isArray(insight.trends) && 
-               insight.trends.map((trend: {name: string; growth: string; trend: string}, index: number) => (
-                <li key={index} className="flex items-center text-sm">
-                  {trend.trend === 'up' ? (
-                    <ArrowUpIcon className="text-success-500 mr-2 h-4 w-4" />
-                  ) : (
-                    <ArrowDownIcon className="text-error-500 mr-2 h-4 w-4" />
-                  )}
-                  <span>{trend.name} ({trend.growth})</span>
-                </li>
-              ))}
+              {(() => {
+                if (Array.isArray(insight.trends)) {
+                  return insight.trends.map((trend: {name: string; growth: string; trend: string}, index: number) => (
+                    <li key={index} className="flex items-center text-sm">
+                      {trend.trend === 'up' ? (
+                        <ArrowUpIcon className="text-success-500 mr-2 h-4 w-4" />
+                      ) : (
+                        <ArrowDownIcon className="text-error-500 mr-2 h-4 w-4" />
+                      )}
+                      <span>{trend.name} ({trend.growth})</span>
+                    </li>
+                  ));
+                }
+                return null;
+              })()}
             </ul>
           </div>
           
@@ -151,15 +155,22 @@ export function AIInsightsSummary({ industryId }: AIInsightsSummaryProps) {
             {insight.timeline && typeof insight.timeline === 'object' && (
               <>
                 <div className="mt-2 flex justify-between text-xs">
-                  {Array.isArray((insight.timeline as any).quarters) && 
-                    (insight.timeline as any).quarters.map((quarter: string, index: number) => (
-                      <span key={index}>{quarter}</span>
-                    ))
-                  }
+                  {(() => {
+                    const timeline = insight.timeline as Record<string, any>;
+                    if (Array.isArray(timeline.quarters)) {
+                      return timeline.quarters.map((quarter: string, index: number) => (
+                        <span key={index}>{quarter}</span>
+                      ));
+                    }
+                    return null;
+                  })()}
                 </div>
                 <p className="mt-2 text-sm">
                   Optimal market entry window: <span className="font-medium">
-                    {(insight.timeline as any).optimalEntry ? String((insight.timeline as any).optimalEntry) : 'Not available'}
+                    {(() => {
+                      const timeline = insight.timeline as Record<string, any>;
+                      return timeline.optimalEntry ? String(timeline.optimalEntry) : 'Not available';
+                    })()}
                   </span>
                 </p>
               </>
