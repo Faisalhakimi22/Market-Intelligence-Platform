@@ -5,6 +5,8 @@ import { setupAuth } from "./auth";
 import { insertIndustrySchema, insertOpportunitySchema, insertCompetitorSchema, insertAlertSchema, insertAiInsightSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
+import { perplexityService } from "./services/perplexity-service";
+
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Sets up /api/register, /api/login, /api/logout, /api/user
@@ -196,12 +198,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Not authorized to view this industry's insights" });
       }
       
-      const insights = await storage.getAiInsight(industryId);
-      if (!insights) {
-        return res.status(404).json({ message: "No insights available for this industry" });
+      // First try to get cached insights
+      const cachedInsights = await storage.getAiInsight(industryId);
+      
+      // If live insights are requested or no insights exist, use Perplexity API
+      if (!cachedInsights || req.query.live === 'true') {
+        try {
+          const perplexityResponse = await perplexityService.getIndustryInsights(industry.name);
+          
+          // Extract content from Perplexity response
+          const content = perplexityResponse.choices[0].message.content;
+          const citations = perplexityResponse.citations || [];
+          
+          // Create new insight or update existing one
+          const insightData = {
+            title: `${industry.name} Industry Analysis`,
+            content: content,
+            sources: citations.join('\n'),
+            industryId
+          };
+          
+          let insight;
+          if (cachedInsights) {
+            // Update existing insight
+            insight = await storage.updateAiInsight(industryId, insightData);
+          } else {
+            // Create new insight
+            insight = await storage.createAiInsight(insightData);
+          }
+          
+          return res.json(insight);
+        } catch (perplexityError) {
+          console.error('Perplexity API error:', perplexityError);
+          
+          // If we have cached insights, return those instead of failing
+          if (cachedInsights) {
+            return res.json({
+              ...cachedInsights,
+              notice: 'Using cached data. Live data retrieval failed.'
+            });
+          }
+          
+          // Otherwise return the error
+          return res.status(500).json({ 
+            message: "Failed to retrieve live market intelligence",
+            error: perplexityError.message 
+          });
+        }
       }
       
-      res.json(insights);
+      // Return cached insights if available and live data not requested
+      if (cachedInsights) {
+        return res.json(cachedInsights);
+      }
+      
+      return res.status(404).json({ message: "No insights available for this industry" });
     } catch (error) {
       next(error);
     }

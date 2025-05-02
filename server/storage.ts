@@ -41,6 +41,7 @@ export interface IStorage {
   // AI Insights
   getAiInsight(industryId: number): Promise<AiInsight | undefined>;
   createAiInsight(insight: InsertAiInsight): Promise<AiInsight>;
+  updateAiInsight(industryId: number, insight: Partial<InsertAiInsight>): Promise<AiInsight | undefined>;
 
   // Password handling
   hashPassword(password: string): Promise<string>;
