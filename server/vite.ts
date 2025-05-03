@@ -15,10 +15,15 @@ export const log = (message: string) => {
 export async function setupVite(app: Application, server: http.Server) {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   
+  // Get the root path - in production this will be handled differently
+  const rootPath = process.env.NODE_ENV === 'production' 
+    ? path.resolve(__dirname, "../../client") 
+    : path.resolve(__dirname, "../client");
+  
   const viteServer = await createViteServer({
     server: { middlewareMode: true },
     appType: "spa",
-    root: path.resolve(__dirname, "../client"),
+    root: rootPath,
   });
   
   // Use Vite's connect middleware
@@ -54,18 +59,33 @@ export async function setupVite(app: Application, server: http.Server) {
 // Serve static files in production
 export function serveStatic(app: Application) {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
-  const clientDistPath = path.resolve(__dirname, "../client/dist");
   
-  // Serve static assets from the client/dist directory
-  app.use(express.static(clientDistPath));
+  // In production deployment on Railway, we won't serve static files
+  // This function will be essentially a no-op in the server-only deployment
+  log("Server-only mode active - no static files will be served");
   
-  // Fallback for SPA routing - serve index.html for all non-API routes
+  // Add a route to let clients know this is a server-only deployment
+  app.get("/api/deployment-info", (req, res) => {
+    res.json({
+      mode: "server-only",
+      environment: process.env.NODE_ENV || "production",
+      version: process.env.npm_package_version || "1.0.0"
+    });
+  });
+  
+  // In server-only mode, we'll respond with API information for non-API routes
   app.get("*", (req, res, next) => {
     if (req.path.startsWith("/api")) {
       return next();
     }
     
-    res.sendFile(path.join(clientDistPath, "index.html"));
+    // Return a simple JSON indicating this is a server-only deployment
+    res.status(200).json({
+      message: "This is a server-only deployment. Frontend routes are not available.",
+      apiBase: "/api",
+      documentation: "/api/docs", // You might want to add API documentation here
+      status: "online"
+    });
   });
   
   log("Static files being served");
