@@ -1,5 +1,4 @@
 import vite from "vite";
-import { createServer as createViteServer } from "vite";
 import { Application } from "express";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -17,10 +16,10 @@ export async function setupVite(app: Application, server: http.Server) {
   
   // Get the root path - in production this will be handled differently
   const rootPath = process.env.NODE_ENV === 'production' 
-    ? path.resolve(__dirname, "../../client") 
+    ? path.resolve(__dirname, "../public") 
     : path.resolve(__dirname, "../client");
   
-  const viteServer = await createViteServer({
+  const viteServer = await vite.createServer({
     server: { middlewareMode: true },
     appType: "spa",
     root: rootPath,
@@ -39,7 +38,7 @@ export async function setupVite(app: Application, server: http.Server) {
     
     try {
       // Read index.html from client directory
-      const indexPath = path.resolve(__dirname, "../client/index.html");
+      const indexPath = path.resolve(rootPath, "index.html");
       let template = fs.readFileSync(indexPath, "utf-8");
       
       // Apply Vite HTML transforms
@@ -60,9 +59,9 @@ export async function setupVite(app: Application, server: http.Server) {
 export function serveStatic(app: Application) {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   
-  // In production deployment on Railway, we won't serve static files
-  // This function will be essentially a no-op in the server-only deployment
-  log("Server-only mode active - no static files will be served");
+  // In server-only deployment on Railway, we won't serve static files
+  // This function will handle API requests only
+  log("Server-only mode active");
   
   // Add a route to let clients know this is a server-only deployment
   app.get("/api/deployment-info", (req, res) => {
@@ -88,7 +87,7 @@ export function serveStatic(app: Application) {
     });
   });
   
-  log("Static files being served");
+  log("API routes configured for server-only mode");
 }
 
 // Re-export vite as default to satisfy the import in other files

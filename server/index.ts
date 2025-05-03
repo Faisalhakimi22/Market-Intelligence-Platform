@@ -10,8 +10,8 @@ app.use((req, res, next) => {
   // Allow requests from the frontend in production
   const allowedOrigins = [
     process.env.FRONTEND_URL || "https://your-frontend-domain.vercel.app",
-    "http://localhost:3000", // For local development
-    "http://localhost:5173"  // Vite's default port
+    "http://localhost:3000",
+    "http://localhost:5173"
   ];
   
   const origin = req.headers.origin;
@@ -74,7 +74,7 @@ app.get('/api/health', (req, res) => {
   });
   
   // Setup Vite in development mode, serve static in production
-  if (app.get("env") === "development") {
+  if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
   } else {
     serveStatic(app);
@@ -89,7 +89,7 @@ app.get('/api/health', (req, res) => {
       reusePort: true,
     },
     () => {
-      log(`Server running on port ${port} in ${app.get("env")} mode`);
+      log(`Server running on port ${port} in ${process.env.NODE_ENV || 'production'} mode`);
     }
   );
 })();
