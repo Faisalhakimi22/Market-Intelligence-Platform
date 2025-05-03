@@ -1,9 +1,10 @@
-import vite from "vite";
 import { Application } from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import http from "http";
 import fs from "fs";
+// Import Vite with named imports instead of default import
+import * as vite from "vite";
 
 // Logger function that can be imported by other modules
 export const log = (message: string) => {
@@ -90,8 +91,8 @@ export function serveStatic(app: Application) {
   log("API routes configured for server-only mode");
 }
 
-// Re-export vite as default to satisfy the import in other files
-export default vite;
+// Export the vite module for use in other files
+export { vite };
 
 // Need to import express for the static middleware
 import express from "express";
