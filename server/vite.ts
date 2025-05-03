@@ -22,10 +22,16 @@ export function log(message: string, source = "express") {
 
 // Function to set up Vite in development
 export async function setupVite(app: Express, server: Server) {
-  // Dynamically import vite.config only when needed in development
   let viteConfig: any;
-  if (app.get("env") === "development") {
-    viteConfig = (await import("../vite.config")).default;
+
+  // Only load Vite config in development mode
+  if (process.env.NODE_ENV === "development") {
+    try {
+      viteConfig = (await import("../vite.config")).default; // Dynamic import for vite.config.ts
+    } catch (error) {
+      console.error("Failed to load Vite config:", error);
+      throw error;
+    }
   }
 
   const serverOptions = {
@@ -34,9 +40,9 @@ export async function setupVite(app: Express, server: Server) {
     allowedHosts: true,
   };
 
-  // Create Vite server
+  // Create Vite server only in development mode
   const vite = await createViteServer({
-    ...viteConfig,
+    ...(viteConfig || {}), // Vite config only if loaded
     configFile: false,
     customLogger: {
       ...viteLogger,
