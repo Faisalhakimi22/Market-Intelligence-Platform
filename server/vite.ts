@@ -1,71 +1,78 @@
-import express, { type Express } from "express";
-import fs from "fs";
+import vite from "vite";
+import { createServer as createViteServer } from "vite";
+import { Application } from "express";
 import path from "path";
-import vite from "vite"; // Default import
-import { type Server } from "http";
-import { nanoid } from "nanoid";
+import { fileURLToPath } from "url";
+import http from "http";
+import fs from "fs";
 
-const viteLogger = vite.createLogger();  // Use Vite's default logger
+// Logger function that can be imported by other modules
+export const log = (message: string) => {
+  console.log(`[server] ${message}`);
+};
 
-export async function setupVite(app: Express, server: Server) {
-  const serverOptions = {
-    middlewareMode: true,
-    hmr: { server },
-    allowedHosts: true,
-  };
-
-  // Use default import for vite and its properties
-  const viteServer = await vite.createServer({
-    configFile: false,
-    customLogger: {
-      ...viteLogger,
-      error: (msg, options) => {
-        viteLogger.error(msg, options);
-        process.exit(1);
-      },
-    },
-    server: serverOptions,
-    appType: "custom",
+// Setup Vite in development mode
+export async function setupVite(app: Application, server: http.Server) {
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  
+  const viteServer = await createViteServer({
+    server: { middlewareMode: true },
+    appType: "spa",
+    root: path.resolve(__dirname, "../client"),
   });
-
+  
+  // Use Vite's connect middleware
   app.use(viteServer.middlewares);
+  
+  // Serve index.html for any routes not starting with /api
   app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
-
+    
+    if (url.startsWith("/api")) {
+      return next();
+    }
+    
     try {
-      const clientTemplate = path.resolve(
-        import.meta.dirname,
-        "..",
-        "client",
-        "index.html",
-      );
-
-      let template = await fs.promises.readFile(clientTemplate, "utf-8");
-      template = template.replace(
-        `src="/src/main.tsx"`,
-        `src="/src/main.tsx?v=${nanoid()}"`,
-      );
-      const page = await viteServer.transformIndexHtml(url, template);
-      res.status(200).set({ "Content-Type": "text/html" }).end(page);
+      // Read index.html from client directory
+      const indexPath = path.resolve(__dirname, "../client/index.html");
+      let template = fs.readFileSync(indexPath, "utf-8");
+      
+      // Apply Vite HTML transforms
+      template = await viteServer.transformIndexHtml(url, template);
+      
+      res.status(200).set({ "Content-Type": "text/html" }).end(template);
     } catch (e) {
       viteServer.ssrFixStacktrace(e as Error);
       next(e);
     }
   });
+  
+  log("Vite dev server started");
+  return server;
 }
 
-export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "public");
-
-  if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
-    );
-  }
-
-  app.use(express.static(distPath));
-
-  app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+// Serve static files in production
+export function serveStatic(app: Application) {
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const clientDistPath = path.resolve(__dirname, "../client/dist");
+  
+  // Serve static assets from the client/dist directory
+  app.use(express.static(clientDistPath));
+  
+  // Fallback for SPA routing - serve index.html for all non-API routes
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api")) {
+      return next();
+    }
+    
+    res.sendFile(path.join(clientDistPath, "index.html"));
   });
+  
+  log("Static files being served");
 }
+
+// Re-export vite as default to satisfy the import in other files
+export default vite;
+
+// Need to import express for the static middleware
+import express from "express";
