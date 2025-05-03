@@ -1,0 +1,45 @@
+# Node modules
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Environment variables
+.env
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Drizzle migrations (optional — include if migrations are auto-generated)
+migrations/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Vercel/Netlify/other deployment tools
+.vercel/
+.netlify/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Temporary files
+tmp/
+temp/
+*.swp
+*.tmp
