@@ -10,12 +10,12 @@ import { cn } from "@/lib/utils";
 import { Parallax, Background } from "react-parallax";
 
 // Import illustrations and backgrounds
-import analyticsDashboardSvg from "../src/assets/analytics-dashboard.svg";
-import marketAnalysisSvg from "../src/assets/market-analysis.svg";
-import businessGrowthSvg from "../src/assets/business-growth.svg";
-import geometricBackgroundSvg from "../src/assets/geometric-background.svg";
-import abstractBackgroundSvg from "../src/assets/abstract-background.svg";
-import patternBackgroundSvg from "../src/assets/pattern-background.svg";
+import analyticsDashboardSvg from "../assets/analytics-dashboard.svg";
+import marketAnalysisSvg from "../assets/market-analysis.svg";
+import businessGrowthSvg from "../assets/business-growth.svg";
+import geometricBackgroundSvg from "../assets/geometric-background.svg";
+import abstractBackgroundSvg from "../assets/abstract-background.svg";
+import patternBackgroundSvg from "../assets/pattern-background.svg";
 
 // UI Components
 import { Button } from "@/components/ui/button";
