@@ -153,66 +153,66 @@ export default function AuthPage() {
   };
 
   // Plans data
-  const plans = {
-    starter: {
-      name: "Starter",
-      description: "Essential market intelligence for startups",
-      price: "Free",
-      period: "forever",
-      saveAmount: "$0",
-      features: [
-        "Basic market trend analysis",
-        "Limited competitor tracking (up to 3)",
-        "Monthly industry reports",
-        "5 AI-powered business idea validations",
-        "Email support",
-        "Community access"
-      ],
-      buttonText: "Get Started Free",
-      color: "border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/40",
-      badge: "Free Forever"
-    },
-    pro: {
-      name: "Professional",
-      description: "Advanced intelligence for growing businesses",
-      price: billingPeriod === "monthly" ? "$99" : "$79",
-      period: billingPeriod === "monthly" ? "/month" : "/month, billed annually",
-      saveAmount: "$240",
-      features: [
-        "Advanced market trend analysis",
-        "Unlimited competitor tracking",
-        "Weekly industry reports",
-        "100 AI-powered business idea validations",
-        "Custom forecast modeling",
-        "Priority email & chat support",
-        "Team collaboration (up to 5 users)"
-      ],
-      buttonText: "Choose Pro",
-      color: "border-blue-400 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/40",
-      badge: "Most Popular"
-    },
-    enterprise: {
-      name: "Enterprise",
-      description: "Complete intelligence suite for organizations",
-      price: billingPeriod === "monthly" ? "$249" : "$199",
-      period: billingPeriod === "monthly" ? "/month" : "/month, billed annually",
-      saveAmount: "$600",
-      features: [
-        "Everything in Professional",
-        "Advanced API integrations",
-        "Custom data sources",
-        "Unlimited AI-powered business validations",
-        "Dedicated success manager",
-        "24/7 priority support",
-        "Team collaboration (unlimited users)",
-        "Custom reporting & analytics",
-        "On-demand market research"
-      ],
-      buttonText: "Contact Sales",
-      color: "border-blue-300 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/40",
-      badge: "Complete Solution"
-    }
-  };
+const plans = {
+  starter: {
+    name: "Starter",
+    description: "Essential market intelligence for startups",
+    price: "Free for 14 days",
+    period: "14-day trial, then $X/month",  // Replace $X with actual price after trial
+    saveAmount: "$X (after trial)",  // Replace with actual savings after trial
+    features: [
+      "Basic market trend analysis",
+      "Limited competitor tracking (up to 3)",
+      "Monthly industry reports",
+      "5 AI-powered business idea validations",
+      "Email support",
+      "Community access"
+    ],
+    buttonText: "Start Free Trial",
+    color: "border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/40",
+    badge: "14-Day Free Trial"
+  },
+  pro: {
+    name: "Professional",
+    description: "Advanced intelligence for growing businesses",
+    price: billingPeriod === "monthly" ? "$5" : "$4",
+    period: billingPeriod === "monthly" ? "/month" : "/month, billed annually",
+    saveAmount: "$12",
+    features: [
+      "Advanced market trend analysis",
+      "Unlimited competitor tracking",
+      "Weekly industry reports",
+      "100 AI-powered business idea validations",
+      "Custom forecast modeling",
+      "Priority email & chat support",
+      "Team collaboration (up to 5 users)"
+    ],
+    buttonText: "Choose Pro",
+    color: "border-blue-400 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/40",
+    badge: "Most Popular"
+  },
+  enterprise: {
+    name: "Enterprise",
+    description: "Complete intelligence suite for organizations",
+    price: billingPeriod === "monthly" ? "$9" : "$7.20",
+    period: billingPeriod === "monthly" ? "/month" : "/month, billed annually",
+    saveAmount: "$21.60",
+    features: [
+      "Everything in Professional",
+      "Advanced API integrations",
+      "Custom data sources",
+      "Unlimited AI-powered business validations",
+      "Dedicated success manager",
+      "24/7 priority support",
+      "Team collaboration (unlimited users)",
+      "Custom reporting & analytics",
+      "On-demand market research"
+    ],
+    buttonText: "Contact Sales",
+    color: "border-blue-300 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/40",
+    badge: "Complete Solution"
+  }
+};
 
   // If loading, render nothing until redirect happens
   if (isLoading) {
