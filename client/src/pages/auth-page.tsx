@@ -158,8 +158,7 @@ const plans = {
     name: "Starter",
     description: "Essential market intelligence for startups",
     price: "Free for 14 days",
-    period: "14-day trial, then $X/month",  // Replace $X with actual price after trial
-    saveAmount: "$X (after trial)",  // Replace with actual savings after trial
+    period: "14-day trial, then $3/month",  // Replace $X with actual price after trial
     features: [
       "Basic market trend analysis",
       "Limited competitor tracking (up to 3)",
