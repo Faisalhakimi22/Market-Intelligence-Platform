@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { useLocation } from "wouter";
 
 // UI Components
@@ -12,9 +12,10 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // Icons
-import { LogIn, UserPlus, ArrowRight, Check, Menu, Sun, Moon, BarChart2 } from "lucide-react";
+import { LogIn, UserPlus, ArrowRight, Check, Menu, Sun, Moon, BarChart2, Zap, Shield, Globe, Star } from "lucide-react";
 
 // Validation Schemas
 const loginSchema = z.object({
@@ -39,6 +40,10 @@ export default function AuthPage() {
   const [activeTab, setActiveTab] = useState("login");
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("annual");
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef });
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.3]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
 
   // Form Hooks
   const loginForm = useForm<LoginFormValues>({
@@ -67,32 +72,69 @@ export default function AuthPage() {
     document.documentElement.classList.toggle("dark", isDarkMode);
   }, [isDarkMode]);
 
+  // Particle Background Effect
+  const particles = Array.from({ length: 20 }).map((_, i) => (
+    <motion.div
+      key={i}
+      className="absolute h-2 w-2 bg-blue-400/50 rounded-full"
+      style={{
+        top: `${Math.random() * 100}%`,
+        left: `${Math.random() * 100}%`,
+      }}
+      animate={{
+        y: [0, -20, 0],
+        opacity: [0.2, 0.8, 0.2],
+      }}
+      transition={{
+        duration: 3 + Math.random() * 2,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
+    />
+  ));
+
   return (
-    <div className={`min-h-screen ${isDarkMode ? "dark" : ""} bg-gradient-to-br from-gray-50 to-blue-100 dark:from-gray-900 dark:to-blue-950 transition-colors duration-300`}>
+    <div className={`min-h-screen ${isDarkMode ? "dark" : ""} bg-gradient-to-br from-gray-100 to-blue-200 dark:from-gray-900 dark:to-blue-950 transition-colors duration-500 overflow-x-hidden`}>
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50">
+      <motion.header
+        className="fixed top-0 left-0 right-0 z-50 bg-white/10 dark:bg-gray-900/10 backdrop-blur-lg border-b border-gray-200/20 dark:border-gray-700/20"
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <motion.div
-              className="h-10 w-10 bg-blue-600 rounded-lg flex items-center justify-center"
-              whileHover={{ scale: 1.1 }}
+              className="h-12 w-12 bg-gradient-to-r from-blue-600 to-blue-400 rounded-xl flex items-center justify-center shadow-lg"
+              whileHover={{ rotate: 360, scale: 1.1 }}
+              transition={{ duration: 0.5 }}
               aria-label="MarketInsightAI Logo"
             >
-              <BarChart2 className="h-6 w-6 text-white" />
+              <BarChart2 className="h-7 w-7 text-white" />
             </motion.div>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">MarketInsightAI</h1>
+            <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight">MarketInsightAI</h1>
           </div>
           <div className="flex items-center gap-4">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsDarkMode(!isDarkMode)}
+                    aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+                    className="text-gray-700 dark:text-gray-200 hover:bg-blue-100/50 dark:hover:bg-blue-900/50"
+                  >
+                    {isDarkMode ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{isDarkMode ? "Light Mode" : "Dark Mode"}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
-            <Button
-              className="hidden md:block bg-blue-600 hover:bg-blue-700"
+              className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-md text-white font-semibold"
               onClick={() => document.querySelector("#auth-form")?.scrollIntoView({ behavior: "smooth" })}
             >
               Get Started
@@ -100,87 +142,141 @@ export default function AuthPage() {
             <Button
               variant="outline"
               size="icon"
-              className="md:hidden"
+              className="md:hidden border-gray-300 dark:border-gray-700"
               aria-label="Open menu"
             >
-              <Menu className="h-5 w-5" />
+              <Menu className="h-6 w-6" />
             </Button>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       {/* Hero Section */}
-      <section className="pt-24 pb-16 flex items-center justify-center min-h-screen">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-12">
-          <motion.div
-            className="md:w-1/2 text-center md:text-left"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">
-              Empower Your <span className="text-blue-600 dark:text-blue-400">Business</span> with AI
-            </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-md mx-auto md:mx-0">
-              Unlock market insights with cutting-edge AI analytics.
-            </p>
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-lg"
-              onClick={() => document.querySelector("#auth-form")?.scrollIntoView({ behavior: "smooth" })}
+      <section ref={heroRef} className="relative pt-32 pb-20 min-h-screen flex items-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 dark:from-blue-900/20 dark:to-purple-900/20 z-0">
+          {particles}
+        </div>
+        <motion.div
+          className="container mx-auto px-4 flex flex-col lg:flex-row items-center gap-12 relative z-10"
+          style={{ opacity, scale }}
+        >
+          <div className="lg:w-1/2 text-center lg:text-left">
+            <motion.h1
+              className="text-5xl lg:text-7xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
             >
-              Start Now <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </motion.div>
+              Unleash <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">AI-Powered</span> Insights
+            </motion.h1>
+            <motion.p
+              className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-md mx-auto lg:mx-0"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              Transform your business with real-time market analytics.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg text-white font-semibold px-8 py-3 rounded-full transform hover:scale-105 transition-transform"
+                onClick={() => document.querySelector("#auth-form")?.scrollIntoView({ behavior: "smooth" })}
+              >
+                Start Now <ArrowRight className="ml-2 h-6 w-6" />
+              </Button>
+            </motion.div>
+          </div>
           <motion.div
             id="auth-form"
-            className="md:w-1/2 bg-white/90 dark:bg-gray-800/90 p-8 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-md"
-            initial={{ opacity: 0, x: 50 }}
+            className="lg:w-1/2 bg-white/10 dark:bg-gray-800/10 p-8 rounded-3xl shadow-2xl border border-gray-200/10 dark:border-gray-700/10 backdrop-blur-xl"
+            initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid grid-cols-2 mb-6 bg-gray-100/50 dark:bg-gray-700/50 rounded-lg">
-                <TabsTrigger value="login" className="py-2 text-base font-medium">
+              <TabsList className="grid grid-cols-2 mb-8 bg-gray-100/10 dark:bg-gray-700/10 rounded-xl backdrop-blur-sm">
+                <TabsTrigger
+                  value="login"
+                  className="py-3 text-lg font-semibold data-[state=active]:bg-white/20 data-[state=active]:dark:bg-gray-800/20 data-[state=active]:text-blue-600 data-[state=active]:dark:text-blue-400"
+                >
                   Sign In
                 </TabsTrigger>
-                <TabsTrigger value="register" className="py-2 text-base font-medium">
+                <TabsTrigger
+                  value="register"
+                  className="py-3 text-lg font-semibold data-[state=active]:bg-white/20 data-[state=active]:dark:bg-gray-800/20 data-[state=active]:text-blue-600 data-[state=active]:dark:text-blue-400"
+                >
                   Sign Up
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="login">
-                <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
+                <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-6">
                   <div>
-                    <Label htmlFor="login-email" className="text-sm font-medium">Email</Label>
-                    <Input
-                      id="login-email"
-                      type="email"
-                      placeholder="your@email.com"
-                      className="h-12 rounded-lg"
-                      {...loginForm.register("email")}
-                      aria-invalid={loginForm.formState.errors.email ? "true" : "false"}
-                    />
-                    {loginForm.formState.errors.email && (
-                      <p className="text-sm text-red-500">{loginForm.formState.errors.email.message}</p>
-                    )}
+                    <Label htmlFor="login-email" className="text-sm font-medium text-gray-700 dark:text-gray-200">Email</Label>
+                    <motion.div
+                      className="relative"
+                      whileFocus={{ scale: 1.02 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Input
+                        id="login-email"
+                        type="email"
+                        placeholder="your@email.com"
+                        className="h-12 rounded-xl bg-white/50 dark:bg-gray-800/50 border-gray-300/50 dark:border-gray-700/50 focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        {...loginForm.register("email")}
+                        aria-invalid={loginForm.formState.errors.email ? "true" : "false"}
+                        autoFocus
+                      />
+                    </motion.div>
+                    <AnimatePresence>
+                      {loginForm.formState.errors.email && (
+                        <motion.p
+                          className="text-sm text-red-500 mt-1 flex items-center gap-1"
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                        >
+                          <Star className="h-4 w-4" /> {loginForm.formState.errors.email.message}
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
                   </div>
                   <div>
-                    <Label htmlFor="login-password" className="text-sm font-medium">Password</Label>
-                    <Input
-                      id="login-password"
-                      type="password"
-                      placeholder="••••••••"
-                      className="h-12 rounded-lg"
-                      {...loginForm.register("password")}
-                      aria-invalid={loginForm.formState.errors.password ? "true" : "false"}
-                    />
-                    {loginForm.formState.errors.password && (
-                      <p className="text-sm text-red-500">{loginForm.formState.errors.password.message}</p>
-                    )}
+                    <Label htmlFor="login-password" className="text-sm font-medium text-gray-700 dark:text-gray-200">Password</Label>
+                    <motion.div
+                      className="relative"
+                      whileFocus={{ scale: 1.02 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Input
+                        id="login-password"
+                        type="password"
+                        placeholder="••••••••"
+                        className="h-12 rounded-xl bg-white/50 dark:bg-gray-800/50 border-gray-300/50 dark:border-gray-700/50 focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        {...loginForm.register("password")}
+                        aria-invalid={loginForm.formState.errors.password ? "true" : "false"}
+                      />
+                    </motion.div>
+                    <AnimatePresence>
+                      {loginForm.formState.errors.password && (
+                        <motion.p
+                          className="text-sm text-red-500 mt-1 flex items-center gap-1"
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                        >
+                          <Star className="h-4 w-4" /> {loginForm.formState.errors.password.message}
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
                   </div>
                   <Button
                     type="submit"
-                    className="w-full h-12 bg-blue-600 hover:bg-blue-700"
+                    className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-transform"
                     disabled={loginForm.formState.isSubmitting}
                   >
                     <LogIn className="mr-2 h-5 w-5" /> Sign In
@@ -188,52 +284,98 @@ export default function AuthPage() {
                 </form>
               </TabsContent>
               <TabsContent value="register">
-                <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
+                <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-6">
                   <div>
-                    <Label htmlFor="register-email" className="text-sm font-medium">Email</Label>
-                    <Input
-                      id="register-email"
-                      type="email"
-                      placeholder="your@email.com"
-                      className="h-12 rounded-lg"
-                      {...registerForm.register("email")}
-                      aria-invalid={registerForm.formState.errors.email ? "true" : "false"}
-                    />
-                    {registerForm.formState.errors.email && (
-                      <p className="text-sm text-red-500">{registerForm.formState.errors.email.message}</p>
-                    )}
+                    <Label htmlFor="register-email" className="text-sm font-medium text-gray-700 dark:text-gray-200">Email</Label>
+                    <motion.div
+                      className="relative"
+                      whileFocus={{ scale: 1.02 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Input
+                        id="register-email"
+                        type="email"
+                        placeholder="your@email.com"
+                        className="h-12 rounded-xl bg-white/50 dark:bg-gray-800/50 border-gray-300/50 dark:border-gray-700/50 focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        {...registerForm.register("email")}
+                        aria-invalid={registerForm.formState.errors.email ? "true" : "false"}
+                        autoFocus
+                      />
+                    </motion.div>
+                    <AnimatePresence>
+                      {registerForm.formState.errors.email && (
+                        <motion.p
+                          className="text-sm text-red-500 mt-1 flex items-center gap-1"
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                        >
+                          <Star className="h-4 w-4" /> {registerForm.formState.errors.email.message}
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
                   </div>
                   <div>
-                    <Label htmlFor="register-password" className="text-sm font-medium">Password</Label>
-                    <Input
-                      id="register-password"
-                      type="password"
-                      placeholder="••••••••"
-                      className="h-12 rounded-lg"
-                      {...registerForm.register("password")}
-                      aria-invalid={registerForm.formState.errors.password ? "true" : "false"}
-                    />
-                    {registerForm.formState.errors.password && (
-                      <p className="text-sm text-red-500">{registerForm.formState.errors.password.message}</p>
-                    )}
+                    <Label htmlFor="register-password" className="text-sm font-medium text-gray-700 dark:text-gray-200">Password</Label>
+                    <motion.div
+                      className="relative"
+                      whileFocus={{ scale: 1.02 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Input
+                        id="register-password"
+                        type="password"
+                        placeholder="••••••••"
+                        className="h-12 rounded-xl bg-white/50 dark:bg-gray-800/50 border-gray-300/50 dark:border-gray-700/50 focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        {...registerForm.register("password")}
+                        aria-invalid={registerForm.formState.errors.password ? "true" : "false"}
+                      />
+                    </motion.div>
+                    <AnimatePresence>
+                      {registerForm.formState.errors.password && (
+                        <motion.p
+                          className="text-sm text-red-500 mt-1 flex items-center gap-1"
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                        >
+                          <Star className="h-4 w-4" /> {registerForm.formState.errors.password.message}
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
                   </div>
                   <div>
-                    <Label htmlFor="register-confirm-password" className="text-sm font-medium">Confirm Password</Label>
-                    <Input
-                      id="register-confirm-password"
-                      type="password"
-                      placeholder="••••••••"
-                      className="h-12 rounded-lg"
-                      {...registerForm.register("confirmPassword")}
-                      aria-invalid={registerForm.formState.errors.confirmPassword ? "true" : "false"}
-                    />
-                    {registerForm.formState.errors.confirmPassword && (
-                      <p className="text-sm text-red-500">{registerForm.formState.errors.confirmPassword.message}</p>
-                    )}
+                    <Label htmlFor="register-confirm-password" className="text-sm font-medium text-gray-700 dark:text-gray-200">Confirm Password</Label>
+                    <motion.div
+                      className="relative"
+                      whileFocus={{ scale: 1.02 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Input
+                        id="register-confirm-password"
+                        type="password"
+                        placeholder="••••••••"
+                        className="h-12 rounded-xl bg-white/50 dark:bg-gray-800/50 border-gray-300/50 dark:border-gray-700/50 focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        {...registerForm.register("confirmPassword")}
+                        aria-invalid={registerForm.formState.errors.confirmPassword ? "true" : "false"}
+                      />
+                    </motion.div>
+                    <AnimatePresence>
+                      {registerForm.formState.errors.confirmPassword && (
+                        <motion.p
+                          className="text-sm text-red-500 mt-1 flex items-center gap-1"
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                        >
+                          <Star className="h-4 w-4" /> {registerForm.formState.errors.confirmPassword.message}
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
                   </div>
                   <Button
                     type="submit"
-                    className="w-full h-12 bg-blue-600 hover:bg-blue-700"
+                    className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-transform"
                     disabled={registerForm.formState.isSubmitting}
                   >
                     <UserPlus className="mr-2 h-5 w-5" /> Sign Up
@@ -242,34 +384,41 @@ export default function AuthPage() {
               </TabsContent>
             </Tabs>
           </motion.div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-white dark:bg-gray-800">
+      <section className="py-20 bg-gradient-to-b from-white to-gray-100 dark:from-gray-800 dark:to-gray-900">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">
-            Why Choose Us
-          </h2>
+          <motion.h2
+            className="text-4xl font-bold text-center text-gray-900 dark:text-white mb-16"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            Cutting-Edge Features
+          </motion.h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { icon: BarChart2, title: "AI Analytics", description: "Real-time market insights" },
-              { icon: Check, title: "Easy to Use", description: "Intuitive interface" },
-              { icon: ArrowRight, title: "Scalable", description: "Grows with your business" },
+              { icon: Zap, title: "Real-Time Analytics", description: "Instant market insights with AI precision." },
+              { icon: Shield, title: "Secure Data", description: "Enterprise-grade security for your peace of mind." },
+              { icon: Globe, title: "Global Reach", description: "Access markets worldwide with ease." },
             ].map((feature, index) => (
               <motion.div
                 key={index}
-                className="bg-white/90 dark:bg-gray-800/90 p-6 rounded-xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-md"
-                whileHover={{ scale: 1.05 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.2 }}
+                className="bg-white/10 dark:bg-gray-800/10 p-8 rounded-2xl shadow-xl border border-gray-200/10 dark:border-gray-700/10 backdrop-blur-lg"
+                whileHover={{ y: -10, boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: index * 0.2 }}
                 role="region"
                 aria-label={feature.title}
               >
-                <feature.icon className="h-12 w-12 text-blue-600 dark:text-blue-400 mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{feature.title}</h3>
-                <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
+                <feature.icon className="h-16 w-16 text-blue-600 dark:text-blue-400 mb-6 mx-auto" />
+                <h3 className="text-2xl font-semibold text-gray-900 dark:text-white text-center">{feature.title}</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-center mt-2">{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -277,67 +426,81 @@ export default function AuthPage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-16 bg-gradient-to-br from-gray-50 to-blue-100 dark:from-gray-900 dark:to-blue-950">
+      <section className="py-20 bg-gradient-to-br from-gray-100 to-blue-200 dark:from-gray-900 dark:to-blue-950">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">
-            Simple Pricing
-          </h2>
-          <div className="flex justify-center mb-8">
-            <div className="flex items-center gap-3 bg-white/90 dark:bg-gray-800/90 p-2 rounded-lg shadow-md">
-              <span className={`text-sm font-medium ${billingPeriod === "monthly" ? "text-blue-600 dark:text-blue-400" : "text-gray-500"}`}>Monthly</span>
+          <motion.h2
+            className="text-4xl font-bold text-center text-gray-900 dark:text-white mb-16"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            Flexible Pricing
+          </motion.h2>
+          <div className="flex justify-center mb-12">
+            <motion.div
+              className="flex items-center gap-4 bg-white/10 dark:bg-gray-800/10 p-3 rounded-xl shadow-lg backdrop-blur-sm"
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <span className={`text-lg font-medium ${billingPeriod === "monthly" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 dark:text-gray-400"}`}>Monthly</span>
               <Switch
                 checked={billingPeriod === "annual"}
                 onCheckedChange={(checked) => setBillingPeriod(checked ? "annual" : "monthly")}
+                className="data-[state=checked]:bg-blue-600"
                 aria-label="Toggle billing period"
               />
-              <span className={`text-sm font-medium ${billingPeriod === "annual" ? "text-blue-600 dark:text-blue-400" : "text-gray-500"}`}>Annual</span>
-            </div>
+              <span className={`text-lg font-medium ${billingPeriod === "annual" ? "text-blue-600 dark:text-blue-400" : "text-gray-500 dark:text-gray-400"}`}>Annual</span>
+            </motion.div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {[
               {
                 name: "Starter",
                 price: billingPeriod === "monthly" ? "$19" : "$15",
                 period: billingPeriod === "monthly" ? "/mo" : "/mo, billed annually",
-                features: ["Basic Analytics", "5 Reports", "Email Support"],
+                features: ["Basic Analytics", "5 Reports/Month", "Email Support"],
               },
               {
                 name: "Pro",
                 price: billingPeriod === "monthly" ? "$49" : "$39",
                 period: billingPeriod === "monthly" ? "/mo" : "/mo, billed annually",
-                features: ["Advanced Analytics", "Unlimited Reports", "Priority Support"],
+                features: ["Advanced Analytics", "Unlimited Reports", "Priority Support", "Team Collaboration"],
               },
             ].map((plan, index) => (
               <motion.div
                 key={index}
-                className="bg-white/90 dark:bg-gray-800/90 p-6 rounded-xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-md"
-                whileHover={{ scale: 1.05 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.2 }}
+                className="bg-white/10 dark:bg-gray-800/10 p-8 rounded-2xl shadow-xl border border-gray-200/10 dark:border-gray-700/10 backdrop-blur-lg"
+                whileHover={{ y: -10, boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: index * 0.2 }}
               >
                 <Card className="border-none bg-transparent">
                   <CardHeader>
-                    <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">{plan.name}</CardTitle>
+                    <CardTitle className="text-3xl font-bold text-gray-900 dark:text-white">{plan.name}</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-6">
                     <div className="flex items-baseline">
-                      <span className="text-4xl font-bold text-gray-900 dark:text-white">{plan.price}</span>
-                      <span className="text-gray-500 dark:text-gray-400 ml-2">{plan.period}</span>
+                      <span className="text-5xl font-extrabold text-gray-900 dark:text-white">{plan.price}</span>
+                      <span className="text-gray-500 dark:text-gray-400 ml-3">{plan.period}</span>
                     </div>
-                    <ul className="space-y-2">
+                    <ul className="space-y-3">
                       {plan.features.map((feature, i) => (
-                        <li key={i} className="flex items-center gap-2">
-                          <Check className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                          <span className="text-gray-600 dark:text-gray-300">{feature}</span>
+                        <li key={i} className="flex items-center gap-3">
+                          <Check className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                          <span className="text-gray-600 dark:text-gray-300 text-lg">{feature}</span>
                         </li>
                       ))}
                     </ul>
                     <Button
-                      className="w-full h-12 bg-blue-600 hover:bg-blue-700"
+                      className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-transform"
                       onClick={() => document.querySelector("#auth-form")?.scrollIntoView({ behavior: "smooth" })}
                     >
-                      Choose Plan
+                      Choose {plan.name}
                     </Button>
                   </CardContent>
                 </Card>
@@ -348,51 +511,63 @@ export default function AuthPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-blue-400 text-white">
-        <div className="container mx-auto px-4 text-center">
+      <section className="py-20 bg-gradient-to-r from-blue-700 to-purple-700 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 z-0">
+          {particles}
+        </div>
+        <div className="container mx-auto px-4 text-center relative z-10">
           <motion.h2
-            className="text-3xl md:text-4xl font-bold mb-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            className="text-5xl font-extrabold mb-6"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            Ready to Transform Your Business?
+            Elevate Your Business Today
           </motion.h2>
           <motion.p
-            className="text-lg mb-8 max-w-md mx-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            className="text-xl mb-10 max-w-lg mx-auto"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Start your journey with MarketInsightAI today.
+            Join the future of market intelligence with MarketInsightAI.
           </motion.p>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
             <Button
               size="lg"
-              className="bg-white text-blue-600 hover:bg-gray-100 shadow-lg"
+              className="bg-white text-blue-700 hover:bg-gray-100 shadow-xl rounded-full px-10 py-4 font-semibold transform hover:scale-110 transition-transform"
               onClick={() => document.querySelector("#auth-form")?.scrollIntoView({ behavior: "smooth" })}
             >
-              Get Started Now <ArrowRight className="ml-2 h-5 w-5" />
+              Get Started Now <ArrowRight className="ml-3 h-6 w-6" />
             </Button>
           </motion.div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-300 py-8">
+      <footer className="bg-gray-900 text-gray-300 py-12">
         <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
-          <div className="flex items-center gap-2 mb-4 md:mb-0">
-            <BarChart2 className="h-6 w-6 text-blue-400" />
-            <span className="text-lg font-bold">MarketInsightAI</span>
+          <div className="flex items-center gap-3 mb-6 md:mb-0">
+            <motion.div
+              className="h-10 w-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center"
+              whileHover={{ rotate: 360 }}
+              transition={{ duration: 0.5 }}
+            >
+              <BarChart2 className="h-6 w-6 text-white" />
+            </motion.div>
+            <span className="text-xl font-bold">MarketInsightAI</span>
           </div>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-blue-400" aria-label="Terms of Service">Terms</a>
-            <a href="#" className="hover:text-blue-400" aria-label="Privacy Policy">Privacy</a>
-            <a href="#" className="hover:text-blue-400" aria-label="Contact Us">Contact</a>
+          <div className="flex gap-8">
+            <a href="#" className="hover:text-blue-400 transition-colors" aria-label="Terms of Service">Terms</a>
+            <a href="#" className="hover:text-blue-400 transition-colors" aria-label="Privacy Policy">Privacy</a>
+            <a href="#" className="hover:text-blue-400 transition-colors" aria-label="Contact Us">Contact</a>
           </div>
         </div>
       </footer>
