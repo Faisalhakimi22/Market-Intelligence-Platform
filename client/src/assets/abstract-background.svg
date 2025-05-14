@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="960" viewBox="0 0 1440 960" fill="none">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.05" />
+      <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.05" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.07" />
+      <stop offset="100%" stop-color="#a78bfa" stop-opacity="0.07" />
+    </linearGradient>
+    <filter id="blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="30" />
+    </filter>
+  </defs>
+  
+  <!-- Big Blobs -->
+  <circle cx="300" cy="300" r="250" fill="url(#grad1)" filter="url(#blur)" />
+  <circle cx="1140" cy="660" r="280" fill="url(#grad2)" filter="url(#blur)" />
+  <circle cx="720" cy="180" r="200" fill="url(#grad2)" filter="url(#blur)" />
+  <circle cx="500" cy="780" r="220" fill="url(#grad1)" filter="url(#blur)" />
+  
+  <!-- Grid Pattern -->
+  <g opacity="0.3">
+    <path d="M0 80H1440" stroke="#3b82f6" stroke-width="0.5" stroke-dasharray="8 8" />
+    <path d="M0 240H1440" stroke="#3b82f6" stroke-width="0.5" stroke-dasharray="8 8" />
+    <path d="M0 400H1440" stroke="#3b82f6" stroke-width="0.5" stroke-dasharray="8 8" />
+    <path d="M0 560H1440" stroke="#3b82f6" stroke-width="0.5" stroke-dasharray="8 8" />
+    <path d="M0 720H1440" stroke="#3b82f6" stroke-width="0.5" stroke-dasharray="8 8" />
+    <path d="M0 880H1440" stroke="#3b82f6" stroke-width="0.5" stroke-dasharray="8 8" />
+    
+    <path d="M80 0V960" stroke="#3b82f6" stroke-width="0.5" stroke-dasharray="8 8" />
+    <path d="M240 0V960" stroke="#3b82f6" stroke-width="0.5" stroke-dasharray="8 8" />
+    <path d="M400 0V960" stroke="#3b82f6" stroke-width="0.5" stroke-dasharray="8 8" />
+    <path d="M560 0V960" stroke="#3b82f6" stroke-width="0.5" stroke-dasharray="8 8" />
+    <path d="M720 0V960" stroke="#3b82f6" stroke-width="0.5" stroke-dasharray="8 8" />
+    <path d="M880 0V960" stroke="#3b82f6" stroke-width="0.5" stroke-dasharray="8 8" />
+    <path d="M1040 0V960" stroke="#3b82f6" stroke-width="0.5" stroke-dasharray="8 8" />
+    <path d="M1200 0V960" stroke="#3b82f6" stroke-width="0.5" stroke-dasharray="8 8" />
+    <path d="M1360 0V960" stroke="#3b82f6" stroke-width="0.5" stroke-dasharray="8 8" />
+  </g>
+  
+  <!-- Decorative Elements -->
+  <circle cx="80" cy="80" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="80" cy="240" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="80" cy="400" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="80" cy="560" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="80" cy="720" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="80" cy="880" r="4" fill="#3b82f6" opacity="0.5" />
+  
+  <circle cx="240" cy="80" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="240" cy="240" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="240" cy="400" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="240" cy="560" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="240" cy="720" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="240" cy="880" r="4" fill="#3b82f6" opacity="0.5" />
+  
+  <circle cx="400" cy="80" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="400" cy="240" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="400" cy="400" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="400" cy="560" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="400" cy="720" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="400" cy="880" r="4" fill="#3b82f6" opacity="0.5" />
+  
+  <circle cx="560" cy="80" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="560" cy="240" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="560" cy="400" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="560" cy="560" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="560" cy="720" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="560" cy="880" r="4" fill="#3b82f6" opacity="0.5" />
+  
+  <circle cx="720" cy="80" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="720" cy="240" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="720" cy="400" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="720" cy="560" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="720" cy="720" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="720" cy="880" r="4" fill="#3b82f6" opacity="0.5" />
+  
+  <circle cx="880" cy="80" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="880" cy="240" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="880" cy="400" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="880" cy="560" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="880" cy="720" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="880" cy="880" r="4" fill="#3b82f6" opacity="0.5" />
+  
+  <circle cx="1040" cy="80" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="1040" cy="240" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="1040" cy="400" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="1040" cy="560" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="1040" cy="720" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="1040" cy="880" r="4" fill="#3b82f6" opacity="0.5" />
+  
+  <circle cx="1200" cy="80" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="1200" cy="240" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="1200" cy="400" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="1200" cy="560" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="1200" cy="720" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="1200" cy="880" r="4" fill="#3b82f6" opacity="0.5" />
+  
+  <circle cx="1360" cy="80" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="1360" cy="240" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="1360" cy="400" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="1360" cy="560" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="1360" cy="720" r="4" fill="#3b82f6" opacity="0.5" />
+  <circle cx="1360" cy="880" r="4" fill="#3b82f6" opacity="0.5" />
+</svg>
