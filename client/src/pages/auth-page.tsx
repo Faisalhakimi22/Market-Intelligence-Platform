@@ -999,8 +999,7 @@ export default function AuthPage() {
           <div className="text-center mb-12">
             <Badge className="mb-4 bg-blue-600/10 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 px-4 py-2 rounded-full border border-blue-200 dark:border-blue-800">
               Customer Stories
-            </aranteed
-Badge>
+            </Badge>
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
               What Our <span className="text-blue-700 dark:text-blue-400">Customers Say</span>
             </h2>
