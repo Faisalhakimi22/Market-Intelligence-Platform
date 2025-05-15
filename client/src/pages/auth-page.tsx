@@ -13,7 +13,7 @@ import { Parallax, Background } from "react-parallax";
 import analyticsDashboardSvg from "../assets/analytics-dashboard.svg";
 import marketAnalysisSvg from "../assets/market-analysis.svg";
 import businessGrowthSvg from "../assets/business-growth.svg";
-import geometricBackgroundSvg from "../assets/geometric-background.webp";
+import geometricBackgroundSvg from "../assets/geometric-background.svg";
 import abstractBackgroundSvg from "../assets/abstract-background.svg";
 import patternBackgroundSvg from "../assets/pattern-background.svg";
 
@@ -683,13 +683,12 @@ export default function AuthPage() {
       <main className="container mx-auto px-4 pt-28 pb-16 relative flex-grow min-h-[calc(100vh-144px)] z-10">
         {/* Beautiful background for main content area */}
         <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-b from-blue-50/80 to-indigo-50/80 dark:from-blue-950/10 dark:to-indigo-950/10 backdrop-blur-sm"></div>
-          <img 
-            src={abstractBackgroundSvg} 
-            alt="" 
-            className="absolute inset-0 w-full h-full object-cover opacity-10"
-          />
-        </div>
+    		<img 
+      		src={abstractBackgroundSvg} 
+      		alt="" 
+      	className="absolute inset-0 w-full h-full object-cover opacity-10"
+    	/>
+      	</div>
         {/* View Container */}
         <AnimatePresence mode="wait">
           {/* Privacy Policy View */}
