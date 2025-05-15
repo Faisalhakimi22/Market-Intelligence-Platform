@@ -474,7 +474,7 @@ export default function AuthPage() {
           <img 
             src={abstractBackgroundSvg} 
             alt="" 
-            className="absolute h-full w-full object-cover opacity-40"
+            className="absolute h-full w-full object-cover opacity-80"
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-blue-600/10 to-purple-600/10 mix-blend-overlay"></div>
