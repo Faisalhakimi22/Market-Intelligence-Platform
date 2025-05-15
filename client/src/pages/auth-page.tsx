@@ -1305,7 +1305,7 @@ export default function AuthPage() {
                         <h4 className="font-medium text-foreground">Location</h4>
                         <p className="text-muted-foreground">
                           Peshawar<br />
-                          Khyberpakhtunkhwa<br />
+                          Khyber Pakhtunkhwa<br />
                           Pakistan
                         </p>
                       </div>
@@ -1457,7 +1457,7 @@ export default function AuthPage() {
               </p>
               <ul>
                 <li>Email: Faisal.hakimi0@outlook.com</li>
-                <li>Address: Peshawar, Khyberpakhtunkhwa, Pakistan</li>
+                <li>Address: Peshawar, Khyber Pakhtunkhwa, Pakistan</li>
               </ul>
             </div>
             
