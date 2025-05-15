@@ -70,6 +70,50 @@ html {
   scroll-behavior: smooth;
 }
 
+@layer utilities {
+  /* Custom shadow utilities */
+  .shadow-soft {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .shadow-soft-lg {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  .shadow-inner-glow {
+    box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.15);
+  }
+  
+  .shadow-blue-glow {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+  }
+  
+  .shadow-purple-glow {
+    box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
+  }
+  
+  /* Gradient utilities */
+  .bg-gradient-primary {
+    @apply bg-gradient-to-r from-blue-500 to-indigo-600;
+  }
+  
+  .bg-gradient-secondary {
+    @apply bg-gradient-to-r from-purple-500 to-pink-500;
+  }
+  
+  .bg-gradient-accent {
+    @apply bg-gradient-to-r from-amber-400 to-orange-500;
+  }
+  
+  .text-gradient-primary {
+    @apply bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent;
+  }
+  
+  .text-gradient-secondary {
+    @apply bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 text-transparent;
+  }
+}
+
 /* Custom background with animated gradients */
 .bg-animated-gradient {
   background: 
@@ -88,8 +132,9 @@ html {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%233b82f6' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
   pointer-events: none;
+  opacity: 0.1;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%233b82f6' fill-opacity='0.05'/%3E%3C/svg%3E");
 }
 
 @keyframes gradient {
@@ -104,56 +149,88 @@ html {
   }
 }
 
-/* Glass effect components */
-@layer components {
-  .glass {
-    @apply bg-white/80 dark:bg-gray-900/70 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-xl;
-  }
-  
-  .glass-card {
-    @apply bg-white/80 dark:bg-gray-900/60 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-lg;
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
-  }
+/* Glass effect styles */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
 
-  .glass-card-premium {
-    @apply bg-white/80 dark:bg-gray-900/60 backdrop-blur-xl border-0 shadow-xl relative overflow-hidden;
-    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1));
-    box-shadow: 
-      0 8px 32px rgba(31, 38, 135, 0.25),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-  }
-  
-  .glass-card-premium::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-      linear-gradient(120deg, rgba(255,255,255,0) 30%, rgba(255,255,255,.3) 38%, rgba(255,255,255,0) 48%) 0% 0% / 200% 200%,
-      radial-gradient(circle at 50% 50%, transparent 100px, rgba(59, 130, 246, 0.03) 200px),
-      url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234f46e5' fill-opacity='0.03'%3E%3Cpath d='M50 50c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10zM10 10c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10S0 25.523 0 20s4.477-10 10-10zm10 8c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm40 40c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    opacity: 0.5;
-    z-index: -1;
-    mix-blend-mode: overlay;
-    animation: shine 6s linear infinite;
-    pointer-events: none;
-  }
-  
-  @keyframes shine {
-    to {
-      background-position: 200% 0, 0 0, 0 0;
-    }
-  }
+.dark .glass-panel {
+  background: rgba(17, 24, 39, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
 
-  .glass-panel {
-    @apply bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/30 dark:border-white/5 shadow-lg;
-  }
+.glass-form {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 
+    0 10px 25px -5px rgba(0, 0, 0, 0.05),
+    0 8px 10px -6px rgba(0, 0, 0, 0.02);
+}
 
-  .glass-input {
-    @apply bg-white/50 dark:bg-gray-800/30 backdrop-blur-md border border-white/30 dark:border-white/10 focus:border-blue-500 focus:ring-blue-500/20;
+.dark .glass-form {
+  background: rgba(17, 24, 39, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.bg-shapes {
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.03) 0, transparent 200px),
+    radial-gradient(circle at 80% 50%, rgba(124, 58, 237, 0.03) 0, transparent 200px),
+    radial-gradient(circle at 40% 70%, rgba(37, 99, 235, 0.03) 0, transparent 200px);
+}
+
+/* Additional styles */
+.glass {
+  @apply bg-white/80 dark:bg-gray-900/70 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-xl;
+}
+
+.glass-card {
+  @apply bg-white/90 dark:bg-gray-900/80 backdrop-blur-xl border border-white/20 dark:border-white/5 shadow-lg;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+}
+
+.glass-card-premium {
+  @apply bg-white/80 dark:bg-gray-900/60 backdrop-blur-xl border-0 shadow-xl relative overflow-hidden;
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1));
+  box-shadow: 
+    0 8px 32px rgba(31, 38, 135, 0.25),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+.glass-card-premium::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(120deg, rgba(255,255,255,0) 30%, rgba(255,255,255,.3) 38%, rgba(255,255,255,0) 48%) 0% 0% / 200% 200%,
+    radial-gradient(circle at 50% 50%, transparent 100px, rgba(59, 130, 246, 0.03) 200px);
+  opacity: 0.5;
+  z-index: -1;
+  mix-blend-mode: overlay;
+  animation: shine 6s linear infinite;
+  pointer-events: none;
+}
+@keyframes shine {
+  to {
+    background-position: 200% 0, 0 0, 0 0;
   }
+}
+
+.glass-panel {
+  @apply bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/30 dark:border-white/5 shadow-lg;
+}
+
+.glass-input {
+  @apply bg-white/50 dark:bg-gray-800/30 backdrop-blur-md border border-white/30 dark:border-white/10 focus:border-blue-500 focus:ring-blue-500/20;
+}
   
   /* Glowing effects */
   .glow-blue {
@@ -339,4 +416,23 @@ html {
     filter: blur(60px);
     z-index: -1;
   }
-}
+  
+  /* Animated gradient border */
+  .animated-gradient-border {
+    @apply relative rounded-xl overflow-hidden;
+  }
+  
+  .animated-gradient-border::before {
+    content: "";
+    @apply absolute inset-0 rounded-xl p-[1px];
+    background: linear-gradient(135deg, #3B82F6, #6366F1, #3B82F6);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    @apply opacity-70 transition-opacity duration-300;
+  }
+  
+  .animated-gradient-border:hover::before {
+    @apply opacity-100;
+  }
