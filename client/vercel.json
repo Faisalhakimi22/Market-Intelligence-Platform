@@ -1,6 +1,7 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://market-intelligence-platform-production.up.railway.app/api/$1" }
+    { "source": "/api/(.*)", "destination": "https://market-intelligence-platform-production.up.railway.app/api/$1" },
+    { "source": "/(.*)", "destination": "/" }
   ],
   "env": {
     "VITE_API_URL": "https://market-intelligence-platform-production.up.railway.app"
