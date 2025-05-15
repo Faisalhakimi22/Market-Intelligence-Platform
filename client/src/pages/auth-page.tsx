@@ -108,7 +108,21 @@ const registerSchema = insertUserSchema.extend({
 type LoginFormValues = z.infer<typeof loginSchema>;
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
-
+// Geometric Decorative Shape Component
+const GeometricShape = ({ className }: { className?: string }) => (
+  <motion.div 
+    className={cn("absolute rounded-full bg-gradient-to-r opacity-20 blur-3xl", className)}
+    animate={{ 
+      scale: [1, 1.1, 1],
+      opacity: [0.1, 0.2, 0.1]
+    }}
+    transition={{ 
+      duration: 8,
+      repeat: Infinity,
+      ease: "easeInOut" 
+    }}
+  />
+);
 
 // Hexagon Grid Animation Background
 const HexagonBackground = () => (
