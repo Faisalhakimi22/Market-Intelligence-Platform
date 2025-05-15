@@ -34,34 +34,77 @@ export default function HomePage() {
   
   return (
     <DashboardLayout>
-      <div className="px-4 md:px-6 py-6">
+      <div className="px-4 md:px-6 py-6 bg-shapes relative">
+        {/* Add subtle animated background gradient */}
+        <div className="absolute inset-0 bg-animated-gradient -z-10 opacity-30"></div>
+        
         {/* Industry Selection Bar */}
-        <IndustrySelector 
-          industries={industries || []} 
-          isLoading={isLoadingIndustries}
-          activeIndustryId={activeIndustryId}
-          onToggle={handleIndustryToggle}
-        />
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold mb-4 text-gradient-primary">Market Intelligence Dashboard</h1>
+          <IndustrySelector 
+            industries={industries || []} 
+            isLoading={isLoadingIndustries}
+            activeIndustryId={activeIndustryId}
+            onToggle={handleIndustryToggle}
+          />
+        </div>
         
         {/* AI Insights Summary */}
-        <AIInsightsSummary industryId={activeIndustryId} />
+        <div className="mb-6">
+          <AIInsightsSummary 
+            industryId={activeIndustryId} 
+            className="glass-card-premium shadow-blue-glow"
+          />
+        </div>
         
         {/* Dashboard Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Market Growth Trends */}
-          <MarketGrowthChart className="col-span-1 md:col-span-2" />
+          <MarketGrowthChart 
+            className="col-span-1 md:col-span-2 glass-card hover-lift transition-all duration-300" 
+          />
           
           {/* Key Opportunities */}
-          <OpportunitiesWidget industryId={activeIndustryId} />
+          <OpportunitiesWidget 
+            industryId={activeIndustryId} 
+            className="glass-card hover-lift transition-all duration-300"
+          />
           
           {/* Competitive Intelligence */}
-          <CompetitorsWidget industryId={activeIndustryId} className="col-span-1 md:col-span-2" />
+          <CompetitorsWidget 
+            industryId={activeIndustryId} 
+            className="col-span-1 md:col-span-2 glass-card hover-lift transition-all duration-300 animated-gradient-border" 
+          />
           
           {/* Forecast Widget */}
-          <ForecastWidget />
+          <ForecastWidget 
+            className="glass-card hover-lift transition-all duration-300"
+          />
           
           {/* Market Alerts */}
-          <AlertsWidget className="lg:col-span-2" />
+          <AlertsWidget 
+            className="lg:col-span-2 glass-card hover-lift transition-all duration-300"
+          />
+        </div>
+        
+        {/* Stats Overview Row */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+          {[
+            { title: "Market Size", value: "$8.4B", change: "+14%", isUp: true },
+            { title: "Growth Rate", value: "22.5%", change: "+3.2%", isUp: true },
+            { title: "Competitors", value: "37", change: "+5", isUp: true },
+            { title: "Opportunities", value: "12", change: "+3", isUp: true }
+          ].map((stat, index) => (
+            <div key={index} className="glass-panel p-4 rounded-lg hover-lift transition-all duration-300">
+              <p className="text-sm text-muted-foreground">{stat.title}</p>
+              <div className="flex items-end justify-between">
+                <p className="text-2xl font-semibold">{stat.value}</p>
+                <span className={`text-sm ${stat.isUp ? 'text-green-500' : 'text-red-500'}`}>
+                  {stat.change}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </DashboardLayout>
