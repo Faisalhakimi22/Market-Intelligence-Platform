@@ -683,12 +683,13 @@ export default function AuthPage() {
       <main className="container mx-auto px-4 pt-28 pb-16 relative flex-grow min-h-[calc(100vh-144px)] z-10">
         {/* Beautiful background for main content area */}
         <div className="absolute inset-0 -z-10">
-    		<img 
-      		src={abstractBackgroundSvg} 
-      		alt="" 
-      	className="absolute inset-0 w-full h-full object-cover opacity-10"
-    	/>
-      	</div>
+          <div className="absolute inset-0 bg-gradient-to-b from-blue-50/80 to-indigo-50/80 dark:from-blue-950/10 dark:to-indigo-950/10 backdrop-blur-sm"></div>
+          <img 
+            src={abstractBackgroundSvg} 
+            alt="" 
+            className="absolute inset-0 w-full h-full object-cover opacity-10"
+          />
+        </div>
         {/* View Container */}
         <AnimatePresence mode="wait">
           {/* Privacy Policy View */}
@@ -993,7 +994,7 @@ export default function AuthPage() {
                   whileHover={{ translateY: -5 }}
                 >
                   {/* Beautiful background elements for the login card */}
-                  <div className="absolute inset-0 -z-10 bg-white/50 dark:bg-gray-900/50 backdrop-blur-xl overflow-hidden">
+                  <div className="absolute inset-0 -z-10 bg-transparent dark:bg-gray-900/50 backdrop-blur-xl overflow-hidden">
                     <img 
                       src={abstractBackgroundSvg} 
                       alt="" 
