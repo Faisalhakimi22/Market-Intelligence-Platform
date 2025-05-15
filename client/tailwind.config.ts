@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"], 
+    content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"], 
   theme: {
     fontFamily: {
       sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
@@ -97,12 +97,17 @@ export default {
             boxShadow: "0 0 30px rgba(59, 130, 246, 0.8)"
           },
         },
+        "dash": {
+          "0%": { strokeDashoffset: "1000" },
+          "100%": { strokeDashoffset: "0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "float": "float 6s ease-in-out infinite",
         "pulse-glow": "pulse-glow 4s ease-in-out infinite",
+        "dash": "dash 20s linear infinite",
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
