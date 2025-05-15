@@ -474,7 +474,7 @@ export default function AuthPage() {
           <img 
             src={abstractBackgroundSvg} 
             alt="" 
-            className="absolute h-full w-full object-cover opacity-80"
+            className="absolute h-full w-full object-cover opacity-100"
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-blue-600/10 to-purple-600/10 mix-blend-overlay"></div>
@@ -687,7 +687,7 @@ export default function AuthPage() {
           <img 
             src={abstractBackgroundSvg} 
             alt="" 
-            className="absolute inset-0 w-full h-full object-cover opacity-70"
+            className="absolute inset-0 w-full h-full object-cover opacity-10"
           />
         </div>
         {/* View Container */}
@@ -994,13 +994,7 @@ export default function AuthPage() {
                   whileHover={{ translateY: -5 }}
                 >
                   {/* Beautiful background elements for the login card */}
-                  <div className="absolute inset-0 -z-10 bg-transparent dark:bg-gray-900/50 backdrop-blur-xl overflow-hidden">
-                    <img 
-                      src={abstractBackgroundSvg} 
-                      alt="" 
-                      className="absolute inset-0 w-full h-full object-cover opacity-60"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5"></div>
+                  
                     
                     {/* Animated spotlight effect */}
                     <motion.div
