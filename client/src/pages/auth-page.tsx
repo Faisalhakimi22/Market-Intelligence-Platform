@@ -115,7 +115,13 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 // Logo Component
 const Logo = () => (
-  <div className="flex items-center gap-2 group">
+  <div 
+    className="flex items-center gap-2 group cursor-pointer" 
+    onClick={() => {
+      window.location.href = "/";
+      window.location.reload();
+    }}
+  >
     <div className="h-10 w-10 rounded-xl bg-gradient-to-r from-primary/90 to-primary flex items-center justify-center shadow-lg overflow-hidden group-hover:shadow-primary/30 transition-all duration-300">
       <motion.div
         initial={{ y: 0 }}
