@@ -14,7 +14,7 @@ import analyticsDashboardSvg from "../assets/analytics-dashboard.svg";
 import marketAnalysisSvg from "../assets/market-analysis.svg";
 import businessGrowthSvg from "../assets/business-growth.svg";
 import geometricBackgroundSvg from "../assets/geometric-background.webp";
-import abstractBackgroundSvg from "../assets/abstract-background.svg";
+import abstractBackgroundSvg from "../assets/geometric-background.webp";
 import patternBackgroundSvg from "../assets/pattern-background.svg";
 
 // UI Components
