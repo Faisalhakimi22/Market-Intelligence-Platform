@@ -1296,24 +1296,17 @@ export default function AuthPage() {
                       <Mail className="h-5 w-5 text-primary mt-0.5" />
                       <div>
                         <h4 className="font-medium text-foreground">Email</h4>
-                        <p className="text-muted-foreground">support@marketinsightai.com</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <Phone className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <h4 className="font-medium text-foreground">Phone</h4>
-                        <p className="text-muted-foreground">+1 (800) 123-4567</p>
+                        <p className="text-muted-foreground">Faisal.hakimi0@outlook.com</p>
                       </div>
                     </div>
                     <div className="flex gap-3">
                       <Globe className="h-5 w-5 text-primary mt-0.5" />
                       <div>
-                        <h4 className="font-medium text-foreground">Headquarters</h4>
+                        <h4 className="font-medium text-foreground">Location</h4>
                         <p className="text-muted-foreground">
-                          123 Market Street<br />
-                          San Francisco, CA 94103<br />
-                          United States
+                          Peshawar<br />
+                          Khyberpakhtunkhwa<br />
+                          Pakistan
                         </p>
                       </div>
                     </div>
@@ -1463,8 +1456,8 @@ export default function AuthPage() {
                 If you have any questions about our {isPrivacy ? "Privacy Policy" : "Terms of Service"}, please contact us at:
               </p>
               <ul>
-                <li>Email: legal@marketinsightai.com</li>
-                <li>Address: 123 Market Street, San Francisco, CA 94103, United States</li>
+                <li>Email: Faisal.hakimi0@outlook.com</li>
+                <li>Address: Peshawar, Khyberpakhtunkhwa, Pakistan</li>
               </ul>
             </div>
             
@@ -1864,7 +1857,7 @@ const fetchMarketData = async () => {
             <div className="glass-card rounded-xl p-8 border border-border/50 mb-12">
               <h2 className="text-2xl font-bold mb-6">Our Story</h2>
               <p className="text-muted-foreground mb-4">
-                Founded in 2021, MarketInsightAI was born from a simple observation: access to high-quality market intelligence was largely restricted to enterprise companies with massive budgets. Small and medium-sized businesses were left without the tools they needed to make informed strategic decisions.
+                Founded in 2025, MarketInsightAI was born from a simple observation: access to high-quality market intelligence was largely restricted to enterprise companies with massive budgets. Small and medium-sized businesses were left without the tools they needed to make informed strategic decisions.
               </p>
               <p className="text-muted-foreground mb-4">
                 Our founders, a team of data scientists and market research experts, set out to change this paradigm. By harnessing the power of AI and machine learning, we've created a platform that provides enterprise-grade market intelligence at a fraction of the traditional cost.
@@ -1907,17 +1900,17 @@ const fetchMarketData = async () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
               {[
                 { 
-                  name: "Alex Thompson", 
-                  role: "CEO & Co-Founder", 
-                  bio: "Former VP of Data Science at Market Research International with 15+ years of experience."
+                  name: "Faisal Hakimi", 
+                  role: "CEO & Founder", 
+                  bio: "Data scientist and AI enthusiast at Market Research International with 4+ years of experience."
                 },
                 { 
-                  name: "Maya Patel", 
-                  role: "CTO & Co-Founder", 
+                  name: "Farwa Ali", 
+                  role: "Co-Founder", 
                   bio: "AI researcher and engineer who previously led machine learning teams at top tech companies."
                 },
                 { 
-                  name: "David Kim", 
+                  name: "Ayan Khan", 
                   role: "Chief Data Officer", 
                   bio: "Expert in market analytics with a background in economics and statistical analysis."
                 }
