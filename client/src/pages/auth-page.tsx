@@ -14,7 +14,7 @@ import analyticsDashboardSvg from "../assets/analytics-dashboard.svg";
 import marketAnalysisSvg from "../assets/market-analysis.svg";
 import businessGrowthSvg from "../assets/business-growth.svg";
 import geometricBackgroundSvg from "../assets/geometric-background.webp";
-import abstractBackgroundSvg from "../assets/geometric-background.webp";
+import abstractBackgroundSvg from "../assets/abstract-background.svg";
 import patternBackgroundSvg from "../assets/pattern-background.svg";
 
 // UI Components
@@ -468,7 +468,17 @@ export default function AuthPage() {
         />
       </div>
       
-     
+      {/* Modern background with abstract design and animated waves */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <div className="absolute inset-0">
+          <img 
+            src={abstractBackgroundSvg} 
+            alt="" 
+            className="absolute h-full w-full object-cover opacity-80"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-600/10 to-purple-600/10 mix-blend-overlay"></div>
+        <div className="absolute inset-0 backdrop-blur-[1px]"></div>
         
         {/* Geometric pattern overlay */}
         <div className="absolute inset-0 opacity-30">
@@ -677,7 +687,7 @@ export default function AuthPage() {
           <img 
             src={abstractBackgroundSvg} 
             alt="" 
-            className="absolute inset-0 w-full h-full object-cover opacity-10"
+            className="absolute inset-0 w-full h-full object-cover opacity-70"
           />
         </div>
         {/* View Container */}
@@ -988,7 +998,7 @@ export default function AuthPage() {
                     <img 
                       src={abstractBackgroundSvg} 
                       alt="" 
-                      className="absolute inset-0 w-full h-full object-cover opacity-30"
+                      className="absolute inset-0 w-full h-full object-cover opacity-60"
                     />
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5"></div>
                     
