@@ -74,7 +74,9 @@ import {
   Star,
   Hexagon,
   Award,
-  DollarSign
+  DollarSign,
+  BookOpen,
+  Newspaper
 } from "lucide-react";
 
 // SVG imports
@@ -86,7 +88,8 @@ import abstractBackgroundSvg from "../assets/abstract-background.svg";
 import patternBackgroundSvg from "../assets/pattern-background.svg";
 
 // Type Definitions
-type ViewId = "auth" | "features" | "pricing" | "faq" | "privacy" | "terms" | "contact";
+type ViewId = "auth" | "features" | "pricing" | "faq" | "privacy" | "terms" | "contact"
+  | "api" | "integrations" | "documentation" | "guides" | "blog" | "about";
 
 // Extended schemas with validation
 const loginSchema = z.object({
@@ -605,10 +608,10 @@ export default function AuthPage() {
                     <button onClick={() => switchView("pricing")} className="text-muted-foreground hover:text-primary text-sm">Pricing</button>
                   </li>
                   <li>
-                    <a href="#" className="text-muted-foreground hover:text-primary text-sm">API</a>
+                    <button onClick={() => switchView("api")} className="text-muted-foreground hover:text-primary text-sm">API</button>
                   </li>
                   <li>
-                    <a href="#" className="text-muted-foreground hover:text-primary text-sm">Integrations</a>
+                    <button onClick={() => switchView("integrations")} className="text-muted-foreground hover:text-primary text-sm">Integrations</button>
                   </li>
                 </ul>
               </div>
@@ -616,13 +619,13 @@ export default function AuthPage() {
                 <h3 className="text-base font-medium text-foreground mb-3">Resources</h3>
                 <ul className="space-y-2.5">
                   <li>
-                    <a href="#" className="text-muted-foreground hover:text-primary text-sm">Documentation</a>
+                    <button onClick={() => switchView("documentation")} className="text-muted-foreground hover:text-primary text-sm">Documentation</button>
                   </li>
                   <li>
-                    <a href="#" className="text-muted-foreground hover:text-primary text-sm">Guides</a>
+                    <button onClick={() => switchView("guides")} className="text-muted-foreground hover:text-primary text-sm">Guides</button>
                   </li>
                   <li>
-                    <a href="#" className="text-muted-foreground hover:text-primary text-sm">Blog</a>
+                    <button onClick={() => switchView("blog")} className="text-muted-foreground hover:text-primary text-sm">Blog</button>
                   </li>
                   <li>
                     <button onClick={() => switchView("faq")} className="text-muted-foreground hover:text-primary text-sm">FAQ</button>
@@ -633,7 +636,7 @@ export default function AuthPage() {
                 <h3 className="text-base font-medium text-foreground mb-3">Company</h3>
                 <ul className="space-y-2.5">
                   <li>
-                    <a href="#" className="text-muted-foreground hover:text-primary text-sm">About</a>
+                    <button onClick={() => switchView("about")} className="text-muted-foreground hover:text-primary text-sm">About</button>
                   </li>
                   <li>
                     <button onClick={() => switchView("contact")} className="text-muted-foreground hover:text-primary text-sm">Contact</button>
@@ -1474,6 +1477,474 @@ export default function AuthPage() {
       </main>
     );
   }
+  // API documentation page
+  else if (activeView === "api") {
+    return renderBaseLayout(
+      <main className="pt-24 pb-16 relative z-10">
+        <div className="container mx-auto px-4">
+          <ContentTemplate 
+            title="API Documentation" 
+            subtitle="Integrate MarketInsightAI into your applications with our powerful API." 
+            icon={<Code className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />} 
+          />
+          
+          <div className="max-w-4xl mx-auto mt-12 glass-card rounded-xl p-8 border border-border/50">
+            <div className="mb-10">
+              <h2 className="text-2xl font-bold mb-4">Getting Started</h2>
+              <p className="text-muted-foreground mb-4">Our API provides programmatic access to market data, trends, and insights. Follow these steps to start integrating with our platform.</p>
+              
+              <div className="space-y-4 mt-6">
+                <div className="flex gap-3">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">1</div>
+                  <div className="flex-1">
+                    <h3 className="font-medium">Get your API key</h3>
+                    <p className="text-sm text-muted-foreground">Sign up for a MarketInsightAI account and generate an API key from your dashboard.</p>
+                  </div>
+                </div>
+                
+                <div className="flex gap-3">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">2</div>
+                  <div className="flex-1">
+                    <h3 className="font-medium">Choose your endpoints</h3>
+                    <p className="text-sm text-muted-foreground">Explore our API documentation to find the endpoints that fit your needs.</p>
+                  </div>
+                </div>
+                
+                <div className="flex gap-3">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">3</div>
+                  <div className="flex-1">
+                    <h3 className="font-medium">Make your first request</h3>
+                    <p className="text-sm text-muted-foreground">Use our sample code to make your first API request and start integrating.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold mb-4">Code Example</h2>
+              <div className="bg-muted p-4 rounded-md overflow-x-auto">
+                <pre className="text-sm text-muted-foreground">
+{`// Example API request using JavaScript
+const fetchMarketData = async () => {
+  const response = await fetch('https://api.marketinsightai.com/v1/market/trends', {
+    method: 'GET',
+    headers: {
+      'Authorization': 'Bearer YOUR_API_KEY',
+      'Content-Type': 'application/json'
+    }
+  });
+  
+  const data = await response.json();
+  return data;
+}`}
+                </pre>
+              </div>
+            </div>
+            
+            <div className="text-center mt-10">
+              <Button onClick={() => switchView("auth")} variant="default">
+                Get Started
+              </Button>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+  
+  // Integrations page
+  else if (activeView === "integrations") {
+    return renderBaseLayout(
+      <main className="pt-24 pb-16 relative z-10">
+        <div className="container mx-auto px-4">
+          <ContentTemplate 
+            title="Integrations" 
+            subtitle="Connect MarketInsightAI with your favorite tools and platforms." 
+            icon={<Package className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />} 
+          />
+          
+          <div className="max-w-5xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { name: "Salesforce", icon: "💼", desc: "Sync market data with your CRM" },
+              { name: "Slack", icon: "💬", desc: "Get insights directly in your team chat" },
+              { name: "HubSpot", icon: "🔄", desc: "Power your marketing with market trends" },
+              { name: "Tableau", icon: "📊", desc: "Create powerful data visualizations" },
+              { name: "Google Sheets", icon: "📝", desc: "Import data to spreadsheets" },
+              { name: "Zapier", icon: "⚡", desc: "Connect to 3000+ apps with no code" },
+              { name: "Power BI", icon: "📈", desc: "Build business intelligence dashboards" },
+              { name: "Notion", icon: "📋", desc: "Embed insights in your workspace" },
+              { name: "Airtable", icon: "🗃️", desc: "Populate your bases with market data" }
+            ].map((integration, i) => (
+              <div key={i} className="glass-card p-6 rounded-xl border border-border/50 hover:border-primary/50 transition-colors">
+                <div className="text-3xl mb-4">{integration.icon}</div>
+                <h3 className="text-lg font-medium mb-2">{integration.name}</h3>
+                <p className="text-sm text-muted-foreground mb-4">{integration.desc}</p>
+                <Button variant="outline" size="sm" className="w-full">Connect</Button>
+              </div>
+            ))}
+          </div>
+          
+          <div className="text-center mt-12">
+            <p className="text-muted-foreground mb-4">Don't see the integration you need?</p>
+            <Button onClick={() => switchView("contact")} variant="default">
+              Request an Integration
+            </Button>
+          </div>
+        </div>
+      </main>
+    );
+  }
+  
+  // Documentation page
+  else if (activeView === "documentation") {
+    return renderBaseLayout(
+      <main className="pt-24 pb-16 relative z-10">
+        <div className="container mx-auto px-4">
+          <ContentTemplate 
+            title="Documentation" 
+            subtitle="Learn how to use MarketInsightAI with our comprehensive documentation." 
+            icon={<FileText className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />} 
+          />
+          
+          <div className="max-w-5xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="md:col-span-1">
+              <div className="glass-card rounded-xl p-6 border border-border/50 sticky top-24">
+                <h3 className="font-medium mb-4">Table of Contents</h3>
+                <ul className="space-y-2.5">
+                  {["Getting Started", "Dashboard", "Market Analysis", "Competitor Tracking", "Report Generation", "Account Settings", "Integrations", "API Reference", "FAQ", "Troubleshooting"].map((item, i) => (
+                    <li key={i}>
+                      <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                        {item}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            
+            <div className="md:col-span-2 space-y-8">
+              <div className="glass-card rounded-xl p-6 border border-border/50">
+                <h2 className="text-2xl font-bold mb-4">Getting Started</h2>
+                <p className="text-muted-foreground mb-4">Welcome to MarketInsightAI! This guide will help you get up and running with our platform.</p>
+                
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">1. Create Your Account</h3>
+                    <p className="text-sm text-muted-foreground">Sign up for a MarketInsightAI account to get started. You can begin with our 14-day free trial.</p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">2. Set Up Your Profile</h3>
+                    <p className="text-sm text-muted-foreground">Configure your industry settings, business size, and areas of interest to get personalized insights.</p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">3. Explore the Dashboard</h3>
+                    <p className="text-sm text-muted-foreground">Your dashboard is the central hub for all your market intelligence. Customize it to show the metrics that matter most to you.</p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">4. Track Competitors</h3>
+                    <p className="text-sm text-muted-foreground">Add competitors to your watchlist to monitor their strategies, pricing, and market positioning.</p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">5. Generate Your First Report</h3>
+                    <p className="text-sm text-muted-foreground">Use our report generator to create a comprehensive analysis of your market landscape.</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="text-center">
+                <Button onClick={() => switchView("auth")} variant="default">
+                  Get Started Now
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+  
+  // Guides page
+  else if (activeView === "guides") {
+    return renderBaseLayout(
+      <main className="pt-24 pb-16 relative z-10">
+        <div className="container mx-auto px-4">
+          <ContentTemplate 
+            title="Guides & Tutorials" 
+            subtitle="Step-by-step instructions to help you get the most out of MarketInsightAI." 
+            icon={<BookOpen className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />} 
+          />
+          
+          <div className="max-w-5xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { 
+                title: "Getting Started with Market Analysis", 
+                desc: "Learn how to perform your first market analysis using our platform.", 
+                category: "Beginner",
+                time: "10 min read"
+              },
+              { 
+                title: "Advanced Competitor Tracking", 
+                desc: "Set up comprehensive monitoring of your top competitors.", 
+                category: "Advanced",
+                time: "15 min read"
+              },
+              { 
+                title: "Creating Custom Reports", 
+                desc: "Design and generate custom reports tailored to your business needs.", 
+                category: "Intermediate",
+                time: "12 min read"
+              },
+              { 
+                title: "Interpreting Market Trends", 
+                desc: "How to spot patterns and make predictions based on market data.", 
+                category: "Intermediate",
+                time: "8 min read"
+              },
+              { 
+                title: "Setting Up API Integrations", 
+                desc: "Connect your existing tools with our API for seamless data flow.", 
+                category: "Advanced",
+                time: "20 min read"
+              },
+              { 
+                title: "Data Visualization Techniques", 
+                desc: "Create powerful visualizations to communicate insights effectively.", 
+                category: "Intermediate",
+                time: "14 min read"
+              }
+            ].map((guide, i) => (
+              <div key={i} className="glass-card rounded-xl overflow-hidden border border-border/50 hover:border-primary/50 transition-colors group">
+                <div className="h-40 bg-gradient-to-br from-primary/10 to-purple-500/10 flex items-center justify-center">
+                  <FileText className="h-16 w-16 text-primary/40 group-hover:scale-110 transition-transform duration-300" />
+                </div>
+                <div className="p-6">
+                  <div className="flex justify-between items-center mb-3">
+                    <Badge variant="outline" className="px-2 py-0.5 text-xs font-medium">
+                      {guide.category}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">{guide.time}</span>
+                  </div>
+                  <h3 className="text-lg font-medium mb-2 group-hover:text-primary transition-colors">{guide.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-4">{guide.desc}</p>
+                  <Button variant="ghost" size="sm" className="w-full group-hover:bg-primary/10 transition-colors">
+                    Read Guide
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="text-center mt-12">
+            <Button onClick={() => switchView("documentation")} variant="default">
+              View All Documentation
+            </Button>
+          </div>
+        </div>
+      </main>
+    );
+  }
+  
+  // Blog page
+  else if (activeView === "blog") {
+    return renderBaseLayout(
+      <main className="pt-24 pb-16 relative z-10">
+        <div className="container mx-auto px-4">
+          <ContentTemplate 
+            title="Blog" 
+            subtitle="Insights, news, and tips from our market intelligence experts." 
+            icon={<Newspaper className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />} 
+          />
+          
+          <div className="max-w-5xl mx-auto mt-12">
+            {/* Featured post */}
+            <div className="glass-card rounded-xl overflow-hidden border border-border/50 mb-10">
+              <div className="grid grid-cols-1 md:grid-cols-2">
+                <div className="bg-gradient-to-br from-primary/10 to-purple-500/10 h-60 md:h-auto flex items-center justify-center p-8">
+                  <LineChart className="h-24 w-24 text-primary/40" />
+                </div>
+                <div className="p-8">
+                  <Badge variant="outline" className="mb-4">Featured</Badge>
+                  <h2 className="text-2xl font-bold mb-3">The Future of Market Intelligence in 2024</h2>
+                  <p className="text-muted-foreground mb-6">Explore the emerging trends and technologies shaping the future of market intelligence and how businesses can prepare for what's ahead.</p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="h-8 w-8 rounded-full bg-gradient-to-r from-primary/80 to-purple-500/80"></div>
+                      <div>
+                        <p className="text-sm font-medium">Sarah Johnson</p>
+                        <p className="text-xs text-muted-foreground">Head of Research</p>
+                      </div>
+                    </div>
+                    <span className="text-sm text-muted-foreground">April 15, 2024</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Recent posts */}
+            <h3 className="text-xl font-bold mb-6">Recent Articles</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              {[
+                { 
+                  title: "5 Ways AI is Revolutionizing Market Analysis", 
+                  desc: "Discover how artificial intelligence is transforming how businesses analyze market data.", 
+                  author: "Michael Chen",
+                  date: "April 10, 2024"
+                },
+                { 
+                  title: "Understanding Customer Behavior in Emerging Markets", 
+                  desc: "Key insights into consumer trends and purchasing patterns in rapidly growing economies.", 
+                  author: "Priya Narayan",
+                  date: "April 8, 2024"
+                },
+                { 
+                  title: "The Impact of Sustainability on Brand Perception", 
+                  desc: "How eco-friendly practices influence consumer choices and brand loyalty in today's market.", 
+                  author: "Thomas Wright",
+                  date: "April 5, 2024"
+                },
+                { 
+                  title: "Strategic Pricing in Competitive Industries", 
+                  desc: "Techniques for optimizing your pricing strategy to balance profitability and market share.", 
+                  author: "Emma Rodriguez",
+                  date: "April 3, 2024"
+                },
+                { 
+                  title: "Using Predictive Analytics for Market Forecasting", 
+                  desc: "How forward-looking data analysis can help your business anticipate market shifts.", 
+                  author: "James Wilson",
+                  date: "March 30, 2024"
+                },
+                { 
+                  title: "Building a Data-Driven Culture in Your Organization", 
+                  desc: "Steps to foster a company environment that prioritizes evidence-based decision making.", 
+                  author: "Amara Okafor",
+                  date: "March 28, 2024"
+                }
+              ].map((post, i) => (
+                <div key={i} className="glass-card rounded-xl overflow-hidden border border-border/50 hover:border-primary/50 transition-colors group">
+                  <div className="p-6">
+                    <h3 className="text-lg font-medium mb-3 group-hover:text-primary transition-colors">{post.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">{post.desc}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-medium">{post.author}</span>
+                      <span className="text-xs text-muted-foreground">{post.date}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="text-center">
+              <Button variant="outline">
+                Load More Articles
+              </Button>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+  
+  // About page
+  else if (activeView === "about") {
+    return renderBaseLayout(
+      <main className="pt-24 pb-16 relative z-10">
+        <div className="container mx-auto px-4">
+          <ContentTemplate 
+            title="About Us" 
+            subtitle="We're on a mission to democratize market intelligence for businesses of all sizes." 
+            icon={<Users className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />} 
+          />
+          
+          <div className="max-w-4xl mx-auto mt-12">
+            <div className="glass-card rounded-xl p-8 border border-border/50 mb-12">
+              <h2 className="text-2xl font-bold mb-6">Our Story</h2>
+              <p className="text-muted-foreground mb-4">
+                Founded in 2021, MarketInsightAI was born from a simple observation: access to high-quality market intelligence was largely restricted to enterprise companies with massive budgets. Small and medium-sized businesses were left without the tools they needed to make informed strategic decisions.
+              </p>
+              <p className="text-muted-foreground mb-4">
+                Our founders, a team of data scientists and market research experts, set out to change this paradigm. By harnessing the power of AI and machine learning, we've created a platform that provides enterprise-grade market intelligence at a fraction of the traditional cost.
+              </p>
+              <p className="text-muted-foreground">
+                Today, MarketInsightAI serves thousands of businesses worldwide, helping them discover market opportunities, track competitors, and make data-driven decisions with confidence.
+              </p>
+            </div>
+            
+            <h2 className="text-2xl font-bold mb-6 text-center">Our Values</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+              {[
+                { 
+                  title: "Data Integrity", 
+                  desc: "We believe in the highest standards of data quality, accuracy, and reliability.", 
+                  icon: <Shield className="h-10 w-10 text-blue-500 dark:text-blue-400" />
+                },
+                { 
+                  title: "Accessibility", 
+                  desc: "We're committed to making powerful market intelligence accessible to businesses of all sizes.", 
+                  icon: <Users className="h-10 w-10 text-green-500 dark:text-green-400" />
+                },
+                { 
+                  title: "Innovation", 
+                  desc: "We continuously push the boundaries of what's possible with AI-powered market analysis.", 
+                  icon: <Lightbulb className="h-10 w-10 text-amber-500 dark:text-amber-400" />
+                }
+              ].map((value, i) => (
+                <div key={i} className="glass-card rounded-xl p-6 border border-border/50 text-center">
+                  <div className="flex justify-center mb-4">
+                    {value.icon}
+                  </div>
+                  <h3 className="text-lg font-medium mb-2">{value.title}</h3>
+                  <p className="text-sm text-muted-foreground">{value.desc}</p>
+                </div>
+              ))}
+            </div>
+            
+            <h2 className="text-2xl font-bold mb-6 text-center">Leadership Team</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+              {[
+                { 
+                  name: "Alex Thompson", 
+                  role: "CEO & Co-Founder", 
+                  bio: "Former VP of Data Science at Market Research International with 15+ years of experience."
+                },
+                { 
+                  name: "Maya Patel", 
+                  role: "CTO & Co-Founder", 
+                  bio: "AI researcher and engineer who previously led machine learning teams at top tech companies."
+                },
+                { 
+                  name: "David Kim", 
+                  role: "Chief Data Officer", 
+                  bio: "Expert in market analytics with a background in economics and statistical analysis."
+                }
+              ].map((person, i) => (
+                <div key={i} className="glass-card rounded-xl p-6 border border-border/50 text-center">
+                  <div className="h-20 w-20 rounded-full bg-gradient-to-r from-primary/80 to-purple-500/80 mx-auto mb-4 flex items-center justify-center">
+                    <User className="h-10 w-10 text-white" />
+                  </div>
+                  <h3 className="text-lg font-medium mb-1">{person.name}</h3>
+                  <p className="text-sm text-primary mb-3">{person.role}</p>
+                  <p className="text-sm text-muted-foreground">{person.bio}</p>
+                </div>
+              ))}
+            </div>
+            
+            <div className="text-center">
+              <p className="text-muted-foreground mb-6">Interested in joining our team?</p>
+              <Button onClick={() => switchView("contact")} variant="default">
+                Contact Us
+              </Button>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+  
   // Default case - display fallback for any other view that wasn't implemented
   else {
     return renderBaseLayout(
@@ -1498,4 +1969,21 @@ export default function AuthPage() {
       </main>
     );
   }
+}
+
+function ContentTemplate({ title, subtitle, icon }: { title: string, subtitle: string, icon: React.ReactNode }) {
+  return (
+    <div className="text-center max-w-3xl mx-auto">
+      <Badge variant="secondary" className="px-3 py-1 bg-primary/10 text-primary dark:bg-primary/20 gap-1 mb-6 inline-flex">
+        {icon}
+        <span>{title}</span>
+      </Badge>
+      <h1 className="text-4xl md:text-5xl font-bold mb-6 text-foreground font-heading">
+        {title}
+      </h1>
+      <p className="text-lg text-muted-foreground mb-8">
+        {subtitle}
+      </p>
+    </div>
+  );
 }
