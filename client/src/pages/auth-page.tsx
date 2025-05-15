@@ -468,17 +468,7 @@ export default function AuthPage() {
         />
       </div>
       
-      {/* Modern background with abstract design and animated waves */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <div className="absolute inset-0">
-          <img 
-            src={abstractBackgroundSvg} 
-            alt="" 
-            className="absolute h-full w-full object-cover opacity-80"
-          />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-600/10 to-purple-600/10 mix-blend-overlay"></div>
-        <div className="absolute inset-0 backdrop-blur-[1px]"></div>
+     
         
         {/* Geometric pattern overlay */}
         <div className="absolute inset-0 opacity-30">
