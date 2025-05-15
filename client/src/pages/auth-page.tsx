@@ -658,6 +658,42 @@ export default function AuthPage() {
     );
   };
 
+  // Add social login handlers
+  const handleGoogleLogin = () => {
+    try {
+      // Show loading state
+      loginMutation.isLoading = true;
+      
+      // Call the auth service to handle Google OAuth
+      // This is a placeholder - replace with actual OAuth implementation
+      window.location.href = "/api/auth/google";
+      
+      // Note: The actual redirect will happen so this code below won't execute
+      // But we include it for clarity
+      console.log("Redirecting to Google OAuth...");
+    } catch (error) {
+      console.error("Google login error:", error);
+      loginMutation.isLoading = false;
+    }
+  };
+  
+  const handleTwitterLogin = () => {
+    try {
+      // Show loading state
+      loginMutation.isLoading = true;
+      
+      // Call the auth service to handle Twitter OAuth
+      // This is a placeholder - replace with actual OAuth implementation
+      window.location.href = "/api/auth/twitter";
+      
+      // Note: The actual redirect will happen so this code below won't execute
+      console.log("Redirecting to Twitter OAuth...");
+    } catch (error) {
+      console.error("Twitter login error:", error);
+      loginMutation.isLoading = false;
+    }
+  };
+
   if (activeView === "auth") {
     return renderBaseLayout(
       <main className="pt-20 pb-16 relative z-10">
@@ -858,7 +894,7 @@ export default function AuthPage() {
                         </div>
                         
                         <div className="grid grid-cols-2 gap-3">
-                          <Button variant="outline" type="button" className="hover:bg-muted/50 transition-colors">
+                          <Button variant="outline" type="button" className="hover:bg-muted/50 transition-colors" onClick={handleGoogleLogin}>
                             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -867,11 +903,11 @@ export default function AuthPage() {
                             </svg>
                             Google
                           </Button>
-                          <Button variant="outline" type="button" className="hover:bg-muted/50 transition-colors">
-                            <svg className="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"></path>
+                          <Button variant="outline" type="button" className="hover:bg-muted/50 transition-colors" onClick={handleTwitterLogin}>
+                            <svg className="mr-2 h-4 w-4" fill="#1DA1F2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
                             </svg>
-                            Facebook
+                            Twitter
                           </Button>
                         </div>
                       </TabsContent>
