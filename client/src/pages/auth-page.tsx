@@ -472,9 +472,20 @@ export default function AuthPage() {
                 </button>
               </nav>
 
-              {/* Theme Toggler and Mobile Menu Button */}
+              {/* Theme Toggler, Login Button and Mobile Menu Button */}
               <div className="flex items-center space-x-4">
                 <ThemeToggle />
+                <Button 
+                  onClick={() => {
+                    switchView("auth");
+                    setActiveTab("login");
+                  }}
+                  variant="outline"
+                  size="sm"
+                  className="hidden md:flex"
+                >
+                  Sign In
+                </Button>
                 <button 
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
                   className="md:hidden flex items-center p-2 rounded-md text-muted-foreground hover:text-primary focus:outline-none"
@@ -535,6 +546,17 @@ export default function AuthPage() {
                   >
                     Contact
                   </button>
+                  <Button 
+                    onClick={() => {
+                      switchView("auth");
+                      setActiveTab("login");
+                      setIsMobileMenuOpen(false);
+                    }}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Sign In
+                  </Button>
                 </div>
               </div>
             </motion.div>
