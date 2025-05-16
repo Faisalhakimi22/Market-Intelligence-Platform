@@ -76,7 +76,9 @@ import {
   Award,
   DollarSign,
   BookOpen,
-  Newspaper
+  Newspaper,
+  LogIn,
+  UserPlus
 } from "lucide-react";
 
 // SVG imports
@@ -572,6 +574,35 @@ export default function AuthPage() {
           )}
         </AnimatePresence>
         
+        {/* Floating Auth Nav */}
+        {activeView !== "auth" && (
+          <div className="fixed bottom-8 right-8 z-30">
+            <div className="flex gap-2">
+              <Button 
+                onClick={() => {
+                  switchView("auth");
+                  setActiveTab("register");
+                }}
+                className="shadow-lg"
+                variant="secondary"
+              >
+                <UserPlus className="h-5 w-5 mr-2" />
+                <span>Register</span>
+              </Button>
+              <Button 
+                onClick={() => {
+                  switchView("auth");
+                  setActiveTab("login");
+                }}
+                className="shadow-lg"
+              >
+                <LogIn className="h-5 w-5 mr-2" />
+                <span>Sign In</span>
+              </Button>
+            </div>
+          </div>
+        )}
+        
         {content}
         
         {/* Footer */}
@@ -705,351 +736,239 @@ export default function AuthPage() {
 
   if (activeView === "auth") {
     return renderBaseLayout(
-      <main className="pt-20 pb-16 relative z-10">
-        <div className="container mx-auto px-4 relative">
-          <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-stretch">
-            
-            {/* Left Column - Hero Content */}
-            <div className="w-full lg:w-1/2 p-2 lg:p-8 flex flex-col justify-center">
-              <div className="flex items-center mb-4">
-                <Badge variant="secondary" className="px-3 py-1 bg-primary/10 text-primary dark:bg-primary/20 gap-1 group hover:bg-primary/20 transition-colors">
-                  <Sparkles className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
-                  <span>AI-Powered Market Intelligence</span>
-                </Badge>
-              </div>
-              
-              <h1 className="text-4xl md:text-5xl font-bold font-heading mb-6 text-foreground leading-tight">
-                Uncover Market <span className="bg-clip-text bg-gradient-to-r from-primary to-purple-600 text-transparent">Insights</span> with Confidence
-              </h1>
-              
-              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                Make strategic decisions with our AI-powered market intelligence platform. Get ahead of trends, monitor competitors, and identify growth opportunities with data-driven insights.
-              </p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
-                <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 bg-blue-50 dark:bg-blue-900/30 rounded-lg p-1.5 text-blue-600 dark:text-blue-400">
-                    <TrendingUp className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-foreground">Real-time Market Trends</h3>
-                    <p className="text-sm text-muted-foreground">Stay ahead with advanced analytics</p>
-                  </div>
-                </div>
+      <main className="pt-24 pb-16 relative z-10">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center mb-12">
+            <Badge variant="secondary" className="px-3 py-1 bg-primary/10 text-primary dark:bg-primary/20 gap-1 mb-6 inline-flex">
+              <Sparkles className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
+              <span>Authentication</span>
+            </Badge>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-foreground font-heading">
+              Welcome to MarketInsight<span className="bg-clip-text bg-gradient-to-r from-primary to-purple-600 text-transparent">AI</span>
+            </h1>
+            <p className="text-lg text-muted-foreground">
+              Sign in to your account or create a new one to access our advanced market intelligence platform.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Login Card */}
+            <motion.div 
+              className="glass-form rounded-2xl overflow-hidden relative shadow-soft"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-purple-500/5 rounded-2xl" />
+              <div className="p-6 sm:p-8 relative">
+                <h2 className="text-2xl font-bold text-foreground mb-2">Sign In</h2>
+                <p className="text-muted-foreground mb-6">Access your account</p>
                 
-                <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg p-1.5 text-indigo-600 dark:text-indigo-400">
-                    <Users className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-foreground">Competitor Intelligence</h3>
-                    <p className="text-sm text-muted-foreground">Monitor strategies and positioning</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 bg-purple-50 dark:bg-purple-900/30 rounded-lg p-1.5 text-purple-600 dark:text-purple-400">
-                    <BrainCircuit className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-foreground">AI Business Validation</h3>
-                    <p className="text-sm text-muted-foreground">Test ideas with predictive analytics</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 bg-green-50 dark:bg-green-900/30 rounded-lg p-1.5 text-green-600 dark:text-green-400">
-                    <Shield className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-foreground">Secure & Compliant</h3>
-                    <p className="text-sm text-muted-foreground">Enterprise-grade security</p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Social Proof */}
-              <div className="mb-6">
-                <p className="text-sm text-muted-foreground mb-3">Trusted by innovative companies</p>
-                <div className="flex flex-wrap gap-6 items-center">
-                  <div className="text-muted-foreground/70 dark:text-muted-foreground/50">
-                    <svg className="h-7" viewBox="0 0 100 30" fill="currentColor">
-                      <path d="M20.5,15.1c0-4.8-3.9-8.7-8.7-8.7c-4.8,0-8.7,3.9-8.7,8.7c0,4.8,3.9,8.7,8.7,8.7C16.6,23.8,20.5,19.9,20.5,15.1z M48.8,15.1c0-4.8-3.9-8.7-8.7-8.7c-4.8,0-8.7,3.9-8.7,8.7c0,4.8,3.9,8.7,8.7,8.7C44.9,23.8,48.8,19.9,48.8,15.1z M77.1,15.1c0-4.8-3.9-8.7-8.7-8.7c-4.8,0-8.7,3.9-8.7,8.7c0,4.8,3.9,8.7,8.7,8.7C73.2,23.8,77.1,19.9,77.1,15.1z M97.1,15.1c0-4.8-3.9-8.7-8.7-8.7c-4.8,0-8.7,3.9-8.7,8.7c0,4.8,3.9,8.7,8.7,8.7C93.2,23.8,97.1,19.9,97.1,15.1z"/>
-                    </svg>
-                  </div>
-                  <div className="text-muted-foreground/70 dark:text-muted-foreground/50">
-                    <svg className="h-5" viewBox="0 0 100 20" fill="currentColor">
-                      <path d="M14.1,0L0,19.1H5.7L19.8,0H14.1z M18.8,19.1H24L9.9,0H4.7L18.8,19.1z M34.4,0L20.3,19.1H25.9L40,0H34.4z M38.7,19.1h5.2L29.8,0h-5.2L38.7,19.1z M60.1,4.6c-2-2-4.5-3-7.5-3s-5.5,1-7.5,3s-3,4.4-3,7.2s1,5.2,3,7.2c2,2,4.5,3,7.5,3s5.5-1,7.5-3c2-2,3-4.4,3-7.2S62.1,6.5,60.1,4.6z M55.3,15c-0.7,0.8-1.6,1.2-2.8,1.2c-1.1,0-2.1-0.4-2.8-1.2c-0.7-0.8-1.1-1.9-1.1-3.3c0-1.4,0.4-2.5,1.1-3.3c0.7-0.8,1.6-1.2,2.8-1.2c1.1,0,2.1,0.4,2.8,1.2c0.7,0.8,1.1,1.9,1.1,3.3C56.3,13.1,56,14.2,55.3,15z M83.5,4.6c-2-2-4.5-3-7.5-3s-5.5,1-7.5,3c-2,2-3,4.4-3,7.2s1,5.2,3,7.2c2,2,4.5,3,7.5,3s5.5-1,7.5-3c2-2,3-4.4,3-7.2S85.5,6.6,83.5,4.6z M78.8,15c-0.7,0.8-1.6,1.2-2.8,1.2c-1.1,0-2.1-0.4-2.8-1.2c-0.7-0.8-1.1-1.9-1.1-3.3c0-1.4,0.4-2.5,1.1-3.3c0.7-0.8,1.6-1.2,2.8-1.2c1.1,0,2.1,0.4,2.8,1.2c0.7,0.8,1.1,1.9,1.1,3.3C79.8,13.1,79.5,14.2,78.8,15z M95.9,0l-4.7,15.7c-0.2,0.8-0.6,1.4-1.2,1.8c-0.6,0.5-1.2,0.7-2,0.7c-0.8,0-1.5-0.2-2-0.7c-0.6-0.4-0.9-1.1-1.2-1.8L80.1,0h5.2l2.1,9.6c0.1,0.3,0.2,0.4,0.2,0.5c0.1,0.1,0.2,0.1,0.3,0.1c0.1,0,0.3,0,0.3-0.1c0.1-0.1,0.2-0.2,0.2-0.5L90.7,0H95.9z"/>
-                    </svg>
-                  </div>
-                  <div className="text-muted-foreground/70 dark:text-muted-foreground/50">
-                    <svg className="h-5" viewBox="0 0 100 25" fill="currentColor">
-                      <path d="M7.7,0.3L0,25h5.1l1.2-4h6.2l1.2,4h5.1L12,0.3H7.7z M7.4,17l2.1-7l2.1,7H7.4z M24,0.3V25h4.8V15.2h7.4V25h4.8V0.3h-4.8v10.5h-7.4V0.3H24z M59.8,4.5c-1.2-1.4-2.5-2.4-3.9-3c-1.4-0.6-3-0.9-4.8-0.9c-1.7,0-3.3,0.3-4.7,0.9c-1.4,0.6-2.7,1.5-3.9,2.7c-1.1,1.1-2,2.5-2.6,4.1c-0.6,1.6-0.9,3.3-0.9,5.2c0,1.9,0.3,3.6,0.9,5.2c0.6,1.6,1.5,3,2.6,4.1c1.1,1.1,2.4,2,3.9,2.7c1.4,0.6,3,0.9,4.7,0.9c2.3,0,4.3-0.5,6.1-1.5c1.8-1,3.3-2.4,4.4-4.2l-4.1-2.2c-0.7,1.1-1.6,1.9-2.6,2.4c-1,0.5-2.1,0.8-3.4,0.8c-1,0-1.9-0.2-2.7-0.5c-0.8-0.3-1.5-0.8-2.1-1.4c-0.6-0.6-1-1.3-1.4-2.2c-0.3-0.8-0.5-1.7-0.5-2.7h18.3c0-2-0.2-3.8-0.7-5.5C61.6,7.2,60.9,5.8,59.8,4.5z M43.9,11.3c0.1-0.9,0.2-1.7,0.5-2.5c0.3-0.8,0.7-1.4,1.2-2c0.5-0.6,1.2-1,1.9-1.3c0.7-0.3,1.6-0.5,2.5-0.5c1,0,1.8,0.2,2.6,0.5c0.7,0.3,1.4,0.8,1.9,1.3c0.5,0.6,0.9,1.2,1.2,2c0.3,0.8,0.4,1.6,0.4,2.5H43.9z M73.5,0.3c-1.3,0-2.4,0.2-3.2,0.5c-0.8,0.3-1.5,0.7-2,1.2c-0.5,0.5-0.9,1-1.1,1.5c-0.2,0.5-0.4,1-0.5,1.3h-0.3V0.3h-4.8V25h4.8V13.4c0-1.2,0.2-2.3,0.6-3.2c0.4-0.9,0.9-1.7,1.5-2.3c0.6-0.6,1.3-1.1,2.1-1.4C71.5,6.2,72.4,6,73.3,6c0.8,0,1.4,0.1,1.9,0.2V0.4C74.6,0.3,74.1,0.3,73.5,0.3z M95.3,4.8C94,4.3,92.6,4,91,4c-1.9,0-3.6,0.3-5.1,1c-1.5,0.7-2.8,1.7-3.8,2.9c-1.1,1.2-1.9,2.6-2.4,4.2c-0.6,1.6-0.9,3.3-0.9,5.1c0,1.9,0.3,3.6,0.9,5.2c0.6,1.6,1.4,3,2.4,4.1c1.1,1.2,2.3,2.1,3.8,2.7c1.5,0.6,3.2,1,5.1,1c1.5,0,3-0.2,4.3-0.7c1.3-0.5,2.5-1.2,3.4-2.1c1-0.9,1.8-2,2.3-3.3c0.6-1.3,0.9-2.8,0.9-4.3v-1.1H89.3v3.8h8c-0.1,0.8-0.3,1.6-0.6,2.2c-0.3,0.6-0.7,1.2-1.3,1.6c-0.5,0.4-1.1,0.8-1.9,1c-0.7,0.2-1.5,0.4-2.4,0.4c-1.2,0-2.3-0.2-3.2-0.7c-0.9-0.5-1.7-1.1-2.3-1.9c-0.6-0.8-1.1-1.7-1.4-2.8c-0.3-1.1-0.5-2.2-0.5-3.4c0-1.2,0.2-2.3,0.5-3.3c0.3-1,0.8-1.9,1.4-2.7c0.6-0.8,1.4-1.4,2.3-1.8c0.9-0.4,2-0.7,3.1-0.7c1,0,1.9,0.1,2.7,0.4c0.8,0.3,1.5,0.7,2.1,1.2c0.6,0.5,1,1.1,1.4,1.8c0.3,0.7,0.6,1.4,0.6,2.2h4.9c-0.1-1.3-0.4-2.6-1-3.7c-0.6-1.1-1.3-2.1-2.3-3C97.7,6,96.6,5.3,95.3,4.8z"/>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Right Column - Auth Card */}
-            <div className="w-full lg:w-1/2 lg:pr-4">
-              <div className="relative mx-auto max-w-md">
-                <motion.div 
-                  className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-3xl blur-xl"
-                  animate={{ 
-                    opacity: [0.5, 0.15, 0.5],
-                    scale: [0.98, 1.01, 0.98] 
-                  }}
-                  transition={{ 
-                    duration: 5, 
-                    repeat: Infinity,
-                    ease: "easeInOut" 
-                  }}
-                />
-                
-                <div className="glass-form rounded-2xl overflow-hidden relative shadow-soft">
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full -z-10">
-                    <div className="absolute -right-1/3 -bottom-1/4 w-2/3 h-2/3 bg-blue-500/5 rounded-full blur-2xl" />
-                    <div className="absolute -left-1/4 -top-1/4 w-1/2 h-1/2 bg-purple-500/5 rounded-full blur-2xl" />
+                <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="login-username">Username</Label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
+                        <User className="h-5 w-5" />
+                      </div>
+                      <Input
+                        id="login-username"
+                        type="text"
+                        className="pl-10"
+                        placeholder="Enter your username"
+                        {...loginForm.register("username")}
+                      />
+                    </div>
+                    {loginForm.formState.errors.username && (
+                      <p className="text-sm text-destructive">{loginForm.formState.errors.username.message}</p>
+                    )}
                   </div>
                   
-                  {/* Auth Tabs */}
-                  <div className="p-6 sm:p-8">
-                    <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab} className="w-full">
-                      <TabsList className="grid grid-cols-2 mb-6 w-full bg-muted/50">
-                        <TabsTrigger value="login" className="font-medium text-sm">Sign In</TabsTrigger>
-                        <TabsTrigger value="register" className="font-medium text-sm">Create Account</TabsTrigger>
-                      </TabsList>
-                      
-                      <TabsContent value="login" className="mt-0 space-y-4">
-                        <div>
-                          <h2 className="text-xl font-bold text-foreground mb-1">Welcome back</h2>
-                          <p className="text-muted-foreground mb-6 text-sm">Sign in to access your account</p>
-                        </div>
-                        
-                        <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
-                          <div className="space-y-4">
-                            <div className="space-y-2">
-                              <Label htmlFor="login-username">Username</Label>
-                              <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
-                                  <User className="h-5 w-5" />
-                                </div>
-                                <Input
-                                  id="login-username"
-                                  type="text"
-                                  className="pl-10"
-                                  placeholder="Enter your username"
-                                  {...loginForm.register("username")}
-                                />
-                              </div>
-                              {loginForm.formState.errors.username && (
-                                <p className="text-sm text-destructive">{loginForm.formState.errors.username.message}</p>
-                              )}
-                            </div>
-                            
-                            <div className="space-y-2">
-                              <div className="flex items-center justify-between">
-                                <Label htmlFor="login-password">Password</Label>
-                                <a href="#" className="text-xs text-primary hover:underline">Forgot password?</a>
-                              </div>
-                              <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
-                                  <Lock className="h-5 w-5" />
-                                </div>
-                                <Input
-                                  id="login-password"
-                                  type="password"
-                                  className="pl-10"
-                                  placeholder="Enter your password"
-                                  {...loginForm.register("password")}
-                                />
-                              </div>
-                              {loginForm.formState.errors.password && (
-                                <p className="text-sm text-destructive">{loginForm.formState.errors.password.message}</p>
-                              )}
-                            </div>
-                            
-                            <div className="flex items-center space-x-2">
-                              <Checkbox id="remember" />
-                              <label
-                                htmlFor="remember"
-                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground"
-                              >
-                                Remember me
-                              </label>
-                            </div>
-                            
-                            <Button type="submit" className="w-full" disabled={isLoading}>
-                              {isLoading ? (
-                                <>
-                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  Signing In...
-                                </>
-                              ) : (
-                                "Sign In"
-                              )}
-                            </Button>
-                          </div>
-                        </form>
-                        
-                        <div className="relative my-6">
-                          <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-border"></div>
-                          </div>
-                          <div className="relative flex justify-center text-xs">
-                            <span className="px-2 bg-card text-muted-foreground">Or continue with</span>
-                          </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-3">
-                          <Button variant="outline" type="button" className="hover:bg-muted/50 transition-colors" onClick={handleGoogleLogin}>
-                            <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                            </svg>
-                            Google
-                          </Button>
-                          <Button variant="outline" type="button" className="hover:bg-muted/50 transition-colors" onClick={handleTwitterLogin}>
-                            <svg className="mr-2 h-4 w-4" fill="#1DA1F2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                            </svg>
-                            Twitter
-                          </Button>
-                        </div>
-                      </TabsContent>
-                      
-                      <TabsContent value="register" className="mt-0 space-y-4">
-                        <div>
-                          <h2 className="text-xl font-bold text-foreground mb-1">Create your account</h2>
-                          <p className="text-muted-foreground mb-6 text-sm">Get started with MarketInsightAI</p>
-                        </div>
-                        
-                        <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
-                          <div className="space-y-4">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                              <div className="space-y-2">
-                                <Label htmlFor="register-name">Full Name</Label>
-                                <Input
-                                  id="register-name"
-                                  type="text"
-                                  placeholder="Enter your name"
-                                  {...registerForm.register("name")}
-                                />
-                                {registerForm.formState.errors.name && (
-                                  <p className="text-sm text-destructive">{registerForm.formState.errors.name.message}</p>
-                                )}
-                              </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="register-username">Username</Label>
-                                <Input
-                                  id="register-username"
-                                  type="text"
-                                  placeholder="Create a username"
-                                  {...registerForm.register("username")}
-                                />
-                                {registerForm.formState.errors.username && (
-                                  <p className="text-sm text-destructive">{registerForm.formState.errors.username.message}</p>
-                                )}
-                              </div>
-                            </div>
-                            
-                            <div className="space-y-2">
-                              <Label htmlFor="register-email">Email</Label>
-                              <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
-                                  <Mail className="h-5 w-5" />
-                                </div>
-                                <Input
-                                  id="register-email"
-                                  type="email"
-                                  className="pl-10"
-                                  placeholder="your@email.com"
-                                  {...registerForm.register("email")}
-                                />
-                              </div>
-                              {registerForm.formState.errors.email && (
-                                <p className="text-sm text-destructive">{registerForm.formState.errors.email.message}</p>
-                              )}
-                            </div>
-                            
-                            <div className="space-y-2">
-                              <Label htmlFor="register-password">Password</Label>
-                              <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
-                                  <Lock className="h-5 w-5" />
-                                </div>
-                                <Input
-                                  id="register-password"
-                                  type="password"
-                                  className="pl-10"
-                                  placeholder="Create a password (min. 8 characters)"
-                                  {...registerForm.register("password")}
-                                />
-                              </div>
-                              {registerForm.formState.errors.password && (
-                                <p className="text-sm text-destructive">{registerForm.formState.errors.password.message}</p>
-                              )}
-                            </div>
-                            
-                            <div className="space-y-2">
-                              <Label htmlFor="register-confirm-password">Confirm Password</Label>
-                              <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
-                                  <Lock className="h-5 w-5" />
-                                </div>
-                                <Input
-                                  id="register-confirm-password"
-                                  type="password"
-                                  className="pl-10"
-                                  placeholder="Confirm your password"
-                                  {...registerForm.register("confirmPassword")}
-                                />
-                              </div>
-                              {registerForm.formState.errors.confirmPassword && (
-                                <p className="text-sm text-destructive">{registerForm.formState.errors.confirmPassword.message}</p>
-                              )}
-                            </div>
-                            
-                            <div className="flex items-start space-x-2">
-                              <Checkbox 
-                                id="terms" 
-                                {...registerForm.register("terms")}
-                                className="mt-1" 
-                              />
-                              <div>
-                                <label
-                                  htmlFor="terms"
-                                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground"
-                                >
-                                  I agree to the <button onClick={() => switchView("terms")} className="text-primary hover:underline">Terms of Service</button> and <button onClick={() => switchView("privacy")} className="text-primary hover:underline">Privacy Policy</button>
-                                </label>
-                                {registerForm.formState.errors.terms && (
-                                  <p className="text-sm text-destructive mt-1">{registerForm.formState.errors.terms.message}</p>
-                                )}
-                              </div>
-                            </div>
-                            
-                            <Button type="submit" className="w-full" disabled={isLoading}>
-                              {isLoading ? (
-                                <>
-                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  Creating Account...
-                                </>
-                              ) : (
-                                "Create Account"
-                              )}
-                            </Button>
-                          </div>
-                        </form>
-                      </TabsContent>
-                    </Tabs>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="login-password">Password</Label>
+                      <a href="#" className="text-xs text-primary hover:underline">Forgot password?</a>
+                    </div>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
+                        <Lock className="h-5 w-5" />
+                      </div>
+                      <Input
+                        id="login-password"
+                        type="password"
+                        className="pl-10"
+                        placeholder="Enter your password"
+                        {...loginForm.register("password")}
+                      />
+                    </div>
+                    {loginForm.formState.errors.password && (
+                      <p className="text-sm text-destructive">{loginForm.formState.errors.password.message}</p>
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="remember" />
+                    <label
+                      htmlFor="remember"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground"
+                    >
+                      Remember me
+                    </label>
+                  </div>
+                  
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Signing in...
+                      </>
+                    ) : (
+                      "Sign In"
+                    )}
+                  </Button>
+                </form>
+                
+                <div className="relative my-6">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-border" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
                   </div>
                 </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <Button variant="outline" onClick={handleGoogleLogin} disabled={isLoading}>
+                    <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Google
+                  </Button>
+                  <Button variant="outline" onClick={handleTwitterLogin} disabled={isLoading}>
+                    <svg className="mr-2 h-4 w-4" fill="#1DA1F2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                    </svg>
+                    Twitter
+                  </Button>
+                </div>
               </div>
-            </div>
+            </motion.div>
+            
+            {/* Register Card */}
+            <motion.div 
+              className="glass-form rounded-2xl overflow-hidden relative shadow-soft"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-green-500/5 rounded-2xl" />
+              <div className="p-6 sm:p-8 relative">
+                <h2 className="text-2xl font-bold text-foreground mb-2">Create Account</h2>
+                <p className="text-muted-foreground mb-6">Get started with a 14-day free trial</p>
+                
+                <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="register-name">Full Name</Label>
+                      <Input
+                        id="register-name"
+                        type="text"
+                        placeholder="Enter your full name"
+                        {...registerForm.register("name")}
+                      />
+                      {registerForm.formState.errors.name && (
+                        <p className="text-sm text-destructive">{registerForm.formState.errors.name.message}</p>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="register-email">Email</Label>
+                      <Input
+                        id="register-email"
+                        type="email"
+                        placeholder="Enter your email"
+                        {...registerForm.register("email")}
+                      />
+                      {registerForm.formState.errors.email && (
+                        <p className="text-sm text-destructive">{registerForm.formState.errors.email.message}</p>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="register-username">Username</Label>
+                      <Input
+                        id="register-username"
+                        type="text"
+                        placeholder="Choose a username"
+                        {...registerForm.register("username")}
+                      />
+                      {registerForm.formState.errors.username && (
+                        <p className="text-sm text-destructive">{registerForm.formState.errors.username.message}</p>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="register-password">Password</Label>
+                      <Input
+                        id="register-password"
+                        type="password"
+                        placeholder="Create a password"
+                        {...registerForm.register("password")}
+                      />
+                      {registerForm.formState.errors.password && (
+                        <p className="text-sm text-destructive">{registerForm.formState.errors.password.message}</p>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="register-confirm-password">Confirm Password</Label>
+                      <Input
+                        id="register-confirm-password"
+                        type="password"
+                        placeholder="Confirm your password"
+                        {...registerForm.register("confirmPassword")}
+                      />
+                      {registerForm.formState.errors.confirmPassword && (
+                        <p className="text-sm text-destructive">{registerForm.formState.errors.confirmPassword.message}</p>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start space-x-2">
+                    <Checkbox 
+                      id="terms" 
+                      {...registerForm.register("terms")}
+                      className="mt-1" 
+                    />
+                    <div>
+                      <label
+                        htmlFor="terms"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground"
+                      >
+                        I agree to the <button type="button" onClick={() => switchView("terms")} className="text-primary hover:underline">Terms of Service</button> and <button type="button" onClick={() => switchView("privacy")} className="text-primary hover:underline">Privacy Policy</button>
+                      </label>
+                      {registerForm.formState.errors.terms && (
+                        <p className="text-sm text-destructive mt-1">{registerForm.formState.errors.terms.message}</p>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating account...
+                      </>
+                    ) : (
+                      "Create Account"
+                    )}
+                  </Button>
+                </form>
+              </div>
+            </motion.div>
           </div>
         </div>
       </main>
