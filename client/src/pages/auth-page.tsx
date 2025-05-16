@@ -485,10 +485,7 @@ export default function AuthPage() {
               <div className="flex items-center space-x-4">
                 <ThemeToggle />
                 <Button 
-                  onClick={() => {
-                    switchView("auth");
-                    setActiveTab("login");
-                  }}
+                  onClick={() => window.location.href = "/auth"}
                   variant="outline"
                   size="sm"
                   className="hidden md:flex"
@@ -555,12 +552,8 @@ export default function AuthPage() {
                   >
                     Contact
                   </button>
-                  <Button 
-                    onClick={() => {
-                      switchView("auth");
-                      setActiveTab("login");
-                      setIsMobileMenuOpen(false);
-                    }}
+                                      <Button 
+                    onClick={() => window.location.href = "/auth"}
                     variant="outline"
                     className="w-full"
                   >
