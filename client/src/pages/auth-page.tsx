@@ -718,8 +718,14 @@ export default function AuthPage() {
     return renderBaseLayout(
       <main className="pt-20 pb-16 relative z-10">
         <div className="container mx-auto px-4 relative">
-          <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-stretch">
-            
+          {/* Decorative background image for home slide */}
+          <img
+            src={geometricBackgroundSvg}
+            alt="Decorative background"
+            className="absolute right-0 top-0 w-2/3 max-w-2xl opacity-30 pointer-events-none select-none z-0 hidden lg:block"
+            style={{objectFit: 'cover'}}
+          />
+          <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-stretch relative z-10">
             {/* Left Column - Hero Content */}
             <div className="w-full lg:w-1/2 p-2 lg:p-8 flex flex-col justify-center">
               <div className="flex items-center mb-4">
