@@ -431,18 +431,13 @@ export default function AuthPage() {
     return (
       <div className="min-h-screen w-full bg-background overflow-hidden font-sans antialiased relative">
         {/* Elegant background with single gradient layer */}
-        <div className="absolute inset-0 z-0 pointer-events-none bg-animated-gradient">
-          {/* We're using just one background layer with custom animation from our new CSS */}
-        </div>
-        
+        <div className="absolute inset-0 z-0 pointer-events-none bg-animated-gradient"></div>
         {/* Enhanced geometry shapes with SVG animations */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
           <GeometryShapes />
         </div>
-        
         {/* Background shapes that add depth without doubling backgrounds */}
         <div className="absolute inset-0 bg-shapes pointer-events-none z-0"></div>
-
         {/* Header with enhanced glass effect */}
         <header 
           className={cn(
@@ -455,7 +450,6 @@ export default function AuthPage() {
             <div className="flex h-16 items-center justify-between">
               {/* Logo */}
               <Logo />
-
               {/* Desktop Navigation */}
               <nav className="hidden md:flex items-center space-x-8">
                 <button 
@@ -489,7 +483,6 @@ export default function AuthPage() {
                   About
                 </button>
               </nav>
-
               {/* Theme Toggler, Login Button and Mobile Menu Button */}
               <div className="flex items-center space-x-4">
                 <ThemeToggle />
@@ -511,7 +504,6 @@ export default function AuthPage() {
             </div>
           </div>
         </header>
-
         {/* Mobile Menu */}
         <AnimatePresence>
           {isMobileMenuOpen && (
@@ -585,9 +577,7 @@ export default function AuthPage() {
             </motion.div>
           )}
         </AnimatePresence>
-        
         {content}
-        
         {/* Footer */}
         <footer className="bg-card/50 dark:bg-card/30 border-t border-border pt-12 pb-8 relative z-10">
           <div className="container mx-auto px-4">
