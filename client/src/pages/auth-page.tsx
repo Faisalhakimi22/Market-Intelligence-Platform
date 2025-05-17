@@ -480,10 +480,10 @@ export default function AuthPage() {
                   FAQ
                 </button>
                 <button 
-                  onClick={() => switchView("contact")}
+                  onClick={() => switchView("about")}
                   className="text-muted-foreground hover:text-primary transition-colors duration-200 font-medium text-sm"
                 >
-                  Contact
+                  About
                 </button>
               </nav>
 
@@ -560,12 +560,12 @@ export default function AuthPage() {
                   </button>
                   <button 
                     onClick={() => {
-                      switchView("contact");
+                      switchView("about");
                       setIsMobileMenuOpen(false);
                     }}
                     className="text-muted-foreground hover:text-primary transition-colors duration-200 font-medium text-sm py-2"
                   >
-                    Contact
+                    About
                   </button>
                   <Button 
                     onClick={() => {
