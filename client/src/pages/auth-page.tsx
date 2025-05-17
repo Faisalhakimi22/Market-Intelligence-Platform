@@ -1911,13 +1911,13 @@ const fetchMarketData = async () => {
                   bio: "Data scientist and AI enthusiast at Market Research International with 4+ years of experience."
                 },
                 { 
-                  name: "Farwa Ali", 
+                  name: "Sadiq Mansoor", 
                   role: "Co-Founder", 
-                  bio: "AI researcher and engineer who previously led machine learning teams at top tech companies."
+                  bio: "AI engineer part of  machine learning teams at tech companies."
                 },
                 { 
-                  name: "Ayan Khan", 
-                  role: "Chief Data Officer", 
+                  name: "lara", 
+                  role: "Data Science", 
                   bio: "Expert in market analytics with a background in economics and statistical analysis."
                 }
               ].map((person, i) => (
