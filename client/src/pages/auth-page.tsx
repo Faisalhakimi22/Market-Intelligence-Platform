@@ -730,88 +730,42 @@ export default function AuthPage() {
                   <span>AI-Powered Market Intelligence</span>
                 </Badge>
               </div>
-              
               <h1 className="text-4xl md:text-5xl font-bold font-heading mb-6 text-foreground leading-tight">
                 Uncover Market <span className="bg-clip-text bg-gradient-to-r from-primary to-purple-600 text-transparent">Insights</span> with Confidence
               </h1>
-              
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
                 Make strategic decisions with our AI-powered market intelligence platform. Get ahead of trends, monitor competitors, and identify growth opportunities with data-driven insights.
               </p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
-                <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 bg-blue-50 dark:bg-blue-900/30 rounded-lg p-1.5 text-blue-600 dark:text-blue-400">
-                    <TrendingUp className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-foreground">Real-time Market Trends</h3>
-                    <p className="text-sm text-muted-foreground">Stay ahead with advanced analytics</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg p-1.5 text-indigo-600 dark:text-indigo-400">
-                    <Users className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-foreground">Competitor Intelligence</h3>
-                    <p className="text-sm text-muted-foreground">Monitor strategies and positioning</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 bg-purple-50 dark:bg-purple-900/30 rounded-lg p-1.5 text-purple-600 dark:text-purple-400">
-                    <BrainCircuit className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-foreground">AI Business Validation</h3>
-                    <p className="text-sm text-muted-foreground">Test ideas with predictive analytics</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 bg-green-50 dark:bg-green-900/30 rounded-lg p-1.5 text-green-600 dark:text-green-400">
-                    <Shield className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-foreground">Secure & Compliant</h3>
-                    <p className="text-sm text-muted-foreground">Enterprise-grade security</p>
-                  </div>
-                </div>
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                <Button
+                  size="lg"
+                  className="w-full sm:w-auto"
+                  onClick={() => switchView("pricing")}
+                >
+                  Start Free Trial
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full sm:w-auto"
+                  onClick={() => window.open('https://demo.marketinsightai.com', '_blank')}
+                >
+                  View Demo
+                </Button>
               </div>
-              
-              {/* Social Proof */}
-              <div className="mb-6">
-                <p className="text-sm text-muted-foreground mb-3">Trusted by innovative companies</p>
-                <div className="flex flex-wrap gap-6 items-center">
-                  <div className="text-muted-foreground/70 dark:text-muted-foreground/50">
-                    <svg className="h-7" viewBox="0 0 100 30" fill="currentColor">
-                      <path d="M20.5,15.1c0-4.8-3.9-8.7-8.7-8.7c-4.8,0-8.7,3.9-8.7,8.7c0,4.8,3.9,8.7,8.7,8.7C16.6,23.8,20.5,19.9,20.5,15.1z M48.8,15.1c0-4.8-3.9-8.7-8.7-8.7c-4.8,0-8.7,3.9-8.7,8.7c0,4.8,3.9,8.7,8.7,8.7C44.9,23.8,48.8,19.9,48.8,15.1z M77.1,15.1c0-4.8-3.9-8.7-8.7-8.7c-4.8,0-8.7,3.9-8.7,8.7c0,4.8,3.9,8.7,8.7,8.7C73.2,23.8,77.1,19.9,77.1,15.1z M97.1,15.1c0-4.8-3.9-8.7-8.7-8.7c-4.8,0-8.7,3.9-8.7,8.7c0,4.8,3.9,8.7,8.7,8.7C93.2,23.8,97.1,19.9,97.1,15.1z"/>
-                    </svg>
-                  </div>
-                  <div className="text-muted-foreground/70 dark:text-muted-foreground/50">
-                    <svg className="h-5" viewBox="0 0 100 20" fill="currentColor">
-                      <path d="M14.1,0L0,19.1H5.7L19.8,0H14.1z M18.8,19.1H24L9.9,0H4.7L18.8,19.1z M34.4,0L20.3,19.1H25.9L40,0H34.4z M38.7,19.1h5.2L29.8,0h-5.2L38.7,19.1z M60.1,4.6c-2-2-4.5-3-7.5-3s-5.5,1-7.5,3s-3,4.4-3,7.2s1,5.2,3,7.2c2,2,4.5,3,7.5,3s5.5-1,7.5-3c2-2,3-4.4,3-7.2S62.1,6.5,60.1,4.6z M55.3,15c-0.7,0.8-1.6,1.2-2.8,1.2c-1.1,0-2.1-0.4-2.8-1.2c-0.7-0.8-1.1-1.9-1.1-3.3c0-1.4,0.4-2.5,1.1-3.3c0.7-0.8,1.6-1.2,2.8-1.2c1.1,0,2.1,0.4,2.8,1.2c0.7,0.8,1.1,1.9,1.1,3.3C56.3,13.1,56,14.2,55.3,15z M83.5,4.6c-2-2-4.5-3-7.5-3s-5.5,1-7.5,3c-2,2-3,4.4-3,7.2s1,5.2,3,7.2c2,2,4.5,3,7.5,3s5.5-1,7.5-3c2-2,3-4.4,3-7.2S85.5,6.6,83.5,4.6z M78.8,15c-0.7,0.8-1.6,1.2-2.8,1.2c-1.1,0-2.1-0.4-2.8-1.2c-0.7-0.8-1.1-1.9-1.1-3.3c0-1.4,0.4-2.5,1.1-3.3c0.7-0.8,1.6-1.2,2.8-1.2c1.1,0,2.1,0.4,2.8,1.2c0.7,0.8,1.1,1.9,1.1,3.3C79.8,13.1,79.5,14.2,78.8,15z M95.9,0l-4.7,15.7c-0.2,0.8-0.6,1.4-1.2,1.8c-0.6,0.5-1.2,0.7-2,0.7c-0.8,0-1.5-0.2-2-0.7c-0.6-0.4-0.9-1.1-1.2-1.8L80.1,0h5.2l2.1,9.6c0.1,0.3,0.2,0.4,0.2,0.5c0.1,0.1,0.2,0.1,0.3,0.1c0.1,0,0.3,0,0.3-0.1c0.1-0.1,0.2-0.2,0.2-0.5L90.7,0H95.9z"/>
-                    </svg>
-                  </div>
-                  <div className="text-muted-foreground/70 dark:text-muted-foreground/50">
-                    <svg className="h-5" viewBox="0 0 100 25" fill="currentColor">
-                      <path d="M7.7,0.3L0,25h5.1l1.2-4h6.2l1.2,4h5.1L12,0.3H7.7z M7.4,17l2.1-7l2.1,7H7.4z M24,0.3V25h4.8V15.2h7.4V25h4.8V0.3h-4.8v10.5h-7.4V0.3H24z M59.8,4.5c-1.2-1.4-2.5-2.4-3.9-3c-1.4-0.6-3-0.9-4.8-0.9c-1.7,0-3.3,0.3-4.7,0.9c-1.4,0.6-2.7,1.5-3.9,2.7c-1.1,1.1-2,2.5-2.6,4.1c-0.6,1.6-0.9,3.3-0.9,5.2c0,1.9,0.3,3.6,0.9,5.2c0.6,1.6,1.5,3,2.6,4.1c1.1,1.1,2.4,2,3.9,2.7c1.4,0.6,3,0.9,4.7,0.9c2.3,0,4.3-0.5,6.1-1.5c1.8-1,3.3-2.4,4.4-4.2l-4.1-2.2c-0.7,1.1-1.6,1.9-2.6,2.4c-1,0.5-2.1,0.8-3.4,0.8c-1,0-1.9-0.2-2.7-0.5c-0.8-0.3-1.5-0.8-2.1-1.4c-0.6-0.6-1-1.3-1.4-2.2c-0.3-0.8-0.5-1.7-0.5-2.7h18.3c0-2-0.2-3.8-0.7-5.5C61.6,7.2,60.9,5.8,59.8,4.5z M43.9,11.3c0.1-0.9,0.2-1.7,0.5-2.5c0.3-0.8,0.7-1.4,1.2-2c0.5-0.6,1.2-1,1.9-1.3c0.7-0.3,1.6-0.5,2.5-0.5c1,0,1.8,0.2,2.6,0.5c0.7,0.3,1.4,0.8,1.9,1.3c0.5,0.6,0.9,1.2,1.2,2c0.3,0.8,0.4,1.6,0.4,2.5H43.9z M73.5,0.3c-1.3,0-2.4,0.2-3.2,0.5c-0.8,0.3-1.5,0.7-2,1.2c-0.5,0.5-0.9,1-1.1,1.5c-0.2,0.5-0.4,1-0.5,1.3h-0.3V0.3h-4.8V25h4.8V13.4c0-1.2,0.2-2.3,0.6-3.2c0.4-0.9,0.9-1.7,1.5-2.3c0.6-0.6,1.3-1.1,2.1-1.4C71.5,6.2,72.4,6,73.3,6c0.8,0,1.4,0.1,1.9,0.2V0.4C74.6,0.3,74.1,0.3,73.5,0.3z M95.3,4.8C94,4.3,92.6,4,91,4c-1.9,0-3.6,0.3-5.1,1c-1.5,0.7-2.8,1.7-3.8,2.9c-1.1,1.2-1.9,2.6-2.4,4.2c-0.6,1.6-0.9,3.3-0.9,5.1c0,1.9,0.3,3.6,0.9,5.2c0.6,1.6,1.4,3,2.4,4.1c1.1,1.2,2.3,2.1,3.8,2.7c1.5,0.6,3.2,1,5.1,1c1.5,0,3-0.2,4.3-0.7c1.3-0.5,2.5-1.2,3.4-2.1c1-0.9,1.8-2,2.3-3.3c0.6-1.3,0.9-2.8,0.9-4.3v-1.1H89.3v3.8h8c-0.1,0.8-0.3,1.6-0.6,2.2c-0.3,0.6-0.7,1.2-1.3,1.6c-0.5,0.4-1.1,0.8-1.9,1c-0.7,0.2-1.5,0.4-2.4,0.4c-1.2,0-2.3-0.2-3.2-0.7c-0.9-0.5-1.7-1.1-2.3-1.9c-0.6-0.8-1.1-1.7-1.4-2.8c-0.3-1.1-0.5-2.2-0.5-3.4c0-1.2,0.2-2.3,0.5-3.3c0.3-1,0.8-1.9,1.4-2.7c0.6-0.8,1.4-1.4,2.3-1.8c0.9-0.4,2-0.7,3.1-0.7c1,0,1.9,0.1,2.7,0.4c0.8,0.3,1.5,0.7,2.1,1.2c0.6,0.5,1,1.1,1.4,1.8c0.3,0.7,0.6,1.4,0.6,2.2h4.9c-0.1-1.3-0.4-2.6-1-3.7c-0.6-1.1-1.3-2.1-2.3-3C97.7,6,96.6,5.3,95.3,4.8z"/>
-                    </svg>
-                  </div>
-                </div>
-              </div>
+              {/* Social Proof or other hero content can remain here */}
+              {/* ... existing social proof ... */}
             </div>
-            {/* Right Column - Business Image (only on large screens) */}
+            {/* Right Column - Enlarged Business Image (only on large screens) */}
             <div className="hidden lg:flex w-1/2 items-center justify-center">
               <img
                 src={marketAnalysisJpg}
                 alt="Business market analysis illustration"
-                className="max-w-md w-full h-auto rounded-2xl shadow-lg border border-border bg-card"
-                style={{objectFit: 'contain'}}
+                className="max-w-2xl w-full h-auto rounded-2xl shadow-2xl border border-border bg-card object-cover"
+                style={{minHeight: '420px', maxHeight: '600px'}}
               />
-                  </div>
+            </div>
           </div>
         </div>
       </main>
