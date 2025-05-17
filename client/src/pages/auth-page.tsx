@@ -143,6 +143,9 @@ const Logo = () => (
   </div>
 );
 
+// Add import for the new image at the top with other assets
+import marketAnalysisJpg from "../assets/market-analysis.JPG";
+
 export default function AuthPage() {
   const [_, navigate] = useLocation();
   const { user, loginMutation, registerMutation, isLoading } = useAuth();
@@ -718,13 +721,6 @@ export default function AuthPage() {
     return renderBaseLayout(
       <main className="pt-20 pb-16 relative z-10">
         <div className="container mx-auto px-4 relative">
-          {/* Decorative background image for home slide (optional, can keep or remove) */}
-          {/* <img
-            src={geometricBackgroundSvg}
-            alt="Decorative background"
-            className="absolute right-0 top-0 w-2/3 max-w-2xl opacity-30 pointer-events-none select-none z-0 hidden lg:block"
-            style={{objectFit: 'cover'}}
-          /> */}
           <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-stretch relative z-10">
             {/* Left Column - Hero Content */}
             <div className="w-full lg:w-1/2 p-2 lg:p-8 flex flex-col justify-center">
@@ -810,8 +806,8 @@ export default function AuthPage() {
             {/* Right Column - Business Image (only on large screens) */}
             <div className="hidden lg:flex w-1/2 items-center justify-center">
               <img
-                src={analyticsDashboardSvg}
-                alt="Business analytics illustration"
+                src={marketAnalysisJpg}
+                alt="Business market analysis illustration"
                 className="max-w-md w-full h-auto rounded-2xl shadow-lg border border-border bg-card"
                 style={{objectFit: 'contain'}}
               />
