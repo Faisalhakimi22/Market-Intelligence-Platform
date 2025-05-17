@@ -456,6 +456,12 @@ export default function AuthPage() {
               {/* Desktop Navigation */}
               <nav className="hidden md:flex items-center space-x-8">
                 <button 
+                  onClick={() => switchView("auth")}
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200 font-medium text-sm"
+                >
+                  Home
+                </button>
+                <button 
                   onClick={() => switchView("features")}
                   className="text-muted-foreground hover:text-primary transition-colors duration-200 font-medium text-sm"
                 >
@@ -516,6 +522,15 @@ export default function AuthPage() {
             >
               <div className="container mx-auto px-4 py-4">
                 <div className="flex flex-col space-y-4">
+                  <button 
+                    onClick={() => {
+                      switchView("auth");
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="text-muted-foreground hover:text-primary transition-colors duration-200 font-medium text-sm py-2"
+                  >
+                    Home
+                  </button>
                   <button 
                     onClick={() => {
                       switchView("features");
