@@ -733,7 +733,8 @@ export default function AuthPage() {
     return renderBaseLayout(
       <main className="pt-20 pb-16 relative z-10">
         <div className="container mx-auto px-4 relative">
-          <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-stretch relative z-10">
+          {/* Hero Section */}
+          <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-stretch relative z-10 mb-20">
             {/* Left Column - Hero Content */}
             <div className="w-full lg:w-1/2 p-2 lg:p-8 flex flex-col justify-center">
               <div className="flex items-center mb-4">
@@ -761,15 +762,28 @@ export default function AuthPage() {
                   size="lg"
                   variant="outline"
                   className="w-full sm:w-auto"
-                  onClick={() => window.open('https://demo.marketinsightai.com', '_blank')}
+                  onClick={() => window.open('https://demo.forecastro.com', '_blank')}
                 >
                   View Demo
                 </Button>
               </div>
-              {/* Social Proof or other hero content can remain here */}
-              {/* ... existing social proof ... */}
+              {/* Trust Indicators */}
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                  <span>Trusted by 10,000+ businesses worldwide</span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Shield className="h-5 w-5 text-blue-500" />
+                  <span>Enterprise-grade security & compliance</span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Zap className="h-5 w-5 text-amber-500" />
+                  <span>Real-time market data & insights</span>
+                </div>
+              </div>
             </div>
-            {/* Right Column - Enlarged Business Image (only on large screens) */}
+            {/* Right Column - Enlarged Business Image */}
             <div className="hidden lg:flex w-1/2 items-center justify-center">
               <img
                 src={marketAnalysisJpg}
@@ -779,6 +793,123 @@ export default function AuthPage() {
               />
             </div>
           </div>
+
+          {/* Features Grid */}
+          <div className="mb-20">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold mb-4">Why Choose Forecastro?</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">Experience the power of AI-driven market intelligence with our comprehensive suite of tools.</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="glass-card p-6 rounded-xl border border-border/50"
+              >
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                  <LineChart className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Real-time Analytics</h3>
+                <p className="text-muted-foreground">Get instant insights into market trends and competitor movements as they happen.</p>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                viewport={{ once: true }}
+                className="glass-card p-6 rounded-xl border border-border/50"
+              >
+                <div className="h-12 w-12 rounded-lg bg-purple-500/10 flex items-center justify-center mb-4">
+                  <BrainCircuit className="h-6 w-6 text-purple-500" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">AI Predictions</h3>
+                <p className="text-muted-foreground">Leverage advanced AI algorithms to predict market trends and opportunities.</p>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="glass-card p-6 rounded-xl border border-border/50"
+              >
+                <div className="h-12 w-12 rounded-lg bg-green-500/10 flex items-center justify-center mb-4">
+                  <Users className="h-6 w-6 text-green-500" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Competitor Tracking</h3>
+                <p className="text-muted-foreground">Monitor your competitors' strategies and stay ahead of market changes.</p>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Stats Section */}
+          <div className="mb-20">
+            <div className="glass-card rounded-xl border border-border/50 p-8">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                  viewport={{ once: true }}
+                  className="text-center"
+                >
+                  <div className="text-3xl font-bold text-primary mb-2">10K+</div>
+                  <div className="text-muted-foreground">Active Users</div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  viewport={{ once: true }}
+                  className="text-center"
+                >
+                  <div className="text-3xl font-bold text-purple-500 mb-2">50M+</div>
+                  <div className="text-muted-foreground">Data Points</div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  viewport={{ once: true }}
+                  className="text-center"
+                >
+                  <div className="text-3xl font-bold text-green-500 mb-2">99.9%</div>
+                  <div className="text-muted-foreground">Uptime</div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  viewport={{ once: true }}
+                  className="text-center"
+                >
+                  <div className="text-3xl font-bold text-blue-500 mb-2">24/7</div>
+                  <div className="text-muted-foreground">Support</div>
+                </motion.div>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-center max-w-3xl mx-auto"
+          >
+            <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Market Strategy?</h2>
+            <p className="text-muted-foreground mb-8">Join thousands of businesses making smarter decisions with Forecastro.</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" onClick={() => switchView("pricing")} className="w-full sm:w-auto">
+                Get Started Now
+              </Button>
+              <Button size="lg" variant="outline" onClick={() => switchView("contact")} className="w-full sm:w-auto">
+                Talk to Sales
+              </Button>
+            </div>
+          </motion.div>
         </div>
       </main>
     );
