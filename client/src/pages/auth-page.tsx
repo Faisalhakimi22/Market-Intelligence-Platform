@@ -129,7 +129,7 @@ const registerSchema = insertUserSchema.extend({
   confirmPassword: z.string().min(1, "Please confirm your password"),
   name: z.string().min(1, "Name is required"),
   terms: z.boolean().refine(val => val === true, {
-    message: "You must accept the terms and conditions"
+          message: "You must accept the terms and conditions"
   })
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -149,7 +149,7 @@ const Logo = () => (
     }}
   >
     <div className="h-10 w-10 rounded-xl bg-gradient-to-r from-primary/90 to-primary flex items-center justify-center shadow-lg overflow-hidden group-hover:shadow-primary/30 transition-all duration-300">
-      <motion.div
+          <motion.div
         initial={{ y: 0 }}
         animate={{
           y: [0, -2, 0, 2, 0],
@@ -161,13 +161,13 @@ const Logo = () => (
         }}
       >
         <BarChart2 className="h-6 w-6 text-white" />
-      </motion.div>
-    </div>
+          </motion.div>
+        </div>
     <h1 className="text-2xl font-bold font-heading text-foreground">
       Fore<span className="text-primary bg-clip-text bg-gradient-to-r from-primary to-purple-500 text-transparent">castro AI</span>
     </h1>
-  </div>
-);
+    </div>
+  );
 
 // Add import for the new image at the top with other assets
 import marketAnalysisJpg from "../assets/market-analysis.jpg";
@@ -640,7 +640,7 @@ export default function AuthPage() {
       navigate("/");
     }
   }, [user, navigate]);
-  
+
   // Login form handling
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -679,7 +679,7 @@ export default function AuthPage() {
       }
       
     // Remove confirmPassword and terms as they're not in the API schema
-    const { confirmPassword, terms, ...registerData } = data;
+      const { confirmPassword, terms, ...registerData } = data;
       await registerMutation.mutateAsync(registerData);
     } catch (error) {
       console.error("Registration error:", error);
