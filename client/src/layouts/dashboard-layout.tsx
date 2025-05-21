@@ -239,7 +239,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <div className="ml-4 text-lg font-heading font-semibold text-gradient-primary">MarketInsightAI</div>
+          <div className="ml-4 text-lg font-heading font-semibold text-gradient-primary">ForecastroAI</div>
         </header>
         <main className="flex-1 relative overflow-y-auto focus:outline-none">
           <div className="bg-shapes relative">
