@@ -117,6 +117,12 @@ import patternBackgroundSvg from "../assets/pattern-background.svg";
 type ViewId = "auth" | "login" | "features" | "pricing" | "faq" | "privacy" | "terms" | "contact"
   | "api" | "integrations" | "documentation" | "guides" | "blog" | "about";
 
+// Animation utility to make scrolling smoother
+const smoothScrollAnimation = {
+  viewport: { once: true, margin: "-20% 0px" },
+  transition: { duration: 0.8, ease: "easeOut" }
+};
+
 // Extended schemas with validation
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -606,6 +612,35 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
 };
 
 export default function AuthPage() {
+  // Add a global style tag for smooth animations
+  React.useEffect(() => {
+    // Create a style element
+    const styleEl = document.createElement('style');
+    styleEl.innerHTML = `
+      /* Smoother animations */
+      .motion-reduce {
+        transition: all 0.5s ease-out;
+      }
+      
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      /* Improved scrolling for animations */
+      @media (prefers-reduced-motion: no-preference) {
+        [data-whileinview] {
+          transition-property: transform, opacity;
+          transition-duration: 0.6s;
+          transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+        }
+      }
+    `;
+    document.head.appendChild(styleEl);
+    
+    return () => {
+      document.head.removeChild(styleEl);
+    };
+  }, []);
   const [_, navigate] = useLocation();
   const { user, loginMutation, registerMutation, isLoading } = useAuth();
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("annual");
@@ -633,6 +668,22 @@ export default function AuthPage() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [lastScrollY]);
+  
+  // Add smooth scrolling behavior
+  useEffect(() => {
+    // Set smooth scrolling for the entire page
+    document.documentElement.style.scrollBehavior = 'smooth';
+    
+    // Find all motion divs and add a custom class to reduce flicker
+    const allMotionElements = document.querySelectorAll('[data-motion]');
+    allMotionElements.forEach(el => {
+      el.classList.add('motion-reduce');
+    });
+    
+    return () => {
+      document.documentElement.style.scrollBehavior = '';
+    };
+  }, []);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -1080,8 +1131,8 @@ export default function AuthPage() {
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: index * 0.1 }}
+        viewport={smoothScrollAnimation.viewport}
+        transition={{ ...smoothScrollAnimation.transition, delay: index * 0.15 }}
         className="group relative z-10 rounded-xl border border-border/40 bg-card p-6 transition-all duration-300 hover:border-primary/20 hover:shadow-lg"
       >
         <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-background/0 to-background/80 backdrop-blur-sm transition-opacity duration-300 opacity-0 group-hover:opacity-100" />
@@ -1110,8 +1161,8 @@ export default function AuthPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.1 + (index * 0.1) }}
+        viewport={smoothScrollAnimation.viewport}
+        transition={{ ...smoothScrollAnimation.transition, delay: 0.1 + (index * 0.15) }}
         className="rounded-xl bg-card p-6 border border-border/30 relative overflow-hidden"
       >
         <div className="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-primary/10 blur-xl" />
@@ -1160,8 +1211,8 @@ export default function AuthPage() {
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
+        viewport={smoothScrollAnimation.viewport}
+        transition={smoothScrollAnimation.transition}
         className={`relative p-6 rounded-xl border border-border/50 bg-gradient-to-b from-background to-muted/30 overflow-hidden group`}
       >
         <div className={`absolute -right-3 -top-3 w-24 h-24 rounded-full ${bgColor} blur-2xl opacity-30 group-hover:opacity-50 transition-opacity duration-300`} />
@@ -1226,7 +1277,7 @@ export default function AuthPage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
                 className="inline-flex rounded-full mb-6 px-3 py-1 bg-primary/10 text-primary text-xs font-medium uppercase tracking-wider"
               >
                 AI-Powered Market Intelligence
