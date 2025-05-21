@@ -31,6 +31,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { GeometryShapes, FloatingIcon } from "@/components/ui/geometry-shapes";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 // Icons
 import {
@@ -145,6 +153,122 @@ const Logo = () => (
 
 // Add import for the new image at the top with other assets
 import marketAnalysisJpg from "../assets/market-analysis.jpg";
+
+// Add the DemoModal component before the AuthPage component
+function DemoModal() {
+  const [currentFeature, setCurrentFeature] = useState(0);
+  
+  const demoFeatures = [
+    {
+      title: "Real-time Market Analytics",
+      description: "Watch as our AI analyzes market trends in real-time, providing actionable insights for your business.",
+      image: analyticsDashboardSvg,
+      icon: <BarChart2 className="h-5 w-5 text-primary" />
+    },
+    {
+      title: "Competitor Analysis",
+      description: "Track your competitors' movements and stay ahead with detailed comparative analysis.",
+      image: marketAnalysisSvg,
+      icon: <Users className="h-5 w-5 text-purple-500" />
+    },
+    {
+      title: "AI-Powered Predictions",
+      description: "Experience the power of our machine learning models predicting market trends with high accuracy.",
+      image: businessGrowthSvg,
+      icon: <BrainCircuit className="h-5 w-5 text-green-500" />
+    }
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentFeature((prev) => (prev + 1) % demoFeatures.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <DialogContent className="sm:max-w-3xl">
+      <DialogHeader>
+        <DialogTitle>Experience Forecastro AI in Action</DialogTitle>
+        <DialogDescription>
+          Take a tour of our powerful features and see how we can transform your market intelligence.
+        </DialogDescription>
+      </DialogHeader>
+      
+      <div className="mt-6">
+        <div className="relative overflow-hidden rounded-lg border border-border">
+          {/* Feature Showcase */}
+          <motion.div
+            key={currentFeature}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="p-6"
+          >
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0">
+                {demoFeatures[currentFeature].icon}
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">{demoFeatures[currentFeature].title}</h3>
+                <p className="text-muted-foreground mb-4">{demoFeatures[currentFeature].description}</p>
+              </div>
+            </div>
+            <div className="mt-4 aspect-video relative rounded-lg overflow-hidden border border-border/50">
+              <img
+                src={demoFeatures[currentFeature].image}
+                alt={demoFeatures[currentFeature].title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+            </div>
+          </motion.div>
+
+          {/* Progress Bar */}
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-border">
+            <motion.div
+              className="h-full bg-primary"
+              initial={{ width: "0%" }}
+              animate={{ width: "100%" }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                repeatType: "loop"
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Feature Navigation */}
+        <div className="mt-6 flex gap-2">
+          {demoFeatures.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentFeature(index)}
+              className={cn(
+                "w-3 h-3 rounded-full transition-colors",
+                currentFeature === index
+                  ? "bg-primary"
+                  : "bg-border hover:bg-primary/50"
+              )}
+            />
+          ))}
+        </div>
+
+        {/* Call to Action */}
+        <div className="mt-8 flex flex-col sm:flex-row gap-4">
+          <Button size="lg" className="w-full" onClick={() => window.open('https://demo.forecastroai.com/signup', '_blank')}>
+            Start Free Trial
+          </Button>
+          <Button size="lg" variant="outline" className="w-full" onClick={() => window.open('https://calendly.com/forecastroai/demo', '_blank')}>
+            Schedule Live Demo
+          </Button>
+        </div>
+      </div>
+    </DialogContent>
+  );
+}
 
 export default function AuthPage() {
   const [_, navigate] = useLocation();
@@ -758,14 +882,18 @@ export default function AuthPage() {
                 >
                   Start Free Trial
                 </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-full sm:w-auto"
-                  onClick={() => window.open('https://demo.forecastroai.com', '_blank')}
-                >
-                  View Demo
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="w-full sm:w-auto"
+                    >
+                      View Demo
+                    </Button>
+                  </DialogTrigger>
+                  <DemoModal />
+                </Dialog>
               </div>
               {/* Trust Indicators */}
               <div className="flex flex-col gap-4">
