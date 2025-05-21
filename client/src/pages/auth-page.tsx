@@ -1282,22 +1282,6 @@ export default function AuthPage() {
       <main>
         {/* Hero Section - Advanced Design */}
         <section className="relative pt-32 pb-16 overflow-hidden">
-          {/* Half Background Image - Cursor AI Style */}
-          <div className="absolute right-0 top-0 w-1/2 h-full pointer-events-none">
-            <div className="absolute inset-0 bg-gradient-to-l from-background/0 to-background z-10" />
-            <div 
-              className="absolute inset-0 bg-cover bg-no-repeat bg-right opacity-30 dark:opacity-15"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg width='1000' height='1000' viewBox='0 0 1000 1000' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23818cf8' stop-opacity='0.4'/%3E%3Cstop offset='100%25' stop-color='%23c084fc' stop-opacity='0.2'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg opacity='0.7'%3E%3Ccircle cx='100' cy='100' r='80' fill='url(%23grad)' /%3E%3Ccircle cx='400' cy='200' r='120' fill='url(%23grad)' /%3E%3Ccircle cx='800' cy='300' r='100' fill='url(%23grad)' /%3E%3Ccircle cx='200' cy='500' r='150' fill='url(%23grad)' /%3E%3Ccircle cx='700' cy='600' r='130' fill='url(%23grad)' /%3E%3Ccircle cx='500' cy='800' r='160' fill='url(%23grad)' /%3E%3C/g%3E%3C/svg%3E")`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center right'
-              }}
-            />
-            <div className="absolute bottom-0 right-0 w-2/3 h-2/3 opacity-50">
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent blur-3xl" />
-            </div>
-          </div>
-          
           {/* Decorative elements */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute left-1/4 -top-48 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-70" />
