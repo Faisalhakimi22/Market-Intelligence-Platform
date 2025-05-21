@@ -99,10 +99,89 @@ import abstractBackgroundSvg from "../assets/abstract-background.svg";
 import patternBackgroundSvg from "../assets/pattern-background.svg";
 
 // Add these imports after the existing SVG imports
-// Replace Next.js dynamic imports with simple placeholder components
-const ParticleBackground = () => <div className="particle-background"></div>;
-const ModelViewer = ({modelPath}) => <div className="model-viewer"></div>;
-const AnimatedCursor = () => null;
+// Modern visual components
+const ParticleBackground = () => (
+  <div className="particles-container absolute inset-0 z-[-1]">
+    <div className="absolute top-0 left-0 w-full h-full">
+      {Array.from({ length: 50 }).map((_, i) => (
+        <div
+          key={i}
+          className="particle absolute rounded-full bg-primary/10"
+          style={{
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            width: `${Math.random() * 10 + 2}px`,
+            height: `${Math.random() * 10 + 2}px`,
+            animationDuration: `${Math.random() * 20 + 10}s`,
+            animationDelay: `${Math.random() * 10}s`,
+            opacity: Math.random() * 0.5 + 0.1,
+            animation: `floatParticle ${Math.random() * 20 + 10}s infinite ease-in-out`
+          }}
+        />
+      ))}
+    </div>
+    <style jsx>{`
+      @keyframes floatParticle {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        25% { transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) scale(${Math.random() * 0.5 + 1}); }
+        50% { transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) scale(${Math.random() * 0.5 + 0.8}); }
+        75% { transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) scale(${Math.random() * 0.5 + 1.2}); }
+      }
+    `}</style>
+  </div>
+);
+
+const ModelViewer = ({ modelPath }) => (
+  <div className="model-viewer-container relative w-full h-full">
+    <div className="model-placeholder flex items-center justify-center w-full h-full">
+      <div className="w-full h-full relative overflow-hidden rounded-xl">
+        {/* 3D Effect with layered elements */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-purple-500/10"></div>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="relative w-4/5 h-4/5">
+            {/* Dashboard elements */}
+            <div className="absolute top-1/4 left-1/4 w-1/2 h-1/5 bg-card/80 backdrop-blur-md rounded-lg border border-border/50 shadow-lg transform rotate-3 z-10"></div>
+            <div className="absolute top-2/5 left-1/3 w-1/3 h-1/4 bg-card/80 backdrop-blur-md rounded-lg border border-border/50 shadow-lg transform -rotate-2 z-20"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-2/5 h-1/6 bg-card/80 backdrop-blur-md rounded-lg border border-border/50 shadow-lg transform rotate-6 z-30"></div>
+            
+            {/* Chart elements */}
+            <div className="absolute top-1/3 left-1/4 w-1/2 h-1/3 flex items-end p-2 gap-1">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div 
+                  key={i} 
+                  className="flex-1 bg-primary rounded-t-sm"
+                  style={{ 
+                    height: `${Math.random() * 80 + 20}%`,
+                    opacity: 0.5 + Math.random() * 0.5
+                  }}
+                ></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const AnimatedCursor = () => {
+  // This would ideally track mouse movement, but we'll create a simple pulsing effect
+  return (
+    <div className="animated-cursor-container fixed inset-0 pointer-events-none z-50">
+      <div className="custom-cursor absolute w-8 h-8 rounded-full border-2 border-primary/50 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0">
+        <div className="cursor-dot absolute top-1/2 left-1/2 w-2 h-2 rounded-full bg-primary transform -translate-x-1/2 -translate-y-1/2"></div>
+      </div>
+      <style jsx>{`
+        .animated-cursor-container {
+          mix-blend-mode: difference;
+        }
+        .custom-cursor {
+          transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+        }
+      `}</style>
+    </div>
+  );
+};
 
 // Type Definitions
 type ViewId = "auth" | "login" | "features" | "pricing" | "faq" | "privacy" | "terms" | "contact"
@@ -678,30 +757,29 @@ const GlowingButton = ({ children, className, ...props }) => {
   );
 };
 
-// Add this component before the AuthPage export
+// Enhanced FloatingCard component
 const FloatingCard = ({ children, delay = 0, className }) => {
   return (
-    <motion.div
-      className={cn("relative z-10", className)}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay }}
+    <div
+      className={`relative z-10 ${className}`}
+      style={{
+        animation: `float ${Math.random() * 2 + 4}s infinite ease-in-out ${delay}s`,
+        opacity: 0.9
+      }}
     >
-      <motion.div
-        animate={{
-          y: [0, -10, 0],
-        }}
-        transition={{
-          duration: 6,
-          repeat: Infinity,
-          repeatType: "mirror",
-          ease: "easeInOut",
-          delay: delay * 2
-        }}
-      >
-        {children}
-      </motion.div>
-    </motion.div>
+      <div className="glass-card backdrop-blur-sm rounded-lg shadow-xl border border-white/10 overflow-hidden relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/10 z-[-1]"></div>
+        <div className="p-4 relative z-10">
+          {children}
+        </div>
+      </div>
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0) rotate(0); }
+          50% { transform: translateY(-10px) rotate(${Math.random() * 2 - 1}deg); }
+        }
+      `}</style>
+    </div>
   );
 };
 
@@ -1142,25 +1220,28 @@ export default function AuthPage() {
     index: number
   }) => {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: index * 0.1 }}
-        className="group relative z-10 rounded-xl border border-border/40 bg-card p-6 transition-all duration-300 hover:border-primary/20 hover:shadow-lg"
+      <div 
+        className="relative rounded-xl overflow-hidden group hover:shadow-xl transition-all duration-500 border border-border/40 hover:border-primary/20"
+        style={{ 
+          animationDelay: `${index * 0.1}s`,
+          transform: 'translateY(0)',
+          opacity: 1,
+          transition: 'all 0.5s ease-out'
+        }}
       >
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-background/0 to-background/80 backdrop-blur-sm transition-opacity duration-300 opacity-0 group-hover:opacity-100" />
-        
-        <div className="relative z-10">
-          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors duration-300">
-            {icon}
+        <div className="absolute inset-0 bg-gradient-to-br from-background/0 to-background/80 backdrop-blur-sm group-hover:backdrop-blur-lg transition-all duration-300"></div>
+        <div className="p-6 relative z-10">
+          <div className="glow-container absolute -inset-1 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-500 bg-primary blur-xl"></div>
+          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors duration-300 relative">
+            <div className="relative">{icon}</div>
           </div>
-          <h3 className="mb-2 text-xl font-semibold text-foreground">{title}</h3>
-          <p className="text-muted-foreground">{description}</p>
+          <h3 className="mb-2 text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-300">{title}</h3>
+          <p className="text-muted-foreground group-hover:text-foreground/80 transition-colors duration-300">{description}</p>
+          <div className="absolute right-4 bottom-4 w-8 h-8 rounded-full bg-primary/0 group-hover:bg-primary/10 flex items-center justify-center scale-0 group-hover:scale-100 transition-all duration-300">
+            <ArrowRight className="h-4 w-4 text-primary scale-0 group-hover:scale-100 transition-all duration-300 delay-100" />
+          </div>
         </div>
-        
-        <div className="absolute -right-px -bottom-px h-16 w-16 rounded-br-xl bg-gradient-to-l from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      </motion.div>
+      </div>
     );
   };
 
