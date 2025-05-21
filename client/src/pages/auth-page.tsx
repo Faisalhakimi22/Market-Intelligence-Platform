@@ -1305,16 +1305,30 @@ export default function AuthPage() {
                 {/* Enhanced Header with Stats */}
                 <div className="grid grid-cols-4 gap-4 mb-6">
                   <div className="col-span-2">
-                    <h3 className="text-xl font-bold flex items-center gap-2">
-                      Market Overview
-                      <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20">Live</Badge>
+                    <div className="flex items-center gap-2">
+                      <div className="relative">
+                        <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">Market Pulse</h3>
+                        <div className="absolute -bottom-1 left-0 h-0.5 w-1/2 bg-gradient-to-r from-primary to-transparent"></div>
+                      </div>
+                      <Badge className="bg-gradient-to-r from-green-500/80 to-green-400/80 text-white hover:from-green-500/90 hover:to-green-400/90 shadow-sm shadow-green-500/10">
+                        <motion.span
+                          initial={{ opacity: 0.7 }}
+                          animate={{ opacity: [0.7, 1, 0.7] }}
+                          transition={{ duration: 1.5, repeat: Infinity }}
+                          className="mr-1">●</motion.span>
+                        Live
+                      </Badge>
+                    </div>
+                    <div className="mt-2 flex items-center">
+                      <p className="text-sm font-medium text-primary">Intelligent market insights, updated in real-time</p>
                       <motion.div 
-                        animate={{ scale: [1, 1.2, 1] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                        className="h-2 w-2 rounded-full bg-green-500"
-                      />
-                    </h3>
-                    <p className="text-sm text-muted-foreground">Real-time analysis of global markets</p>
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                        className="ml-2 text-primary/70"
+                      >
+                        <RefreshCcw className="h-3 w-3" />
+                      </motion.div>
+                    </div>
                   </div>
                   
                   <div className="col-span-2 flex justify-end items-center gap-4">
