@@ -138,7 +138,7 @@ const Logo = () => (
       </motion.div>
     </div>
     <h1 className="text-2xl font-bold font-heading text-foreground">
-      Fore<span className="text-primary bg-clip-text bg-gradient-to-r from-primary to-purple-500 text-transparent">castro</span>
+      Fore<span className="text-primary bg-clip-text bg-gradient-to-r from-primary to-purple-500 text-transparent">castro AI</span>
     </h1>
   </div>
 );
@@ -684,7 +684,7 @@ export default function AuthPage() {
             </div>
             <div className="mt-12 border-t border-border pt-8">
               <p className="text-muted-foreground text-xs text-center">
-                &copy; {new Date().getFullYear()} MarketInsightAI. All rights reserved.
+                &copy; {new Date().getFullYear()} Forecastro AI. All rights reserved.
               </p>
             </div>
           </div>
@@ -762,7 +762,7 @@ export default function AuthPage() {
                   size="lg"
                   variant="outline"
                   className="w-full sm:w-auto"
-                  onClick={() => window.open('https://demo.forecastro.com', '_blank')}
+                  onClick={() => window.open('https://demo.forecastroai.com', '_blank')}
                 >
                   View Demo
                 </Button>
@@ -797,7 +797,7 @@ export default function AuthPage() {
           {/* Features Grid */}
           <div className="mb-20">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">Why Choose Forecastro?</h2>
+              <h2 className="text-3xl font-bold mb-4">Why Choose Forecastro AI?</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">Experience the power of AI-driven market intelligence with our comprehensive suite of tools.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -900,7 +900,7 @@ export default function AuthPage() {
             className="text-center max-w-3xl mx-auto"
           >
             <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Market Strategy?</h2>
-            <p className="text-muted-foreground mb-8">Join thousands of businesses making smarter decisions with Forecastro.</p>
+            <p className="text-muted-foreground mb-8">Join thousands of businesses making smarter decisions with Forecastro AI.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" onClick={() => switchView("pricing")} className="w-full sm:w-auto">
                 Get Started Now
