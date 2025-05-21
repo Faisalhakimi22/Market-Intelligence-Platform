@@ -3,15 +3,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { insertUserSchema } from "@shared/schema";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth, LoginValues, RegisterValues } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-
-// UI Components
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   LineChart as RechartsLineChart,
   Line,
@@ -142,39 +138,6 @@ const registerSchema = insertUserSchema.extend({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 type RegisterFormValues = z.infer<typeof registerSchema>;
-
-// Animated logo component
-const AnimatedLogo = () => (
-  <div className="relative h-16 w-16 mb-6">
-    <motion.div
-      className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary via-purple-500 to-blue-500 opacity-80"
-      animate={{
-        scale: [1, 1.05, 1],
-        rotate: [0, 5, 0, -5, 0],
-      }}
-      transition={{
-        duration: 5,
-        repeat: Infinity,
-        ease: "easeInOut",
-      }}
-    />
-    <div className="absolute inset-1 rounded-lg bg-background/95 flex items-center justify-center">
-      <motion.div
-        initial={{ y: 0 }}
-        animate={{
-          y: [0, -3, 0, 3, 0],
-        }}
-        transition={{
-          duration: 3,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      >
-        <BarChart2 className="h-8 w-8 text-primary" />
-      </motion.div>
-    </div>
-  </div>
-);
 
 // Logo Component
 const Logo = () => (
@@ -385,13 +348,16 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
   
   return (
     <>
-      {/* Cursor AI Style Header */}
       <header 
-        className="fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out bg-background/70 backdrop-blur-xl border-b border-neutral-800/10 dark:border-neutral-50/10"
+        className={cn(
+          "fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out",
+          isHeaderVisible ? "translate-y-0" : "-translate-y-full",
+          "bg-background/60 backdrop-blur-xl border-b border-border/10"
+        )}
       >
-        <div className="container mx-auto px-4">
-          <div className="flex h-16 items-center justify-between">
-            {/* Logo */}
+        <div className="container mx-auto px-6">
+          <div className="flex h-20 items-center justify-between">
+            {/* Animated Logo */}
             <motion.div
               className="flex items-center gap-2 cursor-pointer"
               onClick={() => switchView('auth')}
@@ -399,56 +365,99 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
               whileTap={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
-              <div className="relative h-8 w-8 overflow-hidden rounded-md">
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary to-violet-500"></div>
-                <div className="absolute inset-[0.15rem] bg-background/90 rounded-[4px] flex items-center justify-center">
+              <div className="relative h-10 w-10 overflow-hidden rounded-xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary via-purple-600 to-pink-500 animate-gradient-xy"></div>
+                <div className="absolute inset-0.5 bg-background/90 rounded-[10px] flex items-center justify-center">
                   <motion.div
                     animate={{ 
-                      y: [0, -1.5, 0, 1.5, 0],
+                      y: [0, -3, 0, 3, 0],
+                      rotate: [0, -5, 0, 5, 0]
                     }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
                   >
-                    <BarChart2 className="h-5 w-5 text-primary" />
+                    <BarChart2 className="h-6 w-6 text-primary" />
                   </motion.div>
                 </div>
               </div>
-              <h1 className="text-lg font-bold text-foreground">
-                Forecastro<span className="text-primary">AI</span>
+              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-pink-500">
+                Forecastro AI
               </h1>
             </motion.div>
 
-            {/* Desktop Navigation - Center Aligned Pills Like Cursor */}
-            <nav className="hidden md:flex items-center">
-              <div className="relative flex items-center rounded-full bg-muted/40 p-1 text-sm">
-                {["Features", "Pricing", "API", "Blog", "Resources"].map((item, i) => (
+            {/* Desktop Navigation */}
+            <nav 
+              className="hidden lg:block relative"
+              ref={navContainerRef}
+            >
+              <div className="flex items-center gap-8">
+                {navItems.map((item) => (
                   <button 
-                    key={item}
-                    onClick={() => switchView(item.toLowerCase() as ViewId)}
+                    key={item.id}
+                    ref={(el) => navRefs.current[item.id] = el}
+                    onClick={() => switchView(item.view)}
+                    onMouseEnter={() => setHoveredItem(item.id)}
+                    onMouseLeave={() => setHoveredItem(null)}
                     className={cn(
-                      "px-3 py-1.5 rounded-full text-sm font-medium transition-colors relative",
-                      activeView === item.toLowerCase() 
-                        ? "text-foreground bg-background shadow-sm" 
-                        : "text-muted-foreground hover:text-foreground"
+                      "text-sm font-medium transition-colors duration-200 relative py-1",
+                      activeView === item.view ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                     )}
                   >
-                    {item}
+                    {item.label}
                   </button>
                 ))}
+                
+                {/* Animated pill indicator */}
+                <motion.div 
+                  className="header-pill absolute h-0.5 bottom-0 bg-gradient-to-r from-primary to-purple-500"
+                  style={{ 
+                    left: pillStyle.left,
+                    width: pillStyle.width
+                  }}
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                />
               </div>
             </nav>
 
             {/* Right Side Actions */}
-            <div className="flex items-center gap-4">
-              {/* Theme Toggle */}
-              <ThemeToggle />
+            <div className="flex items-center gap-5">
+              {/* Documentation Link */}
+              <a 
+                href="#" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  switchView('documentation');
+                }} 
+                className="hidden md:flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <FileText className="h-4 w-4" />
+                <span>Docs</span>
+              </a>
               
-              {/* Auth Actions */}
-              <div className="hidden md:flex items-center gap-3">
+              {/* GitHub Link */}
+              <a 
+                href="https://github.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="hidden md:flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd"></path>
+                </svg>
+                <span>GitHub</span>
+              </a>
+              
+              {/* Theme Toggle */}
+              <div className="border-l border-border/30 pl-5 hidden md:block">
+                <ThemeToggle />
+              </div>
+              
+              {/* Sign In / Sign Up Actions */}
+              <div className="flex items-center gap-3">
                 <Button 
                   variant="ghost"
                   size="sm"
                   onClick={() => switchView("login")}
-                  className="text-muted-foreground hover:text-foreground"
+                  className="hidden md:flex hover:bg-muted/50"
                 >
                   Sign In
                 </Button>
@@ -456,30 +465,30 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
                 <Button 
                   onClick={() => switchView("login")}
                   size="sm"
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                  className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white shadow-sm hidden md:flex"
                 >
                   Get Started
                 </Button>
+                
+                {/* Mobile Menu Trigger */}
+                <button 
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+                  className="lg:hidden rounded-md p-2 text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
+                  aria-label="Toggle menu"
+                >
+                  {isMobileMenuOpen ? (
+                    <X className="h-5 w-5" />
+                  ) : (
+                    <Menu className="h-5 w-5" />
+                  )}
+                </button>
               </div>
-              
-              {/* Mobile Menu Button */}
-              <button 
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-                aria-label="Toggle menu"
-              >
-                {isMobileMenuOpen ? (
-                  <X className="h-5 w-5" />
-                ) : (
-                  <Menu className="h-5 w-5" />
-                )}
-              </button>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Cursor AI Style Mobile Menu */}
+      {/* Mobile Menu - Reimagined */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div 
@@ -488,7 +497,7 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 md:hidden bg-background/80 backdrop-blur-sm"
+            className="fixed inset-0 z-40 lg:hidden menu-backdrop"
             onClick={(e) => {
               if (e.target === e.currentTarget) {
                 setIsMobileMenuOpen(false);
@@ -496,73 +505,96 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
             }}
           >
             <motion.div 
-              initial={{ y: "-100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "-100%" }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="w-full border-b border-neutral-800/10 dark:border-neutral-50/10 bg-background/95 backdrop-blur-md shadow-lg"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-background border-l border-border/20 shadow-xl flex flex-col"
             >
-              <div className="max-w-screen-xl mx-auto">
-                <div className="py-4 px-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <div className="h-8 w-8 rounded-md bg-gradient-to-tr from-primary to-violet-500 flex items-center justify-center">
-                        <BarChart2 className="h-5 w-5 text-white" />
-                      </div>
-                      <h2 className="text-lg font-bold">
-                        Forecastro<span className="text-primary">AI</span>
-                      </h2>
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border/20">
+                <h2 className="text-lg font-semibold">Navigation</h2>
+                <button 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-2 rounded-md hover:bg-muted/50 text-muted-foreground"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              
+              <div className="py-6 px-6 flex-1 overflow-y-auto">
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <h3 className="text-xs uppercase tracking-wider text-muted-foreground/70 font-medium">Menu</h3>
+                    <div className="space-y-1.5">
+                      {navItems.map((item) => (
+                        <button 
+                          key={item.id}
+                          onClick={() => {
+                            switchView(item.view);
+                            setIsMobileMenuOpen(false);
+                          }}
+                          className={cn(
+                            "w-full flex items-center gap-3 p-2.5 rounded-lg",
+                            activeView === item.view 
+                              ? "bg-muted text-foreground font-medium" 
+                              : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                          )}
+                        >
+                          <span>{item.label}</span>
+                          {activeView === item.view && (
+                            <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary"></div>
+                          )}
+                        </button>
+                      ))}
                     </div>
-                    <button 
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="p-2 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
                   </div>
                   
-                  <div className="grid grid-cols-1 gap-1 mb-6">
-                    {["Features", "Pricing", "API", "Blog", "Resources"].map((item) => (
-                      <button 
-                        key={item}
-                        onClick={() => {
-                          switchView(item.toLowerCase() as ViewId);
-                          setIsMobileMenuOpen(false);
-                        }}
-                        className={cn(
-                          "flex items-center justify-between p-3 rounded-lg transition-colors",
-                          activeView === item.toLowerCase() 
-                            ? "bg-muted text-foreground font-medium" 
-                            : "hover:bg-muted/50 text-muted-foreground hover:text-foreground"
-                        )}
-                      >
-                        <span>{item}</span>
-                        <ChevronRight className="h-4 w-4 opacity-50" />
-                      </button>
-                    ))}
+                  <div className="space-y-3">
+                    <h3 className="text-xs uppercase tracking-wider text-muted-foreground/70 font-medium">Resources</h3>
+                    <div className="space-y-1.5">
+                      {[
+                        { id: 'documentation', label: 'Documentation', icon: <FileText className="h-4 w-4" /> },
+                        { id: 'guides', label: 'Guides', icon: <BookOpen className="h-4 w-4" /> },
+                        { id: 'blog', label: 'Blog', icon: <Newspaper className="h-4 w-4" /> },
+                      ].map((item) => (
+                        <button 
+                          key={item.id}
+                          onClick={() => {
+                            switchView(item.id as ViewId);
+                            setIsMobileMenuOpen(false);
+                          }}
+                          className="w-full flex items-center gap-3 p-2.5 rounded-lg text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                        >
+                          {item.icon}
+                          <span>{item.label}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  
-                  <div className="border-t border-neutral-800/10 dark:border-neutral-50/10 pt-4 flex flex-col gap-2">
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-center text-sm"
-                      onClick={() => {
-                        switchView("login");
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      Sign In
-                    </Button>
-                    <Button 
-                      className="w-full justify-center text-sm bg-primary hover:bg-primary/90"
-                      onClick={() => {
-                        switchView("login");
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      Get Started
-                    </Button>
-                  </div>
+                </div>
+              </div>
+              
+              <div className="p-6 border-t border-border/20">
+                <div className="flex flex-col gap-3">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-center border-primary/20"
+                    onClick={() => {
+                      switchView("login");
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    Sign In
+                  </Button>
+                  <Button 
+                    className="w-full justify-center bg-gradient-to-r from-primary to-purple-600"
+                    onClick={() => {
+                      switchView("login");
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    Get Started
+                  </Button>
                 </div>
               </div>
             </motion.div>
@@ -574,29 +606,33 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
 };
 
 export default function AuthPage() {
-  const [activeView, setActiveView] = useState<ViewId>("auth");
   const [_, navigate] = useLocation();
   const { user, loginMutation, registerMutation, isLoading } = useAuth();
+  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("annual");
   const [activeTab, setActiveTab] = useState("login");
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeView, setActiveView] = useState<ViewId>("auth");
   
-  // Cursor position for hover effect
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const cardRef = useRef<HTMLDivElement>(null);
-  
+  // Hide header on scroll down, show on scroll up
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (cardRef.current) {
-        const rect = cardRef.current.getBoundingClientRect();
-        setMousePosition({
-          x: e.clientX - rect.left - rect.width / 2,
-          y: e.clientY - rect.top - rect.height / 2,
-        });
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        setIsHeaderVisible(false);
+      } else {
+        setIsHeaderVisible(true);
       }
+      setLastScrollY(currentScrollY);
     };
     
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [lastScrollY]);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -1163,535 +1199,743 @@ export default function AuthPage() {
     return data;
   };
 
-  if (activeView === "login" || activeView === "auth") {
-    return (
-      <div className="relative min-h-screen w-full overflow-hidden bg-background text-foreground flex flex-col">
-        {/* Animated background */}
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/5 via-background to-background" />
-        
-        {/* Animated blobs */}
-        <div className="absolute top-0 left-0 -z-10 h-[30rem] w-[30rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute bottom-0 right-0 -z-10 h-[40rem] w-[40rem] translate-x-1/2 translate-y-1/2 rounded-full bg-purple-500/10 blur-3xl" />
-        
-        {/* Page header */}
-        <header className="container mx-auto py-6 px-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => switchView("auth")}>
-            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center">
-              <BarChart2 className="h-6 w-6 text-white" />
+  if (activeView === "auth") {
+    return renderBaseLayout(
+      <main>
+        {/* Hero Section - Advanced Design */}
+        <section className="relative pt-32 pb-16 overflow-hidden">
+          {/* Decorative elements */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute left-1/4 -top-48 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-70" />
+            <div className="absolute right-1/3 top-1/3 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl opacity-60" />
+            
+            {/* Animated lines */}
+            <motion.div 
+              className="absolute left-0 right-0 top-24 h-px bg-gradient-to-r from-transparent via-border to-transparent"
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: 0.5 }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+            />
+            
+            {/* Grid pattern overlay */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,transparent_0%,transparent_49.5%,rgba(var(--foreground-rgb),0.05)_49.5%,rgba(var(--foreground-rgb),0.05)_50.5%,transparent_50.5%,transparent_100%),linear-gradient(to_bottom,transparent_0%,transparent_49.5%,rgba(var(--foreground-rgb),0.05)_49.5%,rgba(var(--foreground-rgb),0.05)_50.5%,transparent_50.5%,transparent_100%)] bg-[length:40px_40px] opacity-[0.15]" />
             </div>
-            <h1 className="text-xl font-bold">
-              Forecastro<span className="text-primary">AI</span>
-            </h1>
-          </div>
-          
-          <div className="flex items-center gap-6">
-            <ThemeToggle />
-            {activeView === "auth" && (
-              <Button 
-                size="sm" 
-                onClick={() => setActiveView("login")}
+
+          <div className="container mx-auto px-6">
+            <div className="max-w-5xl mx-auto text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex rounded-full mb-6 px-3 py-1 bg-primary/10 text-primary text-xs font-medium uppercase tracking-wider"
               >
-                Sign In
-              </Button>
-            )}
-          </div>
-        </header>
-        
-        <AnimatePresence mode="wait">
-          {activeView === "auth" ? (
-            <motion.main
-              key="auth"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex-1 container mx-auto flex flex-col-reverse lg:flex-row py-8 px-4 items-center gap-12"
-            >
-              {/* Left column: Features and info */}
-              <div className="w-full lg:w-1/2 space-y-8">
-                <div className="max-w-lg">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                  >
-                    <div className="inline-flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium mb-4">
-                      <Sparkles className="h-3.5 w-3.5" />
-                      <span>AI-Powered Market Intelligence</span>
-                    </div>
-                  </motion.div>
-                  
-                  <motion.h1
-                    className="text-4xl lg:text-5xl font-bold leading-tight mb-4"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    Transform Your <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">Market Analysis</span> with AI
-                  </motion.h1>
-                  
-                  <motion.p
-                    className="text-lg text-muted-foreground mb-8"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    Gain unprecedented insights into market trends, competitor strategies, and growth opportunities with our advanced AI platform.
-                  </motion.p>
-                  
-                  <motion.div
-                    className="flex flex-wrap gap-4"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                  >
-                    <Button 
-                      size="lg"
-                      className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white"
-                      onClick={() => setActiveView("login")}
-                    >
-                      Get Started
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                    
-                    <Button 
-                      size="lg"
+                AI-Powered Market Intelligence
+              </motion.div>
+              
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-4xl md:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground to-foreground/70 max-w-4xl mx-auto mb-6 leading-tight"
+              >
+                Transform Market Data Into <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-pink-500">Strategic Insights</span>
+              </motion.h1>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8"
+              >
+                Forecastro AI analyzes millions of market data points in real-time to deliver actionable insights, helping businesses stay ahead of trends and outpace competitors.
+              </motion.p>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="flex flex-col sm:flex-row gap-4 justify-center"
+              >
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white px-8 shadow-md hover:shadow-xl hover:shadow-primary/10 transition-all duration-200"
+                  onClick={() => switchView("pricing")}
+                >
+                  Start Free Trial
+                </Button>
+                
+                <Dialog>
+                  <DialogTrigger asChild>
+                <Button
                       variant="outline"
+                  size="lg"
+                      className="px-8 bg-background/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 hover:bg-primary/5"
                     >
-                      View Demo
+                      <Play className="mr-2 h-4 w-4" /> Watch Demo
                     </Button>
-                  </motion.div>
+                  </DialogTrigger>
+                  <DemoModal />
+                </Dialog>
+              </motion.div>
+            </div>
+            
+            {/* Dashboard Preview Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.4 }}
+              className="relative rounded-xl border border-border/40 shadow-2xl shadow-primary/5 overflow-hidden backdrop-blur-sm bg-background/30 max-w-5xl mx-auto"
+            >
+              {/* Toolbar */}
+              <div className="border-b border-border/40 bg-muted/50 px-4 py-3 flex items-center">
+                <div className="flex space-x-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500/70"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/70"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500/70"></div>
                 </div>
-                
-                <Separator className="my-8" />
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {[
-                    {
-                      icon: <LineChart className="h-6 w-6 text-primary" />,
-                      title: "Real-time Analytics",
-                      description: "Track market trends as they happen with our real-time analytics dashboard"
-                    },
-                    {
-                      icon: <BrainCircuit className="h-6 w-6 text-primary" />,
-                      title: "AI Predictions",
-                      description: "Forecast market changes with our industry-leading AI prediction models"
-                    },
-                    {
-                      icon: <Users className="h-6 w-6 text-primary" />,
-                      title: "Competitor Tracking",
-                      description: "Monitor your competitors' strategies, pricing, and market positions"
-                    },
-                    {
-                      icon: <Target className="h-6 w-6 text-primary" />,
-                      title: "Growth Opportunities",
-                      description: "Identify new market opportunities before your competitors"
-                    }
-                  ].map((feature, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5 + (i * 0.1) }}
-                      className="rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 hover:border-primary/20 transition-all duration-300"
-                      whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                    >
-                      <div className="rounded-lg bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
-                        {feature.icon}
-                      </div>
-                      <h3 className="font-medium text-lg mb-2">{feature.title}</h3>
-                      <p className="text-sm text-muted-foreground">{feature.description}</p>
-                    </motion.div>
-                  ))}
+                <div className="flex-1 flex justify-center">
+                  <div className="text-xs text-muted-foreground bg-background/40 rounded-full px-3 py-0.5">
+                    Forecastro AI Dashboard
+                  </div>
                 </div>
               </div>
               
-              {/* Right column: Visual */}
-              <div className="w-full lg:w-1/2 flex justify-center">
-                <motion.div
-                  ref={cardRef}
-                  className="relative w-full max-w-md aspect-square rounded-2xl overflow-hidden border border-border/50 backdrop-blur-md bg-card/30"
-                  style={{
-                    transform: `perspective(1000px) rotateY(${mousePosition.x / 30}deg) rotateX(${-mousePosition.y / 30}deg)`,
-                    transition: 'transform 0.1s ease-out',
-                  }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <div className="absolute inset-0 p-6 flex flex-col">
-                    <div className="flex justify-between items-center mb-4">
-                      <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <BarChart2 className="h-5 w-5 text-primary" />
-                      </div>
-                      
-                      <div className="text-xs text-muted-foreground bg-background/40 rounded-full px-3 py-1">
-                        Live Dashboard
+              {/* Dashboard Content */}
+              <div className="p-6">
+                {/* Enhanced Header with Stats */}
+                <div className="grid grid-cols-4 gap-4 mb-6">
+                  <div className="col-span-2">
+                    <h3 className="text-xl font-bold flex items-center gap-2">
+                      Market Overview
+                      <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20">Live</Badge>
+                      <motion.div 
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="h-2 w-2 rounded-full bg-green-500"
+                      />
+                    </h3>
+                    <p className="text-sm text-muted-foreground">Real-time analysis of global markets</p>
+                  </div>
+                  
+                  <div className="col-span-2 flex justify-end items-center gap-4">
+                    <div className="text-right">
+                      <div className="text-sm text-muted-foreground">Last updated</div>
+                      <div className="text-sm font-medium flex items-center">
+                        Just now
+                        <motion.span 
+                          className="ml-2 h-2 w-2 rounded-full bg-green-500"
+                          animate={{ opacity: [1, 0.5, 1] }}
+                          transition={{ duration: 1.5, repeat: Infinity }}
+                        />
                       </div>
                     </div>
                     
-                    <div className="h-72 flex items-center justify-center">
-                      <div className="relative">
+                    <div className="h-8 w-px bg-border"></div>
+                    
+                    <div className="text-right">
+                      <div className="text-sm text-muted-foreground">AI confidence</div>
+                      <div className="text-sm font-medium flex items-center">
+                        98.2%
                         <motion.div
-                          className="absolute h-64 w-64 rounded-full border border-primary/20"
-                          animate={{
-                            rotate: 360,
-                          }}
-                          transition={{
-                            duration: 20,
-                            repeat: Infinity,
-                            ease: "linear",
-                          }}
+                          className="ml-2"
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                         >
-                          <motion.div
-                            className="absolute -top-2 -left-2 h-4 w-4 rounded-full bg-primary"
-                            animate={{
-                              scale: [1, 1.2, 1],
-                            }}
-                            transition={{
-                              duration: 2,
-                              repeat: Infinity,
-                              ease: "easeInOut",
+                          <BrainCircuit className="h-4 w-4 text-primary" />
+                        </motion.div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Enhanced Chart Area */}
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                  {/* Main Chart */}
+                  <div className="col-span-2 border border-border/40 rounded-lg overflow-hidden bg-muted/20 backdrop-blur-sm">
+                    <div className="border-b border-border/40 bg-muted/30 px-3 py-2 flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <LineChart className="h-4 w-4 text-primary" />
+                        <span className="text-sm font-medium">Market Trends</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {["1D", "1W", "1M", "1Y", "All"].map((period, i) => (
+                          <button 
+                            key={i} 
+                            className={cn(
+                              "text-xs px-2 py-1 rounded transition-colors",
+                              period === "1M" 
+                                ? "bg-primary text-primary-foreground" 
+                                : "text-muted-foreground hover:bg-muted/50"
+                            )}
+                          >
+                            {period}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="p-4 h-[300px] relative">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart
+                          data={generateMarketData(30)}
+                          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                        >
+                          <defs>
+                            <linearGradient id="marketGradient" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.2}/>
+                              <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                            </linearGradient>
+                          </defs>
+                          <XAxis
+                            dataKey="date"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                          />
+                          <YAxis
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                            domain={['auto', 'auto']}
+                            tickFormatter={(value) => `$${value.toLocaleString()}`}
+                          />
+                          <CartesianGrid
+                            strokeDasharray="3 3"
+                            vertical={false}
+                            stroke="hsl(var(--border))"
+                            opacity={0.2}
+                          />
+                          <Tooltip
+                            content={({ active, payload, label }) => {
+                              if (active && payload && payload.length) {
+                                return (
+                                  <div className="rounded-lg border border-border bg-background p-3 shadow-lg">
+                                    <div className="text-sm font-medium mb-1">{label}</div>
+                                    <div className="text-sm text-muted-foreground">
+                                      Value: <span className="text-primary font-medium">${payload[0].value.toLocaleString()}</span>
+                                    </div>
+                                    <div className="text-sm text-muted-foreground">
+                                      Volume: <span className="text-primary font-medium">{payload[0].payload.volume.toLocaleString()}</span>
+                                    </div>
+                                  </div>
+                                );
+                              }
+                              return null;
                             }}
                           />
-                        </motion.div>
-                        
-                        <motion.div
-                          className="absolute h-48 w-48 rounded-full border border-primary/15"
-                          animate={{
-                            rotate: -360,
-                          }}
-                          transition={{
-                            duration: 25,
-                            repeat: Infinity,
-                            ease: "linear",
-                          }}
-                        >
-                          <motion.div
-                            className="absolute -bottom-2 -right-2 h-4 w-4 rounded-full bg-purple-500"
-                            animate={{
-                              scale: [1, 1.3, 1],
-                            }}
-                            transition={{
-                              duration: 3,
-                              repeat: Infinity,
-                              ease: "easeInOut",
-                              delay: 0.5,
+                          <Area
+                            type="monotone"
+                            dataKey="value"
+                            stroke="hsl(var(--primary))"
+                            strokeWidth={2}
+                            fill="url(#marketGradient)"
+                            dot={false}
+                            activeDot={{
+                              r: 4,
+                              fill: "hsl(var(--primary))",
+                              stroke: "hsl(var(--background))",
+                              strokeWidth: 2,
                             }}
                           />
-                        </motion.div>
-                        
-                        <div className="relative h-32 w-32 rounded-full bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center backdrop-blur-sm">
-                          <Globe className="h-16 w-16 text-primary/40" />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+
+                  {/* Side Stats */}
+                  <div className="space-y-4">
+                    {/* Market Summary */}
+                    <div className="border border-border/40 rounded-lg p-4 bg-muted/20 backdrop-blur-sm">
+                      <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                        <Target className="h-4 w-4 text-primary" />
+                        Market Summary
+                      </h4>
+                      <div className="space-y-2">
+                        {[
+                          { label: "Trading Volume", value: "$2.8M", change: "+12.3%" },
+                          { label: "Active Markets", value: "142", change: "+5" },
+                          { label: "Market Volatility", value: "Low", change: "-2.1%" }
+                        ].map((item, i) => (
+                          <div key={i} className="flex items-center justify-between text-sm">
+                            <span className="text-muted-foreground">{item.label}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{item.value}</span>
+                              <span className={cn(
+                                "text-xs",
+                                item.change.startsWith("+") ? "text-green-500" : "text-red-500"
+                              )}>
+                                {item.change}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* AI Insights */}
+                    <div className="border border-border/40 rounded-lg p-4 bg-muted/20 backdrop-blur-sm">
+                      <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                        <BrainCircuit className="h-4 w-4 text-primary" />
+                        AI Insights
+                      </h4>
+                      <div className="space-y-3">
+                        <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
+                          <div className="flex items-start gap-2">
+                            <TrendingUp className="h-4 w-4 text-green-500 mt-0.5" />
+                            <div>
+                              <div className="text-sm font-medium text-green-500">Growth Opportunity</div>
+                              <p className="text-xs text-muted-foreground">Emerging market trend detected in sector XYZ</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                          <div className="flex items-start gap-2">
+                            <AlertCircle className="h-4 w-4 text-yellow-500 mt-0.5" />
+                            <div>
+                              <div className="text-sm font-medium text-yellow-500">Market Alert</div>
+                              <p className="text-xs text-muted-foreground">Potential volatility increase expected</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    
-                    <div className="mt-auto grid grid-cols-3 gap-3">
+                  </div>
+                </div>
+
+                {/* Enhanced Stats Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                  {[
+                    { 
+                      label: "Market Growth", 
+                      value: "+24.8%", 
+                      trend: "up", 
+                      percent: "+2.4%",
+                      color: "from-green-500/20 to-green-500/5"
+                    },
+                    { 
+                      label: "Opportunity Score", 
+                      value: "86/100", 
+                      trend: "up", 
+                      percent: "+12%",
+                      color: "from-blue-500/20 to-blue-500/5"
+                    },
+                    { 
+                      label: "Risk Level", 
+                      value: "Low", 
+                      trend: "down", 
+                      percent: "-5%",
+                      color: "from-amber-500/20 to-amber-500/5"
+                    }
+                  ].map((stat, i) => (
+                    <motion.div
+                      key={i}
+                      className={cn(
+                        "border border-border/40 rounded-lg p-4",
+                        "bg-gradient-to-br backdrop-blur-sm",
+                        stat.color
+                      )}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.5 + (i * 0.1) }}
+                      whileHover={{ scale: 1.02 }}
+                    >
+                      <div className="text-sm text-muted-foreground mb-1">{stat.label}</div>
+                      <div className="flex justify-between items-center">
+                        <div className="text-2xl font-bold">{stat.value}</div>
+                  <div className={cn(
+                          "flex items-center text-xs font-medium px-2 py-1 rounded-full",
+                          stat.trend === "up" 
+                            ? "text-green-500 bg-green-500/10" 
+                            : "text-red-500 bg-red-500/10"
+                        )}>
+                          {stat.trend === "up" 
+                            ? <TrendingUp className="h-3 w-3 mr-1" /> 
+                            : <TrendingDown className="h-3 w-3 mr-1" />
+                          }
+                          {stat.percent}
+                  </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Recent Activities */}
+                <div className="border border-border/40 rounded-lg overflow-hidden bg-muted/20 backdrop-blur-sm">
+                  <div className="border-b border-border/40 bg-muted/30 px-3 py-2 flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <Activity className="h-4 w-4 text-primary" />
+                      <span className="text-sm font-medium">Recent Activities</span>
+                    </div>
+                    <Button variant="ghost" size="sm" className="text-xs">
+                      View All
+                      <ChevronRight className="h-3 w-3 ml-1" />
+                    </Button>
+                  </div>
+                  
+                  <div className="p-4">
+                    <div className="space-y-4">
                       {[
-                        { label: "Markets", value: "4,628", color: "bg-primary/10 text-primary" },
-                        { label: "Growth", value: "+28%", color: "bg-green-500/10 text-green-500" },
-                        { label: "Accuracy", value: "98.2%", color: "bg-blue-500/10 text-blue-500" }
-                      ].map((stat, i) => (
-                        <div key={i} className={`rounded-lg p-3 ${stat.color}`}>
-                          <div className="font-bold text-lg">{stat.value}</div>
-                          <div className="text-xs opacity-80">{stat.label}</div>
+                        {
+                          icon: <Search className="h-4 w-4" />,
+                          title: "Market Analysis Completed",
+                          desc: "AI analysis of tech sector completed",
+                          time: "2 mins ago",
+                          color: "text-blue-500"
+                        },
+                        {
+                          icon: <AlertTriangle className="h-4 w-4" />,
+                          title: "New Market Opportunity",
+                          desc: "Potential growth detected in sector ABC",
+                          time: "15 mins ago",
+                          color: "text-green-500"
+                        },
+                        {
+                          icon: <RefreshCcw className="h-4 w-4" />,
+                          title: "Data Update",
+                          desc: "Market data refreshed successfully",
+                          time: "1 hour ago",
+                          color: "text-amber-500"
+                        }
+                      ].map((activity, i) => (
+                        <div key={i} className="flex items-start gap-4">
+                          <div className={cn(
+                            "h-8 w-8 rounded-full flex items-center justify-center",
+                            "bg-background border border-border",
+                            activity.color
+                          )}>
+                            {activity.icon}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <div className="font-medium text-sm">{activity.title}</div>
+                              <div className="text-xs text-muted-foreground">{activity.time}</div>
+                            </div>
+                            <div className="text-xs text-muted-foreground">{activity.desc}</div>
+                          </div>
                         </div>
                       ))}
                     </div>
                   </div>
-                </motion.div>
-              </div>
-            </motion.main>
-          ) : (
-            <motion.main
-              key="login"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex-1 flex items-center justify-center"
-            >
-              <div className="w-full max-w-md px-6 py-12">
-                <div className="flex flex-col items-center">
-                  <AnimatedLogo />
-                  
-                  <h1 className="text-2xl font-bold mb-1 text-center">
-                    Welcome to Forecastro<span className="text-primary">AI</span>
-                  </h1>
-                  
-                  <p className="text-muted-foreground text-center mb-8">
-                    Sign in to continue to your dashboard
-                  </p>
-                  
-                  <motion.div
-                    className="w-full rounded-xl border bg-card/60 backdrop-blur-md shadow-lg"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.4 }}
-                  >
-                    <Tabs 
-                      defaultValue="login" 
-                      className="w-full" 
-                      onValueChange={setActiveTab}
-                      value={activeTab}
-                    >
-                      <div className="p-6">
-                        <TabsList className="grid grid-cols-2 w-full mb-6">
-                          <TabsTrigger value="login">Sign In</TabsTrigger>
-                          <TabsTrigger value="register">Create Account</TabsTrigger>
-                        </TabsList>
-                        
-                        <TabsContent value="login" className="mt-0 space-y-4">
-                          <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
-                            <div className="space-y-4">
-                              <div className="space-y-2">
-                                <Label htmlFor="username">Username</Label>
-                                <div className="relative">
-                                  <User className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground/50" />
-                                  <Input
-                                    id="username"
-                                    placeholder="Enter your username"
-                                    className="pl-10"
-                                    {...loginForm.register("username")}
-                                  />
-                                </div>
-                                {loginForm.formState.errors.username && (
-                                  <p className="text-sm text-destructive">{loginForm.formState.errors.username.message}</p>
-                                )}
-                              </div>
-                              
-                              <div className="space-y-2">
-                                <Label htmlFor="password">Password</Label>
-                                <div className="relative">
-                                  <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground/50" />
-                                  <Input
-                                    id="password"
-                                    type="password"
-                                    placeholder="••••••••"
-                                    className="pl-10"
-                                    {...loginForm.register("password")}
-                                  />
-                                </div>
-                                {loginForm.formState.errors.password && (
-                                  <p className="text-sm text-destructive">{loginForm.formState.errors.password.message}</p>
-                                )}
-                              </div>
-                              
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-2">
-                                  <Checkbox id="remember" />
-                                  <label
-                                    htmlFor="remember"
-                                    className="text-sm text-muted-foreground cursor-pointer"
-                                  >
-                                    Remember me
-                                  </label>
-                                </div>
-                                
-                                <button type="button" className="text-sm text-primary hover:underline">
-                                  Forgot password?
-                                </button>
-                              </div>
-                            </div>
-                            
-                            <Button type="submit" className="w-full" disabled={isLoading}>
-                              {isLoading ? (
-                                <>
-                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  Signing in...
-                                </>
-                              ) : (
-                                <>
-                                  Sign In
-                                  <ArrowRight className="ml-2 h-4 w-4" />
-                                </>
-                              )}
-                            </Button>
-                          </form>
-                          
-                          <div className="relative my-6">
-                            <div className="absolute inset-0 flex items-center">
-                              <div className="w-full border-t border-border"></div>
-                            </div>
-                            <div className="relative flex justify-center text-xs uppercase">
-                              <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
-                            </div>
-                          </div>
-                          
-                          <div className="grid grid-cols-1 gap-3">
-                            <Button variant="outline" className="w-full">
-                              <Github className="mr-2 h-4 w-4" />
-                              GitHub
-                            </Button>
-                          </div>
-                        </TabsContent>
-                        
-                        <TabsContent value="register" className="mt-0 space-y-4">
-                          <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
-                            <div className="space-y-4">
-                              <div className="grid gap-4">
-                                <div className="space-y-2">
-                                  <Label htmlFor="name">Full Name</Label>
-                                  <Input
-                                    id="name"
-                                    placeholder="John Doe"
-                                    {...registerForm.register("name")}
-                                  />
-                                  {registerForm.formState.errors.name && (
-                                    <p className="text-sm text-destructive">{registerForm.formState.errors.name.message}</p>
-                                  )}
-                                </div>
-                                
-                                <div className="space-y-2">
-                                  <Label htmlFor="email">Email</Label>
-                                  <div className="relative">
-                                    <Mail className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground/50" />
-                                    <Input
-                                      id="email"
-                                      type="email"
-                                      placeholder="you@example.com"
-                                      className="pl-10"
-                                      {...registerForm.register("email")}
-                                    />
-                                  </div>
-                                  {registerForm.formState.errors.email && (
-                                    <p className="text-sm text-destructive">{registerForm.formState.errors.email.message}</p>
-                                  )}
-                                </div>
-                                
-                                <div className="space-y-2">
-                                  <Label htmlFor="username">Username</Label>
-                                  <div className="relative">
-                                    <User className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground/50" />
-                                    <Input
-                                      id="username"
-                                      placeholder="Choose a username"
-                                      className="pl-10"
-                                      {...registerForm.register("username")}
-                                    />
-                                  </div>
-                                  {registerForm.formState.errors.username && (
-                                    <p className="text-sm text-destructive">{registerForm.formState.errors.username.message}</p>
-                                  )}
-                                </div>
-                                
-                                <div className="space-y-2">
-                                  <Label htmlFor="password">Password</Label>
-                                  <div className="relative">
-                                    <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground/50" />
-                                    <Input
-                                      id="password"
-                                      type="password"
-                                      placeholder="Create a secure password"
-                                      className="pl-10"
-                                      {...registerForm.register("password")}
-                                    />
-                                  </div>
-                                  {registerForm.formState.errors.password && (
-                                    <p className="text-sm text-destructive">{registerForm.formState.errors.password.message}</p>
-                                  )}
-                                </div>
-                                
-                                <div className="space-y-2">
-                                  <Label htmlFor="confirmPassword">Confirm Password</Label>
-                                  <div className="relative">
-                                    <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground/50" />
-                                    <Input
-                                      id="confirmPassword"
-                                      type="password"
-                                      placeholder="Confirm your password"
-                                      className="pl-10"
-                                      {...registerForm.register("confirmPassword")}
-                                    />
-                                  </div>
-                                  {registerForm.formState.errors.confirmPassword && (
-                                    <p className="text-sm text-destructive">{registerForm.formState.errors.confirmPassword.message}</p>
-                                  )}
-                                </div>
-                              </div>
-                              
-                              <div className="flex items-start space-x-2">
-                                <Checkbox
-                                  id="terms"
-                                  onCheckedChange={(checked) => {
-                                    registerForm.setValue("terms", checked === true);
-                                  }}
-                                  checked={registerForm.watch("terms")}
-                                />
-                                <div className="grid gap-1.5 leading-none">
-                                  <label
-                                    htmlFor="terms"
-                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                                  >
-                                    Accept terms and conditions
-                                  </label>
-                                  <p className="text-sm text-muted-foreground">
-                                    By creating an account, you agree to our Terms of Service and Privacy Policy.
-                                  </p>
-                                </div>
-                              </div>
-                              {registerForm.formState.errors.terms && (
-                                <p className="text-sm text-destructive">{registerForm.formState.errors.terms.message}</p>
-                              )}
-                              
-                              <Button type="submit" className="w-full" disabled={isLoading}>
-                                {isLoading ? (
-                                  <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Creating Account...
-                                  </>
-                                ) : (
-                                  <>
-                                    Create Account
-                                    <ArrowRight className="ml-2 h-4 w-4" />
-                                  </>
-                                )}
-                              </Button>
-                            </div>
-                          </form>
-                        </TabsContent>
-                      </div>
-                    </Tabs>
-                  </motion.div>
-                  
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                    className="mt-8 space-y-4"
-                  >
-                    {[
-                      "Real-time market analytics",
-                      "AI-powered predictions",
-                      "Comprehensive competitor tracking",
-                      "24/7 market monitoring"
-                    ].map((feature, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: 0.3 + (i * 0.1) }}
-                        className="flex items-center space-x-2 text-sm text-muted-foreground"
-                      >
-                        <CheckCircle className="h-4 w-4 text-primary" />
-                        <span>{feature}</span>
-                      </motion.div>
-                    ))}
-                  </motion.div>
                 </div>
               </div>
-            </motion.main>
-          )}
-        </AnimatePresence>
+            </motion.div>
+            
+            {/* Trusted By Section */}
+            <div className="mt-20 text-center">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="text-sm font-medium text-muted-foreground mb-6"
+              >
+                TRUSTED BY INNOVATIVE COMPANIES WORLDWIDE
+              </motion.p>
+              
+              <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8">
+                {["Microsoft", "Google", "Amazon", "Shopify", "Adobe"].map((company, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                    className="text-muted-foreground/60 hover:text-muted-foreground transition-colors duration-300 text-xl font-semibold"
+                  >
+                    {company}
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section - Advanced version */}
+        <section className="py-24 relative">
+          <div className="container mx-auto px-6">
+            <div className="max-w-3xl mx-auto text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm text-primary bg-primary/10 font-medium mb-6"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>Advanced Capabilities</span>
+              </motion.div>
+              
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-3xl md:text-4xl font-bold mb-6"
+              >
+                Harness the Power of AI for Market Intelligence
+              </motion.h2>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-muted-foreground text-lg"
+              >
+                Our AI-powered platform provides comprehensive market analysis and predictive insights to help your business make data-driven decisions with confidence.
+              </motion.p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+              {[
+                {
+                  icon: <LineChart className="h-6 w-6" />,
+                  title: "Real-time Analytics",
+                  description: "Monitor market trends and competitors with our real-time analytics dashboard, updated every minute."
+                },
+                {
+                  icon: <BrainCircuit className="h-6 w-6" />,
+                  title: "AI Predictions",
+                  description: "Our advanced machine learning models predict market trends with industry-leading 96% accuracy."
+                },
+                {
+                  icon: <Users className="h-6 w-6" />,
+                  title: "Competitor Intelligence",
+                  description: "Track your competitors' strategies, pricing, and market positioning to stay ahead."
+                },
+                {
+                  icon: <Target className="h-6 w-6" />,
+                  title: "Opportunity Detection",
+                  description: "Automatically identify market gaps and growth opportunities before your competitors."
+                },
+                {
+                  icon: <BarChart className="h-6 w-6" />,
+                  title: "Custom Reports",
+                  description: "Generate comprehensive market reports tailored to your specific business needs."
+                },
+                {
+                  icon: <Zap className="h-6 w-6" />,
+                  title: "Smart Alerts",
+                  description: "Receive intelligent notifications about critical market changes that affect your business."
+                }
+              ].map((feature, i) => (
+                <FeatureCard 
+                  key={i}
+                  icon={feature.icon}
+                  title={feature.title}
+                  description={feature.description}
+                  index={i}
+                />
+              ))}
+                    </div>
+            
+            <div className="text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+              >
+                <Button
+                  size="lg"
+                  onClick={() => switchView("features")}
+                  variant="outline"
+                  className="border-primary/20 hover:border-primary/40 hover:bg-primary/5"
+                >
+                  Explore All Features <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </motion.div>
+                    </div>
+                  </div>
+        </section>
         
-        <footer className="container mx-auto py-6 px-4 text-center text-muted-foreground text-sm">
-          &copy; {new Date().getFullYear()} Forecastro AI. All rights reserved.
-        </footer>
-      </div>
+        {/* Metrics Section - With Cards */}
+        <section className="py-20 bg-muted/30 relative">
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute left-1/4 top-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl opacity-70 transform -translate-y-1/2" />
+            <div className="absolute right-1/4 top-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl opacity-70" />
+          </div>
+          
+          <div className="container mx-auto px-6">
+            <div className="max-w-3xl mx-auto text-center mb-16">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="text-3xl md:text-4xl font-bold mb-6"
+              >
+                Proven Results for Businesses Worldwide
+              </motion.h2>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-muted-foreground text-lg"
+              >
+                Companies using Forecastro AI report significant improvements in market understanding, strategic decision-making, and overall business performance.
+              </motion.p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <MetricCard
+                value="10K+"
+                label="Active Users"
+                icon={<Users className="h-5 w-5" />}
+                color="text-blue-500"
+                bgColor="bg-blue-500"
+              />
+              <MetricCard
+                value="32%"
+                label="Average Growth"
+                icon={<TrendingUp className="h-5 w-5" />}
+                color="text-green-500"
+                bgColor="bg-green-500"
+              />
+              <MetricCard
+                value="96%"
+                label="Prediction Accuracy"
+                icon={<Target className="h-5 w-5" />}
+                color="text-purple-500"
+                bgColor="bg-purple-500"
+              />
+              <MetricCard
+                value="24/7"
+                label="Market Monitoring"
+                icon={<LineChart className="h-5 w-5" />}
+                color="text-pink-500"
+                bgColor="bg-pink-500"
+              />
+            </div>
+          </div>
+        </section>
+        
+        {/* Testimonials Section */}
+        <section className="py-24 relative">
+          <div className="container mx-auto px-6">
+            <div className="max-w-3xl mx-auto text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm text-primary bg-primary/10 font-medium mb-6"
+              >
+                <Star className="h-3.5 w-3.5" />
+                <span>Customer Success Stories</span>
+              </motion.div>
+              
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-3xl md:text-4xl font-bold mb-6"
+              >
+                What Our Customers Say
+              </motion.h2>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-muted-foreground text-lg"
+              >
+                Discover how Forecastro AI has transformed businesses across industries with its powerful market intelligence capabilities.
+              </motion.p>
+        </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <TestimonialCard
+                quote="Forecastro AI has completely transformed how we approach market analysis. We've identified three new market opportunities that we would have otherwise missed."
+                author="Sarah Johnson"
+                role="Chief Strategy Officer"
+                company="TechNova Inc."
+                index={0}
+              />
+              <TestimonialCard
+                quote="The AI-powered predictions have been remarkably accurate. We've been able to adjust our strategy ahead of market shifts and gain a significant advantage over competitors."
+                author="Michael Chen"
+                role="VP of Product"
+                company="GrowthWave"
+                index={1}
+              />
+              <TestimonialCard
+                quote="What impressed me most was how quickly we could extract actionable insights from complex market data. Forecastro AI's platform is intuitive yet incredibly powerful."
+                author="Priya Mehta"
+                role="Marketing Director"
+                company="Elevate Brands"
+                index={2}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-20 relative">
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute inset-0 bg-muted/30" />
+            <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent opacity-30" />
+            <div className="absolute left-0 right-0 bottom-0 h-px bg-gradient-to-r from-transparent via-border to-transparent opacity-30" />
+            <div className="absolute left-1/3 top-1/2 w-96 h-96 bg-primary/5 rounded-full blur-3xl opacity-60 transform -translate-y-1/2" />
+            <div className="absolute right-1/3 top-1/4 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl opacity-60" />
+          </div>
+          
+          <div className="container mx-auto px-6 relative">
+            <div className="max-w-4xl mx-auto text-center">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6"
+              >
+                Ready to Transform Your Market Strategy?
+              </motion.h2>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto"
+              >
+                Join thousands of forward-thinking businesses that are leveraging Forecastro AI to gain a competitive edge in their markets.
+              </motion.p>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="flex flex-col sm:flex-row gap-4 justify-center"
+              >
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white px-8 shadow-md hover:shadow-xl hover:shadow-primary/10 transition-all duration-200"
+                  onClick={() => switchView("pricing")}
+                >
+                  Start Free Trial
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="px-8 bg-background/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 hover:bg-primary/5"
+                  onClick={() => switchView("contact")}
+                >
+                  Contact Sales
+                </Button>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+      </main>
     );
   }
   
-  if (activeView === "features") {
+  else if (activeView === "features") {
     return renderBaseLayout(
       <main className="pt-24 pb-16 relative z-10">
         <div className="container mx-auto px-4">
@@ -1740,7 +1984,9 @@ export default function AuthPage() {
         </div>
       </main>
     );
-  } else if (activeView === "pricing") {
+  }
+  
+  else if (activeView === "pricing") {
     return renderBaseLayout(
       <main className="pt-24 pb-16 relative z-10">
         <div className="container mx-auto px-4">
@@ -1829,7 +2075,9 @@ export default function AuthPage() {
         </div>
       </main>
     );
-  } else if (activeView === "faq") {
+  }
+  
+  else if (activeView === "faq") {
     return renderBaseLayout(
       <main className="pt-24 pb-16 relative z-10">
         <div className="container mx-auto px-4">
@@ -1876,7 +2124,9 @@ export default function AuthPage() {
         </div>
       </main>
     );
-  } else if (activeView === "contact") {
+  }
+  
+  else if (activeView === "contact") {
     return renderBaseLayout(
       <main className="pt-24 pb-16 relative z-10">
         <div className="container mx-auto px-4">
@@ -1979,7 +2229,9 @@ export default function AuthPage() {
         </div>
       </main>
     );
-  } else if (activeView === "privacy" || activeView === "terms") {
+  }
+  
+  else if (activeView === "privacy" || activeView === "terms") {
     const isPrivacy = activeView === "privacy";
     return renderBaseLayout(
       <main className="pt-24 pb-16 relative z-10">
@@ -2102,7 +2354,9 @@ export default function AuthPage() {
         </div>
       </main>
     );
-  } else if (activeView === "api") {
+  }
+  // API documentation page
+  else if (activeView === "api") {
     return renderBaseLayout(
       <main className="pt-24 pb-16 relative z-10">
         <div className="container mx-auto px-4">
@@ -2174,7 +2428,10 @@ const fetchMarketData = async () => {
         </div>
       </main>
     );
-  } else if (activeView === "integrations") {
+  }
+  
+  // Integrations page
+  else if (activeView === "integrations") {
     return renderBaseLayout(
       <main className="pt-24 pb-16 relative z-10">
         <div className="container mx-auto px-4">
@@ -2214,7 +2471,10 @@ const fetchMarketData = async () => {
         </div>
       </main>
     );
-  } else if (activeView === "documentation") {
+  }
+  
+  // Documentation page
+  else if (activeView === "documentation") {
     return renderBaseLayout(
       <main className="pt-24 pb-16 relative z-10">
         <div className="container mx-auto px-4">
@@ -2283,7 +2543,10 @@ const fetchMarketData = async () => {
         </div>
       </main>
     );
-  } else if (activeView === "guides") {
+  }
+  
+  // Guides page
+  else if (activeView === "guides") {
     return renderBaseLayout(
       <main className="pt-24 pb-16 relative z-10">
         <div className="container mx-auto px-4">
@@ -2361,7 +2624,10 @@ const fetchMarketData = async () => {
         </div>
       </main>
     );
-  } else if (activeView === "blog") {
+  }
+  
+  // Blog page
+  else if (activeView === "blog") {
     return renderBaseLayout(
       <main className="pt-24 pb-16 relative z-10">
         <div className="container mx-auto px-4">
@@ -2459,7 +2725,10 @@ const fetchMarketData = async () => {
         </div>
       </main>
     );
-  } else if (activeView === "about") {
+  }
+  
+  // About page
+  else if (activeView === "about") {
     return renderBaseLayout(
       <main className="pt-24 pb-16 relative z-10">
         <div className="container mx-auto px-4">
@@ -2552,7 +2821,9 @@ const fetchMarketData = async () => {
         </div>
       </main>
     );
-  } else if (activeView === "login") {
+  }
+  
+  else if (activeView === "login") {
     return renderBaseLayout(
       <main className="pt-24 pb-16 relative z-10">
         <div className="container mx-auto px-4 flex flex-col items-center min-h-[60vh]">
@@ -2809,7 +3080,10 @@ const fetchMarketData = async () => {
         </div>
       </main>
     );
-  } else {
+  }
+  
+  // Default case - display fallback for any other view that wasn't implemented
+  else {
     return renderBaseLayout(
       <main className="pt-24 pb-16 relative z-10">
         <div className="container mx-auto px-4">
