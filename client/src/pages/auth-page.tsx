@@ -5,8 +5,7 @@ import { z } from "zod";
 import { insertUserSchema } from "@shared/schema";
 import { useAuth, LoginValues, RegisterValues } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { useInView } from "react-intersection-observer";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import {
@@ -103,8 +102,7 @@ import {
   Activity,
   Search,
   AlertTriangle,
-  RefreshCcw,
-  Clock
+  RefreshCcw
 } from "lucide-react";
 
 // SVG imports
@@ -607,307 +605,6 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
   );
 };
 
-// Add these new components before AuthPage
-const GlowingButton = ({ children, className, ...props }: any) => {
-  return (
-    <motion.button
-      className={cn(
-        "relative inline-flex items-center justify-center px-6 py-3 overflow-hidden rounded-lg group",
-        "bg-gradient-to-br from-primary/80 to-purple-600/80",
-        "text-white font-medium",
-        "hover:shadow-2xl hover:shadow-primary/20",
-        "transition-all duration-300",
-        className
-      )}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      {...props}
-    >
-      <span className="relative z-10">{children}</span>
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-r from-primary to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        style={{ mixBlendMode: "overlay" }}
-      />
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-r from-primary via-purple-600 to-primary"
-        animate={{
-          backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-        style={{ backgroundSize: "200% 200%" }}
-      />
-    </motion.button>
-  );
-};
-
-const FloatingCard = ({ children, delay = 0, className }: { children: React.ReactNode; delay?: number; className?: string }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
-      className={cn(
-        "relative p-6 rounded-2xl overflow-hidden",
-        "border border-border/50",
-        "bg-gradient-to-b from-background/80 to-muted/30",
-        "backdrop-blur-xl",
-        className
-      )}
-    >
-      <div className="relative z-10">{children}</div>
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-purple-500/5" />
-    </motion.div>
-  );
-};
-
-const HeroSection = () => {
-  const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 300], [0, 100]);
-  const y2 = useTransform(scrollY, [0, 300], [0, -100]);
-  const opacity = useTransform(scrollY, [0, 200], [1, 0]);
-
-  return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden py-20">
-      {/* Background Effects */}
-      <motion.div 
-        className="absolute inset-0 z-0"
-        style={{ opacity }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-background to-background/0" />
-        <div className="absolute inset-0 bg-grid-white/10 bg-grid" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-purple-500/5 to-background/0" />
-      </motion.div>
-
-      {/* Floating Elements */}
-      <motion.div 
-        className="absolute -top-20 -left-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl"
-        style={{ y: y1 }}
-      />
-      <motion.div 
-        className="absolute -bottom-20 -right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"
-        style={{ y: y2 }}
-      />
-
-      {/* Content */}
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left Column */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <Badge 
-                variant="secondary" 
-                className="px-4 py-1 mb-6 bg-primary/10 text-primary dark:bg-primary/20"
-              >
-                <Sparkles className="h-4 w-4 mr-2" />
-                AI-Powered Market Intelligence
-              </Badge>
-            </motion.div>
-
-            <motion.h1
-              className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              Transform Your <br />
-              Market Strategy with <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-primary animate-gradient-x">
-                Forecastro AI
-              </span>
-            </motion.h1>
-
-            <motion.p
-              className="text-lg text-muted-foreground mb-8 max-w-lg"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              Harness the power of advanced AI to predict market trends, analyze competitors, 
-              and identify growth opportunities with unparalleled accuracy.
-            </motion.p>
-
-            <motion.div
-              className="flex flex-wrap gap-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-            >
-              <GlowingButton onClick={() => switchView("auth")}>
-                Get Started Free
-              </GlowingButton>
-              <Button variant="outline" className="group">
-                View Demo
-                <motion.span
-                  className="ml-2 inline-block"
-                  animate={{ x: [0, 4, 0] }}
-                  transition={{ duration: 1, repeat: Infinity }}
-                >
-                  →
-                </motion.span>
-              </Button>
-            </motion.div>
-
-            <motion.div
-              className="mt-12 flex items-center gap-6"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-            >
-              <div className="flex -space-x-3">
-                {[...Array(4)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="w-10 h-10 rounded-full border-2 border-background bg-gradient-to-br from-primary/80 to-purple-600/80"
-                  />
-                ))}
-              </div>
-              <div>
-                <div className="font-medium">Trusted by 10,000+ users</div>
-                <div className="text-sm text-muted-foreground">From startups to enterprises</div>
-              </div>
-            </motion.div>
-          </motion.div>
-
-          {/* Right Column - Interactive Dashboard Preview */}
-          <motion.div
-            className="relative"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <FloatingCard className="relative z-20">
-              <div className="absolute top-2 left-2 right-2 flex items-center px-4 py-2 bg-muted/50 rounded-lg backdrop-blur-sm">
-                <div className="flex space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500/70"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/70"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500/70"></div>
-                </div>
-                <div className="flex-1 text-center">
-                  <span className="text-xs text-muted-foreground">Forecastro AI Dashboard</span>
-                </div>
-              </div>
-
-              <div className="mt-8 space-y-4">
-                {/* Chart Preview */}
-                <div className="h-40 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-lg flex items-end p-4">
-                  {[...Array(12)].map((_, i) => (
-                    <motion.div
-                      key={i}
-                      className="flex-1 bg-primary/40 mx-0.5 rounded-t"
-                      initial={{ height: "20%" }}
-                      animate={{ height: `${30 + Math.random() * 50}%` }}
-                      transition={{
-                        duration: 0.8,
-                        delay: i * 0.1,
-                        repeat: Infinity,
-                        repeatType: "reverse",
-                      }}
-                    />
-                  ))}
-                </div>
-
-                {/* Stats Preview */}
-                <div className="grid grid-cols-3 gap-4">
-                  {[
-                    { label: "Market Growth", value: "+24.8%" },
-                    { label: "AI Confidence", value: "98.2%" },
-                    { label: "Predictions", value: "2.4K" },
-                  ].map((stat, i) => (
-                    <motion.div
-                      key={i}
-                      className="p-4 rounded-lg bg-muted/50"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.6 + i * 0.1 }}
-                    >
-                      <div className="text-sm text-muted-foreground">{stat.label}</div>
-                      <div className="text-lg font-bold">{stat.value}</div>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Activity Feed Preview */}
-                <div className="space-y-2">
-                  {[
-                    "Market analysis completed",
-                    "New opportunity detected",
-                    "Competitor update available",
-                  ].map((activity, i) => (
-                    <motion.div
-                      key={i}
-                      className="flex items-center gap-2 text-sm p-2 rounded-lg bg-muted/30"
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.8 + i * 0.1 }}
-                    >
-                      <div className="h-2 w-2 rounded-full bg-primary"></div>
-                      <span className="text-muted-foreground">{activity}</span>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </FloatingCard>
-
-            {/* Floating Info Cards */}
-            <motion.div
-              className="absolute -right-4 top-20 z-30"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.9 }}
-            >
-              <FloatingCard className="w-48">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="h-8 w-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                    <TrendingUp className="h-4 w-4 text-green-500" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium">Growth</div>
-                    <div className="text-xs text-muted-foreground">Detected</div>
-                  </div>
-                </div>
-                <div className="text-2xl font-bold text-green-500">+32%</div>
-              </FloatingCard>
-            </motion.div>
-
-            <motion.div
-              className="absolute -left-4 bottom-20 z-30"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1 }}
-            >
-              <FloatingCard className="w-48">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="h-8 w-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-                    <Target className="h-4 w-4 text-blue-500" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium">Accuracy</div>
-                    <div className="text-xs text-muted-foreground">AI Model</div>
-                  </div>
-                </div>
-                <div className="text-2xl font-bold text-blue-500">98.2%</div>
-              </FloatingCard>
-            </motion.div>
-          </motion.div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 export default function AuthPage() {
   const [_, navigate] = useLocation();
   const { user, loginMutation, registerMutation, isLoading } = useAuth();
@@ -1212,7 +909,7 @@ export default function AuthPage() {
           <div className="absolute bottom-1/4 left-1/4 w-32 h-32 bg-indigo-500/5 rounded-full blur-xl opacity-70" />
           
           {/* Subtle animated shapes */}
-          <motion.div
+            <motion.div 
             className="absolute top-1/3 left-1/3 w-64 h-64 rounded-full border border-primary/10"
             animate={{
               scale: [1, 1.1, 1],
@@ -1238,7 +935,7 @@ export default function AuthPage() {
               delay: 1
             }}
           />
-        </div>
+                </div>
         
         {/* Modern Header */}
         <ModernHeader 
@@ -1318,12 +1015,12 @@ export default function AuthPage() {
                           <span className="h-0.5 w-0 bg-primary mr-0 group-hover:w-2 group-hover:mr-2 transition-all duration-200"></span>
                           {link}
                         </button>
-                      </li>
+                  </li>
                     ))}
-                  </ul>
-                </div>
+                </ul>
+              </div>
               ))}
-            </div>
+              </div>
             
             <div className="mt-16 border-t border-border/20 pt-8">
               <p className="text-muted-foreground text-xs text-center">
@@ -1504,129 +1201,737 @@ export default function AuthPage() {
 
   if (activeView === "auth") {
     return renderBaseLayout(
-      <>
-        <HeroSection />
-        
-        {/* Features Section */}
-        <section className="py-20 relative">
-          <div className="container mx-auto px-4">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <Badge variant="secondary" className="px-3 py-1 bg-primary/10 text-primary dark:bg-primary/20 gap-1 mb-6 inline-flex">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>Features</span>
-              </Badge>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                Advanced AI-Powered Features for
-                <span className="text-primary"> Market Intelligence</span>
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                Leverage cutting-edge artificial intelligence to gain unprecedented insights
-                into market trends and opportunities.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {features.map((feature, i) => (
-                <FloatingCard key={i} delay={0.2 + i * 0.1}>
-                  <div className={cn(
-                    "h-12 w-12 rounded-xl flex items-center justify-center mb-6",
-                    feature.color
-                  )}>
-                    {feature.icon}
-                  </div>
-                  <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-                  <p className="text-muted-foreground mb-4">{feature.description}</p>
-                  <ul className="space-y-2">
-                    {feature.points.map((point, j) => (
-                      <li key={j} className="flex items-start gap-2 text-sm">
-                        <Check className="h-4 w-4 text-primary mt-1" />
-                        <span>{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </FloatingCard>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Stats Section */}
-        <section className="py-20 relative overflow-hidden">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                {
-                  icon: <Users className="h-6 w-6" />,
-                  label: "Active Users",
-                  value: "10K+",
-                  color: "bg-blue-500/20",
-                  textColor: "text-blue-500"
-                },
-                {
-                  icon: <TrendingUp className="h-6 w-6" />,
-                  label: "Average Growth",
-                  value: "32%",
-                  color: "bg-green-500/20",
-                  textColor: "text-green-500"
-                },
-                {
-                  icon: <Target className="h-6 w-6" />,
-                  label: "Prediction Accuracy",
-                  value: "96%",
-                  color: "bg-purple-500/20",
-                  textColor: "text-purple-500"
-                },
-                {
-                  icon: <Clock className="h-6 w-6" />,
-                  label: "Market Monitoring",
-                  value: "24/7",
-                  color: "bg-pink-500/20",
-                  textColor: "text-pink-500"
-                }
-              ].map((stat, i) => (
-                <FloatingCard key={i} delay={0.1 + i * 0.1}>
-                  <div className="flex items-center gap-4">
-                    <div className={cn("p-3 rounded-xl", stat.color)}>
-                      <div className={stat.textColor}>{stat.icon}</div>
-                    </div>
-                    <div>
-                      <div className={cn("text-2xl font-bold", stat.textColor)}>{stat.value}</div>
-                      <div className="text-sm text-muted-foreground">{stat.label}</div>
-                    </div>
-                  </div>
-                </FloatingCard>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-20 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-purple-500/5 to-background/0" />
-          <div className="container mx-auto px-4 relative">
-            <div className="max-w-3xl mx-auto text-center">
-              <Badge variant="secondary" className="px-3 py-1 bg-primary/10 text-primary dark:bg-primary/20 gap-1 mb-6 inline-flex">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>Get Started Today</span>
-              </Badge>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                Ready to Transform Your Market Strategy?
-              </h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                Join thousands of businesses already using Forecastro AI to stay ahead of the competition.
-              </p>
-              <div className="flex flex-wrap gap-4 justify-center">
-                <GlowingButton onClick={() => switchView("auth")} className="px-8">
+      <main>
+        {/* Hero Section - Advanced Design */}
+        <section className="relative pt-32 pb-16 overflow-hidden">
+          {/* Decorative elements */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute left-1/4 -top-48 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-70" />
+            <div className="absolute right-1/3 top-1/3 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl opacity-60" />
+            
+            {/* Animated lines */}
+            <motion.div 
+              className="absolute left-0 right-0 top-24 h-px bg-gradient-to-r from-transparent via-border to-transparent"
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: 0.5 }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+            />
+            
+            {/* Grid pattern overlay */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,transparent_0%,transparent_49.5%,rgba(var(--foreground-rgb),0.05)_49.5%,rgba(var(--foreground-rgb),0.05)_50.5%,transparent_50.5%,transparent_100%),linear-gradient(to_bottom,transparent_0%,transparent_49.5%,rgba(var(--foreground-rgb),0.05)_49.5%,rgba(var(--foreground-rgb),0.05)_50.5%,transparent_50.5%,transparent_100%)] bg-[length:40px_40px] opacity-[0.15]" />
+              </div>
+          
+          <div className="container mx-auto px-6">
+            <div className="max-w-5xl mx-auto text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex rounded-full mb-6 px-3 py-1 bg-primary/10 text-primary text-xs font-medium uppercase tracking-wider"
+              >
+                AI-Powered Market Intelligence
+              </motion.div>
+              
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-4xl md:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground to-foreground/70 max-w-4xl mx-auto mb-6 leading-tight"
+              >
+                Transform Market Data Into <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-pink-500">Strategic Insights</span>
+              </motion.h1>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8"
+              >
+                Forecastro AI analyzes millions of market data points in real-time to deliver actionable insights, helping businesses stay ahead of trends and outpace competitors.
+              </motion.p>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="flex flex-col sm:flex-row gap-4 justify-center"
+              >
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white px-8 shadow-md hover:shadow-xl hover:shadow-primary/10 transition-all duration-200"
+                  onClick={() => switchView("pricing")}
+                >
                   Start Free Trial
-                </GlowingButton>
-                <Button variant="outline">
-                  Schedule Demo
                 </Button>
+                
+                <Dialog>
+                  <DialogTrigger asChild>
+                <Button
+                      variant="outline"
+                  size="lg"
+                      className="px-8 bg-background/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 hover:bg-primary/5"
+                    >
+                      <Play className="mr-2 h-4 w-4" /> Watch Demo
+                    </Button>
+                  </DialogTrigger>
+                  <DemoModal />
+                </Dialog>
+              </motion.div>
+            </div>
+            
+            {/* Dashboard Preview Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.4 }}
+              className="relative rounded-xl border border-border/40 shadow-2xl shadow-primary/5 overflow-hidden backdrop-blur-sm bg-background/30 max-w-5xl mx-auto"
+            >
+              {/* Toolbar */}
+              <div className="border-b border-border/40 bg-muted/50 px-4 py-3 flex items-center">
+                <div className="flex space-x-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500/70"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/70"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500/70"></div>
+                </div>
+                <div className="flex-1 flex justify-center">
+                  <div className="text-xs text-muted-foreground bg-background/40 rounded-full px-3 py-0.5">
+                    Forecastro AI Dashboard
+                  </div>
+                </div>
+              </div>
+              
+              {/* Dashboard Content */}
+              <div className="p-6">
+                {/* Enhanced Header with Stats */}
+                <div className="grid grid-cols-4 gap-4 mb-6">
+                  <div className="col-span-2">
+                    <h3 className="text-xl font-bold flex items-center gap-2">
+                      Market Overview
+                      <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20">Live</Badge>
+                      <motion.div 
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="h-2 w-2 rounded-full bg-green-500"
+                      />
+                    </h3>
+                    <p className="text-sm text-muted-foreground">Real-time analysis of global markets</p>
+                  </div>
+                  
+                  <div className="col-span-2 flex justify-end items-center gap-4">
+                    <div className="text-right">
+                      <div className="text-sm text-muted-foreground">Last updated</div>
+                      <div className="text-sm font-medium flex items-center">
+                        Just now
+                        <motion.span 
+                          className="ml-2 h-2 w-2 rounded-full bg-green-500"
+                          animate={{ opacity: [1, 0.5, 1] }}
+                          transition={{ duration: 1.5, repeat: Infinity }}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="h-8 w-px bg-border"></div>
+                    
+                    <div className="text-right">
+                      <div className="text-sm text-muted-foreground">AI confidence</div>
+                      <div className="text-sm font-medium flex items-center">
+                        98.2%
+                        <motion.div
+                          className="ml-2"
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        >
+                          <BrainCircuit className="h-4 w-4 text-primary" />
+                        </motion.div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Enhanced Chart Area */}
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                  {/* Main Chart */}
+                  <div className="col-span-2 border border-border/40 rounded-lg overflow-hidden bg-muted/20 backdrop-blur-sm">
+                    <div className="border-b border-border/40 bg-muted/30 px-3 py-2 flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <LineChart className="h-4 w-4 text-primary" />
+                        <span className="text-sm font-medium">Market Trends</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {["1D", "1W", "1M", "1Y", "All"].map((period, i) => (
+                          <button 
+                            key={i} 
+                            className={cn(
+                              "text-xs px-2 py-1 rounded transition-colors",
+                              period === "1M" 
+                                ? "bg-primary text-primary-foreground" 
+                                : "text-muted-foreground hover:bg-muted/50"
+                            )}
+                          >
+                            {period}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="p-4 h-[300px] relative">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart
+                          data={generateMarketData(30)}
+                          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                        >
+                          <defs>
+                            <linearGradient id="marketGradient" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.2}/>
+                              <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                            </linearGradient>
+                          </defs>
+                          <XAxis
+                            dataKey="date"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                          />
+                          <YAxis
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                            domain={['auto', 'auto']}
+                            tickFormatter={(value) => `$${value.toLocaleString()}`}
+                          />
+                          <CartesianGrid
+                            strokeDasharray="3 3"
+                            vertical={false}
+                            stroke="hsl(var(--border))"
+                            opacity={0.2}
+                          />
+                          <Tooltip
+                            content={({ active, payload, label }) => {
+                              if (active && payload && payload.length) {
+                                return (
+                                  <div className="rounded-lg border border-border bg-background p-3 shadow-lg">
+                                    <div className="text-sm font-medium mb-1">{label}</div>
+                                    <div className="text-sm text-muted-foreground">
+                                      Value: <span className="text-primary font-medium">${payload[0].value.toLocaleString()}</span>
+                                    </div>
+                                    <div className="text-sm text-muted-foreground">
+                                      Volume: <span className="text-primary font-medium">{payload[0].payload.volume.toLocaleString()}</span>
+                                    </div>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }}
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="value"
+                            stroke="hsl(var(--primary))"
+                            strokeWidth={2}
+                            fill="url(#marketGradient)"
+                            dot={false}
+                            activeDot={{
+                              r: 4,
+                              fill: "hsl(var(--primary))",
+                              stroke: "hsl(var(--background))",
+                              strokeWidth: 2,
+                            }}
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+
+                  {/* Side Stats */}
+                  <div className="space-y-4">
+                    {/* Market Summary */}
+                    <div className="border border-border/40 rounded-lg p-4 bg-muted/20 backdrop-blur-sm">
+                      <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                        <Target className="h-4 w-4 text-primary" />
+                        Market Summary
+                      </h4>
+                      <div className="space-y-2">
+                        {[
+                          { label: "Trading Volume", value: "$2.8M", change: "+12.3%" },
+                          { label: "Active Markets", value: "142", change: "+5" },
+                          { label: "Market Volatility", value: "Low", change: "-2.1%" }
+                        ].map((item, i) => (
+                          <div key={i} className="flex items-center justify-between text-sm">
+                            <span className="text-muted-foreground">{item.label}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{item.value}</span>
+                              <span className={cn(
+                                "text-xs",
+                                item.change.startsWith("+") ? "text-green-500" : "text-red-500"
+                              )}>
+                                {item.change}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* AI Insights */}
+                    <div className="border border-border/40 rounded-lg p-4 bg-muted/20 backdrop-blur-sm">
+                      <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                        <BrainCircuit className="h-4 w-4 text-primary" />
+                        AI Insights
+                      </h4>
+                      <div className="space-y-3">
+                        <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
+                          <div className="flex items-start gap-2">
+                            <TrendingUp className="h-4 w-4 text-green-500 mt-0.5" />
+                            <div>
+                              <div className="text-sm font-medium text-green-500">Growth Opportunity</div>
+                              <p className="text-xs text-muted-foreground">Emerging market trend detected in sector XYZ</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                          <div className="flex items-start gap-2">
+                            <AlertCircle className="h-4 w-4 text-yellow-500 mt-0.5" />
+                            <div>
+                              <div className="text-sm font-medium text-yellow-500">Market Alert</div>
+                              <p className="text-xs text-muted-foreground">Potential volatility increase expected</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Enhanced Stats Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                  {[
+                    { 
+                      label: "Market Growth", 
+                      value: "+24.8%", 
+                      trend: "up", 
+                      percent: "+2.4%",
+                      color: "from-green-500/20 to-green-500/5"
+                    },
+                    { 
+                      label: "Opportunity Score", 
+                      value: "86/100", 
+                      trend: "up", 
+                      percent: "+12%",
+                      color: "from-blue-500/20 to-blue-500/5"
+                    },
+                    { 
+                      label: "Risk Level", 
+                      value: "Low", 
+                      trend: "down", 
+                      percent: "-5%",
+                      color: "from-amber-500/20 to-amber-500/5"
+                    }
+                  ].map((stat, i) => (
+                    <motion.div
+                      key={i}
+                      className={cn(
+                        "border border-border/40 rounded-lg p-4",
+                        "bg-gradient-to-br backdrop-blur-sm",
+                        stat.color
+                      )}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.5 + (i * 0.1) }}
+                      whileHover={{ scale: 1.02 }}
+                    >
+                      <div className="text-sm text-muted-foreground mb-1">{stat.label}</div>
+                      <div className="flex justify-between items-center">
+                        <div className="text-2xl font-bold">{stat.value}</div>
+                        <div className={cn(
+                          "flex items-center text-xs font-medium px-2 py-1 rounded-full",
+                          stat.trend === "up" 
+                            ? "text-green-500 bg-green-500/10" 
+                            : "text-red-500 bg-red-500/10"
+                        )}>
+                          {stat.trend === "up" 
+                            ? <TrendingUp className="h-3 w-3 mr-1" /> 
+                            : <TrendingDown className="h-3 w-3 mr-1" />
+                          }
+                          {stat.percent}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Recent Activities */}
+                <div className="border border-border/40 rounded-lg overflow-hidden bg-muted/20 backdrop-blur-sm">
+                  <div className="border-b border-border/40 bg-muted/30 px-3 py-2 flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <Activity className="h-4 w-4 text-primary" />
+                      <span className="text-sm font-medium">Recent Activities</span>
+                    </div>
+                    <Button variant="ghost" size="sm" className="text-xs">
+                      View All
+                      <ChevronRight className="h-3 w-3 ml-1" />
+                    </Button>
+                  </div>
+                  
+                  <div className="p-4">
+                    <div className="space-y-4">
+                      {[
+                        {
+                          icon: <Search className="h-4 w-4" />,
+                          title: "Market Analysis Completed",
+                          desc: "AI analysis of tech sector completed",
+                          time: "2 mins ago",
+                          color: "text-blue-500"
+                        },
+                        {
+                          icon: <AlertTriangle className="h-4 w-4" />,
+                          title: "New Market Opportunity",
+                          desc: "Potential growth detected in sector ABC",
+                          time: "15 mins ago",
+                          color: "text-green-500"
+                        },
+                        {
+                          icon: <RefreshCcw className="h-4 w-4" />,
+                          title: "Data Update",
+                          desc: "Market data refreshed successfully",
+                          time: "1 hour ago",
+                          color: "text-amber-500"
+                        }
+                      ].map((activity, i) => (
+                        <div key={i} className="flex items-start gap-4">
+                          <div className={cn(
+                            "h-8 w-8 rounded-full flex items-center justify-center",
+                            "bg-background border border-border",
+                            activity.color
+                          )}>
+                            {activity.icon}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <div className="font-medium text-sm">{activity.title}</div>
+                              <div className="text-xs text-muted-foreground">{activity.time}</div>
+                            </div>
+                            <div className="text-xs text-muted-foreground">{activity.desc}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+            
+            {/* Trusted By Section */}
+            <div className="mt-20 text-center">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="text-sm font-medium text-muted-foreground mb-6"
+              >
+                TRUSTED BY INNOVATIVE COMPANIES WORLDWIDE
+              </motion.p>
+              
+              <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8">
+                {["Microsoft", "Google", "Amazon", "Shopify", "Adobe"].map((company, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                    className="text-muted-foreground/60 hover:text-muted-foreground transition-colors duration-300 text-xl font-semibold"
+                  >
+                    {company}
+                  </motion.div>
+                ))}
               </div>
             </div>
           </div>
         </section>
-      </>
+        
+        {/* Features Section - Advanced version */}
+        <section className="py-24 relative">
+          <div className="container mx-auto px-6">
+            <div className="max-w-3xl mx-auto text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm text-primary bg-primary/10 font-medium mb-6"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>Advanced Capabilities</span>
+              </motion.div>
+              
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-3xl md:text-4xl font-bold mb-6"
+              >
+                Harness the Power of AI for Market Intelligence
+              </motion.h2>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-muted-foreground text-lg"
+              >
+                Our AI-powered platform provides comprehensive market analysis and predictive insights to help your business make data-driven decisions with confidence.
+              </motion.p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+              {[
+                {
+                  icon: <LineChart className="h-6 w-6" />,
+                  title: "Real-time Analytics",
+                  description: "Monitor market trends and competitors with our real-time analytics dashboard, updated every minute."
+                },
+                {
+                  icon: <BrainCircuit className="h-6 w-6" />,
+                  title: "AI Predictions",
+                  description: "Our advanced machine learning models predict market trends with industry-leading 96% accuracy."
+                },
+                {
+                  icon: <Users className="h-6 w-6" />,
+                  title: "Competitor Intelligence",
+                  description: "Track your competitors' strategies, pricing, and market positioning to stay ahead."
+                },
+                {
+                  icon: <Target className="h-6 w-6" />,
+                  title: "Opportunity Detection",
+                  description: "Automatically identify market gaps and growth opportunities before your competitors."
+                },
+                {
+                  icon: <BarChart className="h-6 w-6" />,
+                  title: "Custom Reports",
+                  description: "Generate comprehensive market reports tailored to your specific business needs."
+                },
+                {
+                  icon: <Zap className="h-6 w-6" />,
+                  title: "Smart Alerts",
+                  description: "Receive intelligent notifications about critical market changes that affect your business."
+                }
+              ].map((feature, i) => (
+                <FeatureCard 
+                  key={i}
+                  icon={feature.icon}
+                  title={feature.title}
+                  description={feature.description}
+                  index={i}
+                />
+              ))}
+            </div>
+            
+            <div className="text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+              >
+                <Button
+                  size="lg"
+                  onClick={() => switchView("features")}
+                  variant="outline"
+                  className="border-primary/20 hover:border-primary/40 hover:bg-primary/5"
+                >
+                  Explore All Features <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </motion.div>
+              </div>
+            </div>
+        </section>
+        
+        {/* Metrics Section - With Cards */}
+        <section className="py-20 bg-muted/30 relative">
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute left-1/4 top-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl opacity-70 transform -translate-y-1/2" />
+            <div className="absolute right-1/4 top-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl opacity-70" />
+          </div>
+          
+          <div className="container mx-auto px-6">
+            <div className="max-w-3xl mx-auto text-center mb-16">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="text-3xl md:text-4xl font-bold mb-6"
+              >
+                Proven Results for Businesses Worldwide
+              </motion.h2>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-muted-foreground text-lg"
+              >
+                Companies using Forecastro AI report significant improvements in market understanding, strategic decision-making, and overall business performance.
+              </motion.p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <MetricCard
+                value="10K+"
+                label="Active Users"
+                icon={<Users className="h-5 w-5" />}
+                color="text-blue-500"
+                bgColor="bg-blue-500"
+              />
+              <MetricCard
+                value="32%"
+                label="Average Growth"
+                icon={<TrendingUp className="h-5 w-5" />}
+                color="text-green-500"
+                bgColor="bg-green-500"
+              />
+              <MetricCard
+                value="96%"
+                label="Prediction Accuracy"
+                icon={<Target className="h-5 w-5" />}
+                color="text-purple-500"
+                bgColor="bg-purple-500"
+              />
+              <MetricCard
+                value="24/7"
+                label="Market Monitoring"
+                icon={<LineChart className="h-5 w-5" />}
+                color="text-pink-500"
+                bgColor="bg-pink-500"
+              />
+            </div>
+          </div>
+        </section>
+        
+        {/* Testimonials Section */}
+        <section className="py-24 relative">
+          <div className="container mx-auto px-6">
+            <div className="max-w-3xl mx-auto text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm text-primary bg-primary/10 font-medium mb-6"
+              >
+                <Star className="h-3.5 w-3.5" />
+                <span>Customer Success Stories</span>
+              </motion.div>
+              
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-3xl md:text-4xl font-bold mb-6"
+              >
+                What Our Customers Say
+              </motion.h2>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-muted-foreground text-lg"
+              >
+                Discover how Forecastro AI has transformed businesses across industries with its powerful market intelligence capabilities.
+              </motion.p>
+        </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <TestimonialCard
+                quote="Forecastro AI has completely transformed how we approach market analysis. We've identified three new market opportunities that we would have otherwise missed."
+                author="Sarah Johnson"
+                role="Chief Strategy Officer"
+                company="TechNova Inc."
+                index={0}
+              />
+              <TestimonialCard
+                quote="The AI-powered predictions have been remarkably accurate. We've been able to adjust our strategy ahead of market shifts and gain a significant advantage over competitors."
+                author="Michael Chen"
+                role="VP of Product"
+                company="GrowthWave"
+                index={1}
+              />
+              <TestimonialCard
+                quote="What impressed me most was how quickly we could extract actionable insights from complex market data. Forecastro AI's platform is intuitive yet incredibly powerful."
+                author="Priya Mehta"
+                role="Marketing Director"
+                company="Elevate Brands"
+                index={2}
+              />
+            </div>
+          </div>
+        </section>
+        
+        {/* CTA Section */}
+        <section className="py-20 relative">
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute inset-0 bg-muted/30" />
+            <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent opacity-30" />
+            <div className="absolute left-0 right-0 bottom-0 h-px bg-gradient-to-r from-transparent via-border to-transparent opacity-30" />
+            <div className="absolute left-1/3 top-1/2 w-96 h-96 bg-primary/5 rounded-full blur-3xl opacity-60 transform -translate-y-1/2" />
+            <div className="absolute right-1/3 top-1/4 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl opacity-60" />
+          </div>
+          
+          <div className="container mx-auto px-6 relative">
+            <div className="max-w-4xl mx-auto text-center">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6"
+              >
+                Ready to Transform Your Market Strategy?
+              </motion.h2>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto"
+              >
+                Join thousands of forward-thinking businesses that are leveraging Forecastro AI to gain a competitive edge in their markets.
+              </motion.p>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="flex flex-col sm:flex-row gap-4 justify-center"
+              >
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white px-8 shadow-md hover:shadow-xl hover:shadow-primary/10 transition-all duration-200"
+                  onClick={() => switchView("pricing")}
+                >
+                  Start Free Trial
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="px-8 bg-background/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 hover:bg-primary/5"
+                  onClick={() => switchView("contact")}
+                >
+                  Contact Sales
+                </Button>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+      </main>
     );
   }
   
