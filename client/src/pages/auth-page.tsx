@@ -87,7 +87,11 @@ import {
   Newspaper,
   X,
   Play,
-  TrendingDown
+  TrendingDown,
+  Activity,
+  Search,
+  AlertTriangle,
+  RefreshCcw
 } from "lucide-react";
 
 // SVG imports
@@ -1265,12 +1269,17 @@ export default function AuthPage() {
               
               {/* Dashboard Content */}
               <div className="p-6">
-                {/* Header with Stats */}
+                {/* Enhanced Header with Stats */}
                 <div className="grid grid-cols-4 gap-4 mb-6">
                   <div className="col-span-2">
-                    <h3 className="text-xl font-bold flex items-center">
+                    <h3 className="text-xl font-bold flex items-center gap-2">
                       Market Overview
-                      <Badge className="ml-2 bg-green-500/10 text-green-500 hover:bg-green-500/20">Live</Badge>
+                      <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20">Live</Badge>
+                      <motion.div 
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="h-2 w-2 rounded-full bg-green-500"
+                      />
                     </h3>
                     <p className="text-sm text-muted-foreground">Real-time analysis of global markets</p>
                   </div>
@@ -1280,7 +1289,11 @@ export default function AuthPage() {
                       <div className="text-sm text-muted-foreground">Last updated</div>
                       <div className="text-sm font-medium flex items-center">
                         Just now
-                        <span className="ml-2 h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <motion.span 
+                          className="ml-2 h-2 w-2 rounded-full bg-green-500"
+                          animate={{ opacity: [1, 0.5, 1] }}
+                          transition={{ duration: 1.5, repeat: Infinity }}
+                        />
                       </div>
                     </div>
                     
@@ -1288,127 +1301,252 @@ export default function AuthPage() {
                     
                     <div className="text-right">
                       <div className="text-sm text-muted-foreground">AI confidence</div>
-                      <div className="text-sm font-medium">98.2%</div>
+                      <div className="text-sm font-medium flex items-center">
+                        98.2%
+                        <motion.div
+                          className="ml-2"
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        >
+                          <BrainCircuit className="h-4 w-4 text-primary" />
+                        </motion.div>
+                      </div>
                     </div>
                   </div>
                 </div>
                 
-                {/* Main Chart Area */}
-                <div className="mb-6 border border-border/40 rounded-lg overflow-hidden bg-muted/20 backdrop-blur-sm">
-                  <div className="border-b border-border/40 bg-muted/30 px-3 py-2 flex justify-between items-center">
-                    <div className="text-sm font-medium">Market Trends</div>
-                    <div className="flex items-center gap-2">
-                      {["1D", "1W", "1M", "1Y", "All"].map((period, i) => (
-                        <button 
-                          key={i} 
-                          className={cn(
-                            "text-xs px-2 py-1 rounded",
-                            period === "1M" ? "bg-primary/20 text-primary" : "text-muted-foreground hover:bg-muted/50"
-                          )}
-                        >
-                          {period}
-                        </button>
-                      ))}
+                {/* Enhanced Chart Area */}
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                  {/* Main Chart */}
+                  <div className="col-span-2 border border-border/40 rounded-lg overflow-hidden bg-muted/20 backdrop-blur-sm">
+                    <div className="border-b border-border/40 bg-muted/30 px-3 py-2 flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <LineChart className="h-4 w-4 text-primary" />
+                        <span className="text-sm font-medium">Market Trends</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {["1D", "1W", "1M", "1Y", "All"].map((period, i) => (
+                          <button 
+                            key={i} 
+                            className={cn(
+                              "text-xs px-2 py-1 rounded transition-colors",
+                              period === "1M" 
+                                ? "bg-primary text-primary-foreground" 
+                                : "text-muted-foreground hover:bg-muted/50"
+                            )}
+                          >
+                            {period}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="p-4 h-64 relative">
+                      {/* Enhanced Interactive Line Chart */}
+                      <div className="absolute inset-0 flex items-end">
+                        <div className="w-full h-full flex items-end">
+                          {Array.from({ length: 50 }).map((_, i) => {
+                            const height = 30 + Math.sin(i * 0.2) * 20 + Math.cos(i * 0.3) * 15 + (Math.random() * 10);
+                            return (
+                              <motion.div
+                                key={i}
+                                className="flex-1 mx-0.5 rounded-t-sm relative group"
+                                style={{
+                                  background: `linear-gradient(to top, rgba(var(--primary), 0.2), rgba(var(--primary), 0.4))`,
+                                  height: `${height}%`
+                                }}
+                                initial={{ height: 0 }}
+                                animate={{ height: `${height}%` }}
+                                transition={{ duration: 1, delay: i * 0.01 }}
+                                whileHover={{ scale: 1.1 }}
+                              >
+                                <div className="absolute -top-16 left-1/2 -translate-x-1/2 bg-popover p-2 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                                  <div className="text-xs font-medium">Value: ${(Math.random() * 1000).toFixed(2)}</div>
+                                  <div className="text-xs text-muted-foreground">Apr {i + 1}</div>
+                                </div>
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="p-4 h-64 relative">
-                    {/* Interactive Line Chart */}
-                    <div className="absolute inset-0 flex items-end">
-                      <div className="w-full h-full flex items-end">
-                        {Array.from({ length: 50 }).map((_, i) => {
-                          const height = 30 + Math.sin(i * 0.2) * 20 + Math.cos(i * 0.3) * 15 + (Math.random() * 10);
-                          return (
-                            <motion.div
-                              key={i}
-                              className="flex-1 mx-0.5 rounded-t-sm"
-                              style={{
-                                background: `linear-gradient(to top, rgba(var(--primary), 0.2), rgba(var(--primary), 0.4))`,
-                                height: `${height}%`
-                              }}
-                              initial={{ height: 0 }}
-                              animate={{ height: `${height}%` }}
-                              transition={{ duration: 1, delay: i * 0.01 }}
-                            />
-                          );
-                        })}
+
+                  {/* Side Stats */}
+                  <div className="space-y-4">
+                    {/* Market Summary */}
+                    <div className="border border-border/40 rounded-lg p-4 bg-muted/20 backdrop-blur-sm">
+                      <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                        <Target className="h-4 w-4 text-primary" />
+                        Market Summary
+                      </h4>
+                      <div className="space-y-2">
+                        {[
+                          { label: "Trading Volume", value: "$2.8M", change: "+12.3%" },
+                          { label: "Active Markets", value: "142", change: "+5" },
+                          { label: "Market Volatility", value: "Low", change: "-2.1%" }
+                        ].map((item, i) => (
+                          <div key={i} className="flex items-center justify-between text-sm">
+                            <span className="text-muted-foreground">{item.label}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{item.value}</span>
+                              <span className={cn(
+                                "text-xs",
+                                item.change.startsWith("+") ? "text-green-500" : "text-red-500"
+                              )}>
+                                {item.change}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                      
-                      {/* Trend Line */}
-                      <div className="absolute inset-x-0 bottom-0 h-64 overflow-hidden">
-                        <svg
-                          viewBox="0 0 1000 200"
-                          className="absolute inset-0 w-full h-full"
-                          preserveAspectRatio="none"
-                        >
-                          <motion.path
-                            d="M0,100 C50,90 100,110 150,95 C200,80 250,100 300,100 C350,100 400,80 450,90 C500,100 550,120 600,110 C650,100 700,80 750,70 C800,60 850,80 900,90 C950,100 1000,90 1000,90"
-                            fill="none"
-                            stroke="hsl(var(--primary))"
-                            strokeWidth="2"
-                            strokeDasharray="2000"
-                            strokeDashoffset="2000"
-                            animate={{ strokeDashoffset: 0 }}
-                            transition={{ duration: 2, ease: "easeInOut" }}
-                          />
-                        </svg>
+                    </div>
+
+                    {/* AI Insights */}
+                    <div className="border border-border/40 rounded-lg p-4 bg-muted/20 backdrop-blur-sm">
+                      <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                        <BrainCircuit className="h-4 w-4 text-primary" />
+                        AI Insights
+                      </h4>
+                      <div className="space-y-3">
+                        <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
+                          <div className="flex items-start gap-2">
+                            <TrendingUp className="h-4 w-4 text-green-500 mt-0.5" />
+                            <div>
+                              <div className="text-sm font-medium text-green-500">Growth Opportunity</div>
+                              <p className="text-xs text-muted-foreground">Emerging market trend detected in sector XYZ</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                          <div className="flex items-start gap-2">
+                            <AlertCircle className="h-4 w-4 text-yellow-500 mt-0.5" />
+                            <div>
+                              <div className="text-sm font-medium text-yellow-500">Market Alert</div>
+                              <p className="text-xs text-muted-foreground">Potential volatility increase expected</p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      
-                      {/* Cursor Tracker - Animated Vertical Line */}
-                      <motion.div
-                        className="absolute top-0 w-0.5 h-full bg-primary/50"
-                        initial={{ left: "0%" }}
-                        animate={{ left: "100%" }}
-                        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                      />
                     </div>
                   </div>
                 </div>
-                
-                {/* Stats Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+
+                {/* Enhanced Stats Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                   {[
-                    { label: "Market Growth", value: "+24.8%", trend: "up", percent: "+2.4%" },
-                    { label: "Opportunity Score", value: "86/100", trend: "up", percent: "+12%" },
-                    { label: "Risk Level", value: "Low", trend: "down", percent: "-5%" }
+                    { 
+                      label: "Market Growth", 
+                      value: "+24.8%", 
+                      trend: "up", 
+                      percent: "+2.4%",
+                      color: "from-green-500/20 to-green-500/5"
+                    },
+                    { 
+                      label: "Opportunity Score", 
+                      value: "86/100", 
+                      trend: "up", 
+                      percent: "+12%",
+                      color: "from-blue-500/20 to-blue-500/5"
+                    },
+                    { 
+                      label: "Risk Level", 
+                      value: "Low", 
+                      trend: "down", 
+                      percent: "-5%",
+                      color: "from-amber-500/20 to-amber-500/5"
+                    }
                   ].map((stat, i) => (
                     <motion.div
                       key={i}
-                      className="border border-border/40 rounded-lg p-4 bg-muted/10"
+                      className={cn(
+                        "border border-border/40 rounded-lg p-4",
+                        "bg-gradient-to-br backdrop-blur-sm",
+                        stat.color
+                      )}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: 0.5 + (i * 0.1) }}
+                      whileHover={{ scale: 1.02 }}
                     >
                       <div className="text-sm text-muted-foreground mb-1">{stat.label}</div>
                       <div className="flex justify-between items-center">
                         <div className="text-2xl font-bold">{stat.value}</div>
                         <div className={cn(
-                          "flex items-center text-xs font-medium",
-                          stat.trend === "up" ? "text-green-500" : "text-red-500"
+                          "flex items-center text-xs font-medium px-2 py-1 rounded-full",
+                          stat.trend === "up" 
+                            ? "text-green-500 bg-green-500/10" 
+                            : "text-red-500 bg-red-500/10"
                         )}>
-                          {stat.trend === "up" ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
+                          {stat.trend === "up" 
+                            ? <TrendingUp className="h-3 w-3 mr-1" /> 
+                            : <TrendingDown className="h-3 w-3 mr-1" />
+                          }
                           {stat.percent}
                         </div>
                       </div>
                     </motion.div>
                   ))}
                 </div>
-                
-                {/* AI Recommendation Card */}
-                <motion.div
-                  className="border border-primary/20 bg-primary/5 rounded-lg p-4 flex items-start gap-3"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.8 }}
-                >
-                  <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Sparkles className="h-4 w-4 text-primary" />
+
+                {/* Recent Activities */}
+                <div className="border border-border/40 rounded-lg overflow-hidden bg-muted/20 backdrop-blur-sm">
+                  <div className="border-b border-border/40 bg-muted/30 px-3 py-2 flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <Activity className="h-4 w-4 text-primary" />
+                      <span className="text-sm font-medium">Recent Activities</span>
+                    </div>
+                    <Button variant="ghost" size="sm" className="text-xs">
+                      View All
+                      <ChevronRight className="h-3 w-3 ml-1" />
+                    </Button>
                   </div>
-                  <div>
-                    <div className="font-medium text-primary mb-1">AI Recommendation</div>
-                    <p className="text-sm text-muted-foreground">Based on current market trends and competitive analysis, we recommend expanding into the European market, particularly focusing on sustainable product lines which show 32% growth potential.</p>
+                  
+                  <div className="p-4">
+                    <div className="space-y-4">
+                      {[
+                        {
+                          icon: <Search className="h-4 w-4" />,
+                          title: "Market Analysis Completed",
+                          desc: "AI analysis of tech sector completed",
+                          time: "2 mins ago",
+                          color: "text-blue-500"
+                        },
+                        {
+                          icon: <AlertTriangle className="h-4 w-4" />,
+                          title: "New Market Opportunity",
+                          desc: "Potential growth detected in sector ABC",
+                          time: "15 mins ago",
+                          color: "text-green-500"
+                        },
+                        {
+                          icon: <RefreshCcw className="h-4 w-4" />,
+                          title: "Data Update",
+                          desc: "Market data refreshed successfully",
+                          time: "1 hour ago",
+                          color: "text-amber-500"
+                        }
+                      ].map((activity, i) => (
+                        <div key={i} className="flex items-start gap-4">
+                          <div className={cn(
+                            "h-8 w-8 rounded-full flex items-center justify-center",
+                            "bg-background border border-border",
+                            activity.color
+                          )}>
+                            {activity.icon}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <div className="font-medium text-sm">{activity.title}</div>
+                              <div className="text-xs text-muted-foreground">{activity.time}</div>
+                            </div>
+                            <div className="text-xs text-muted-foreground">{activity.desc}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </motion.div>
+                </div>
               </div>
             </motion.div>
             
