@@ -352,35 +352,35 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
         className={cn(
           "fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out",
           isHeaderVisible ? "translate-y-0" : "-translate-y-full",
-          "bg-background/60 backdrop-blur-xl border-b border-border/10"
+          "bg-background/80 backdrop-blur-2xl border-b border-border/10 shadow-sm"
         )}
       >
         <div className="container mx-auto px-6">
-          <div className="flex h-20 items-center justify-between">
+          <div className="flex h-16 items-center justify-between">
             {/* Animated Logo */}
             <motion.div
               className="flex items-center gap-2 cursor-pointer"
               onClick={() => switchView('auth')}
-              whileHover={{ scale: 1.03 }}
+              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
-              <div className="relative h-10 w-10 overflow-hidden rounded-xl">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary via-purple-600 to-pink-500 animate-gradient-xy"></div>
-                <div className="absolute inset-0.5 bg-background/90 rounded-[10px] flex items-center justify-center">
+              <div className="relative h-8 w-8 overflow-hidden rounded-lg">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary via-violet-500 to-indigo-400 animate-gradient-xy"></div>
+                <div className="absolute inset-[1.5px] bg-background/90 rounded-[6px] flex items-center justify-center">
                   <motion.div
                     animate={{ 
-                      y: [0, -3, 0, 3, 0],
-                      rotate: [0, -5, 0, 5, 0]
+                      y: [0, -2, 0, 2, 0],
+                      rotate: [0, -3, 0, 3, 0]
                     }}
                     transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
                   >
-                    <BarChart2 className="h-6 w-6 text-primary" />
+                    <BarChart2 className="h-4 w-4 text-primary" />
                   </motion.div>
                 </div>
               </div>
-              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-pink-500">
-                Forecastro AI
+              <h1 className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-violet-500 to-indigo-400 tracking-tight">
+                Forecastro
               </h1>
             </motion.div>
 
@@ -389,7 +389,7 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
               className="hidden lg:block relative"
               ref={navContainerRef}
             >
-              <div className="flex items-center gap-8">
+              <div className="flex items-center gap-6">
                 {navItems.map((item) => (
                   <button 
                     key={item.id}
@@ -398,7 +398,7 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
                     onMouseEnter={() => setHoveredItem(item.id)}
                     onMouseLeave={() => setHoveredItem(null)}
                     className={cn(
-                      "text-sm font-medium transition-colors duration-200 relative py-1",
+                      "text-sm font-medium transition-colors duration-200 relative py-1.5 px-1",
                       activeView === item.view ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                     )}
                   >
@@ -408,7 +408,7 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
                 
                 {/* Animated pill indicator */}
                 <motion.div 
-                  className="header-pill absolute h-0.5 bottom-0 bg-gradient-to-r from-primary to-purple-500"
+                  className="header-pill absolute h-[2px] bottom-0 bg-gradient-to-r from-primary to-violet-500"
                   style={{ 
                     left: pillStyle.left,
                     width: pillStyle.width
@@ -419,7 +419,7 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
             </nav>
 
             {/* Right Side Actions */}
-            <div className="flex items-center gap-5">
+            <div className="flex items-center gap-4">
               {/* Documentation Link */}
               <a 
                 href="#" 
@@ -429,7 +429,7 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
                 }} 
                 className="hidden md:flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                <FileText className="h-4 w-4" />
+                <FileText className="h-3.5 w-3.5" />
                 <span>Docs</span>
               </a>
               
@@ -440,24 +440,24 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
                 rel="noopener noreferrer" 
                 className="hidden md:flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd"></path>
                 </svg>
                 <span>GitHub</span>
               </a>
               
               {/* Theme Toggle */}
-              <div className="border-l border-border/30 pl-5 hidden md:block">
+              <div className="border-l border-border/30 pl-4 hidden md:block">
                 <ThemeToggle />
               </div>
               
               {/* Sign In / Sign Up Actions */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <Button 
                   variant="ghost"
                   size="sm"
                   onClick={() => switchView("login")}
-                  className="hidden md:flex hover:bg-muted/50"
+                  className="hidden md:flex hover:bg-muted/50 text-sm font-medium"
                 >
                   Sign In
                 </Button>
@@ -465,7 +465,7 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
                 <Button 
                   onClick={() => switchView("login")}
                   size="sm"
-                  className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white shadow-sm hidden md:flex"
+                  className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-600/90 text-white font-medium text-sm shadow-sm hidden md:flex px-4"
                 >
                   Get Started
                 </Button>
@@ -497,7 +497,7 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 lg:hidden menu-backdrop"
+            className="fixed inset-0 z-40 lg:hidden bg-background/60 backdrop-blur-sm"
             onClick={(e) => {
               if (e.target === e.currentTarget) {
                 setIsMobileMenuOpen(false);
@@ -509,23 +509,23 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-background border-l border-border/20 shadow-xl flex flex-col"
+              className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-background/95 backdrop-blur-xl border-l border-border/20 shadow-xl flex flex-col"
             >
               <div className="flex items-center justify-between px-6 py-4 border-b border-border/20">
-                <h2 className="text-lg font-semibold">Navigation</h2>
+                <h2 className="text-base font-semibold">Menu</h2>
                 <button 
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="p-2 rounded-md hover:bg-muted/50 text-muted-foreground"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 w-4" />
                 </button>
               </div>
               
-              <div className="py-6 px-6 flex-1 overflow-y-auto">
-                <div className="space-y-6">
-                  <div className="space-y-3">
-                    <h3 className="text-xs uppercase tracking-wider text-muted-foreground/70 font-medium">Menu</h3>
-                    <div className="space-y-1.5">
+              <div className="py-4 px-6 flex-1 overflow-y-auto">
+                <div className="space-y-5">
+                  <div className="space-y-2.5">
+                    <h3 className="text-xs uppercase tracking-wider text-muted-foreground/70 font-medium">Navigation</h3>
+                    <div className="space-y-1">
                       {navItems.map((item) => (
                         <button 
                           key={item.id}
@@ -534,24 +534,24 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
                             setIsMobileMenuOpen(false);
                           }}
                           className={cn(
-                            "w-full flex items-center gap-3 p-2.5 rounded-lg",
+                            "w-full flex items-center gap-3 p-2 rounded-lg",
                             activeView === item.view 
-                              ? "bg-muted text-foreground font-medium" 
+                              ? "bg-primary/10 text-primary font-medium" 
                               : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                           )}
                         >
                           <span>{item.label}</span>
                           {activeView === item.view && (
-                            <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary"></div>
+                            <div className="ml-auto w-1 h-4 rounded-full bg-primary"></div>
                           )}
                         </button>
                       ))}
                     </div>
                   </div>
                   
-                  <div className="space-y-3">
+                  <div className="space-y-2.5">
                     <h3 className="text-xs uppercase tracking-wider text-muted-foreground/70 font-medium">Resources</h3>
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                       {[
                         { id: 'documentation', label: 'Documentation', icon: <FileText className="h-4 w-4" /> },
                         { id: 'guides', label: 'Guides', icon: <BookOpen className="h-4 w-4" /> },
@@ -563,7 +563,7 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
                             switchView(item.id as ViewId);
                             setIsMobileMenuOpen(false);
                           }}
-                          className="w-full flex items-center gap-3 p-2.5 rounded-lg text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                          className="w-full flex items-center gap-3 p-2 rounded-lg text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                         >
                           {item.icon}
                           <span>{item.label}</span>
@@ -578,7 +578,7 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
                 <div className="flex flex-col gap-3">
                   <Button 
                     variant="outline" 
-                    className="w-full justify-center border-primary/20"
+                    className="w-full justify-center border-primary/20 text-sm"
                     onClick={() => {
                       switchView("login");
                       setIsMobileMenuOpen(false);
@@ -587,7 +587,7 @@ const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobi
                     Sign In
                   </Button>
                   <Button 
-                    className="w-full justify-center bg-gradient-to-r from-primary to-purple-600"
+                    className="w-full justify-center bg-gradient-to-r from-primary to-violet-600 font-medium text-sm"
                     onClick={() => {
                       switchView("login");
                       setIsMobileMenuOpen(false);
@@ -949,38 +949,49 @@ export default function AuthPage() {
         
         {content}
         
-        {/* Footer remains the same for now - will update in next edit */}
-        <footer className="bg-background border-t border-border/20 pt-16 pb-8 relative z-10">
+        {/* Modernized Footer */}
+        <footer className="bg-background border-t border-border/20 pt-20 pb-8 relative z-10 mt-20">
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {/* Footer background accents */}
+            <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent opacity-50" />
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl opacity-40 -translate-y-1/2" />
+            <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-violet-500/5 rounded-full blur-3xl opacity-40 translate-y-1/2" />
+          </div>
+          
           <div className="container mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
               <div className="col-span-1 md:col-span-1">
                 <div className="flex items-center gap-2 mb-6">
-                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center">
-                    <BarChart2 className="h-4 w-4 text-white" />
+                  <div className="relative h-9 w-9 overflow-hidden rounded-lg">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary via-violet-500 to-indigo-400"></div>
+                    <div className="absolute inset-[1.5px] bg-background/90 rounded-[6px] flex items-center justify-center">
+                      <BarChart2 className="h-5 w-5 text-primary" />
+                    </div>
                   </div>
-                  <h3 className="text-xl font-bold text-foreground">
-                    Forecastro<span className="text-primary">AI</span>
+                  <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-violet-500 to-indigo-400 tracking-tight">
+                    Forecastro
                   </h3>
                 </div>
-                <p className="text-muted-foreground text-sm mb-6">AI-powered market intelligence for smarter business decisions.</p>
-                <div className="flex space-x-4">
+                <p className="text-muted-foreground/80 text-sm mb-6 leading-relaxed">Advanced AI-powered market intelligence platform for data-driven business decisions.</p>
+                <div className="flex space-x-5">
                   {[
-                    { icon: <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    { name: "Facebook", icon: <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd"></path>
                     </svg> },
-                    { icon: <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    { name: "Twitter", icon: <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path>
                     </svg> },
-                    { icon: <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    { name: "GitHub", icon: <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd"></path>
                     </svg> },
-                    { icon: <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path fillRule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.51 0 10-4.48 10-10S17.51 2 12 2zm6.605 4.61a8.502 8.502 0 011.93 5.314c-.281-.054-3.101-.629-5.943-.271-.065-.141-.12-.293-.184-.445a25.416 25.416 0 00-.564-1.236c3.145-1.28 4.577-3.124 4.761-3.362zM12 3.475c2.17 0 4.154.813 5.662 2.148-.152.216-1.443 1.941-4.48 3.08-1.399-2.57-2.95-4.675-3.189-5A8.687 8.687 0 0112 3.475zm-3.633.803a53.896 53.896 0 013.167 4.935c-3.992 1.063-7.517 1.04-7.896 1.04a8.581 8.581 0 014.729-5.975zM3.453 12.01v-.26c.37.01 4.512.065 8.775-1.215.25.477.477.965.694 1.453-.109.033-.228.065-.336.098-4.404 1.42-6.747 5.303-6.942 5.629a8.522 8.522 0 01-2.19-5.705zM12 20.547a8.482 8.482 0 01-5.239-1.8c.152-.315 1.888-3.656 6.703-5.337.022-.01.033-.01.054-.022a35.318 35.318 0 011.823 6.475 8.4 8.4 0 01-3.341.684zm4.761-1.465c-.086-.52-.542-3.015-1.659-6.084 2.679-.423 5.022.271 5.314.369a8.468 8.468 0 01-3.655 5.715z" clipRule="evenodd"></path>
+                    { name: "LinkedIn", icon: <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
                     </svg> }
                   ].map((item, i) => (
                     <a 
                       key={i} 
                       href="#" 
+                      aria-label={item.name}
                       className="text-muted-foreground hover:text-primary transition-all duration-200 hover:scale-110"
                     >
                       {item.icon}
@@ -1004,7 +1015,7 @@ export default function AuthPage() {
                 }
               ].map((section, i) => (
                 <div key={i} className="col-span-1">
-                  <h3 className="text-base font-medium text-foreground mb-5 uppercase tracking-wider text-sm">{section.title}</h3>
+                  <h3 className="text-sm font-semibold text-foreground mb-5 uppercase tracking-wider">{section.title}</h3>
                   <ul className="space-y-3">
                     {section.links.map((link, j) => (
                       <li key={j}>
@@ -1012,7 +1023,7 @@ export default function AuthPage() {
                           onClick={() => switchView(link.toLowerCase().replace(' ', '-') as ViewId)} 
                           className="text-muted-foreground hover:text-primary transition-colors duration-200 text-sm flex items-center group"
                         >
-                          <span className="h-0.5 w-0 bg-primary mr-0 group-hover:w-2 group-hover:mr-2 transition-all duration-200"></span>
+                          <span className="h-[2px] w-0 bg-gradient-to-r from-primary to-violet-500 mr-0 group-hover:w-2 group-hover:mr-2 transition-all duration-200 rounded-full"></span>
                           {link}
                         </button>
                       </li>
@@ -1022,10 +1033,22 @@ export default function AuthPage() {
               ))}
             </div>
             
-            <div className="mt-16 border-t border-border/20 pt-8">
-              <p className="text-muted-foreground text-xs text-center">
+            <div className="mt-16 pt-8 border-t border-border/30 flex flex-col md:flex-row justify-between items-center gap-4">
+              <p className="text-muted-foreground/70 text-sm">
                 &copy; {new Date().getFullYear()} Forecastro AI. All rights reserved.
               </p>
+              
+              <div className="flex items-center gap-6">
+                <a href="#" className="text-muted-foreground/70 hover:text-foreground text-sm transition-colors">
+                  Privacy
+                </a>
+                <a href="#" className="text-muted-foreground/70 hover:text-foreground text-sm transition-colors">
+                  Terms
+                </a>
+                <a href="#" className="text-muted-foreground/70 hover:text-foreground text-sm transition-colors">
+                  Cookies
+                </a>
+              </div>
             </div>
           </div>
         </footer>
@@ -1082,19 +1105,25 @@ export default function AuthPage() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5, delay: index * 0.1 }}
-        className="group relative z-10 rounded-xl border border-border/40 bg-card p-6 transition-all duration-300 hover:border-primary/20 hover:shadow-lg"
+        whileHover={{ y: -5 }}
+        className="group relative z-10 rounded-xl border border-border/50 bg-card/80 p-7 transition-all duration-300 hover:border-primary/30 hover:shadow-lg overflow-hidden"
       >
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-background/0 to-background/80 backdrop-blur-sm transition-opacity duration-300 opacity-0 group-hover:opacity-100" />
+        {/* Subtle gradient background effect */}
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-primary/5 opacity-60" />
+        
+        {/* Glowing accent */}
+        <div className="absolute -right-10 -top-10 w-20 h-20 bg-primary/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out" />
         
         <div className="relative z-10">
-          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors duration-300">
+          <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary/20 transition-all duration-300 shadow-sm group-hover:shadow-md group-hover:scale-110">
             {icon}
           </div>
-          <h3 className="mb-2 text-xl font-semibold text-foreground">{title}</h3>
-          <p className="text-muted-foreground">{description}</p>
+          <h3 className="mb-3 text-xl font-semibold text-foreground tracking-tight">{title}</h3>
+          <p className="text-muted-foreground/90 leading-relaxed">{description}</p>
         </div>
         
-        <div className="absolute -right-px -bottom-px h-16 w-16 rounded-br-xl bg-gradient-to-l from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {/* Bottom indicator line */}
+        <div className="absolute left-7 right-7 bottom-0 h-[2px] bg-gradient-to-r from-primary/40 to-violet-500/40 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
       </motion.div>
     );
   };
@@ -1202,24 +1231,25 @@ export default function AuthPage() {
   if (activeView === "auth") {
     return renderBaseLayout(
       <main>
-        {/* Hero Section - Advanced Design */}
-        <section className="relative pt-32 pb-16 overflow-hidden">
+        {/* Hero Section - Modern Redesign */}
+        <section className="relative pt-28 pb-16 overflow-hidden">
           {/* Decorative elements */}
           <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute left-1/4 -top-48 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-70" />
-            <div className="absolute right-1/3 top-1/3 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl opacity-60" />
+            {/* Modern gradient blobs */}
+            <div className="absolute -left-20 top-20 w-80 h-80 bg-gradient-to-r from-primary/10 to-violet-500/10 rounded-full blur-3xl opacity-70" />
+            <div className="absolute right-0 bottom-20 w-96 h-96 bg-gradient-to-bl from-indigo-400/10 to-primary/10 rounded-full blur-3xl opacity-60" />
             
-            {/* Animated lines */}
+            {/* Subtle grid pattern */}
+            <div className="absolute inset-0 bg-[radial-gradient(rgba(var(--foreground-rgb),0.03)_1px,transparent_1px)] bg-[size:20px_20px] opacity-30" />
+            
+            {/* Animated accent line */}
             <motion.div 
-              className="absolute left-0 right-0 top-24 h-px bg-gradient-to-r from-transparent via-border to-transparent"
+              className="absolute left-1/4 right-1/4 top-36 h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"
               initial={{ scaleX: 0, opacity: 0 }}
-              animate={{ scaleX: 1, opacity: 0.5 }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
+              animate={{ scaleX: 1, opacity: 0.7 }}
+              transition={{ duration: 1.8, ease: "easeOut" }}
             />
-            
-            {/* Grid pattern overlay */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,transparent_0%,transparent_49.5%,rgba(var(--foreground-rgb),0.05)_49.5%,rgba(var(--foreground-rgb),0.05)_50.5%,transparent_50.5%,transparent_100%),linear-gradient(to_bottom,transparent_0%,transparent_49.5%,rgba(var(--foreground-rgb),0.05)_49.5%,rgba(var(--foreground-rgb),0.05)_50.5%,transparent_50.5%,transparent_100%)] bg-[length:40px_40px] opacity-[0.15]" />
-            </div>
+          </div>
 
           <div className="container mx-auto px-6">
             <div className="max-w-5xl mx-auto text-center mb-16">
@@ -1227,25 +1257,25 @@ export default function AuthPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="inline-flex rounded-full mb-6 px-3 py-1 bg-primary/10 text-primary text-xs font-medium uppercase tracking-wider"
+                className="inline-flex items-center gap-1.5 rounded-full mb-6 px-3 py-1 bg-primary/10 text-primary text-xs font-medium tracking-wide"
               >
-                AI-Powered Market Intelligence
+                <Sparkles className="h-3.5 w-3.5 mr-0.5" /> AI-POWERED MARKET INTELLIGENCE
               </motion.div>
               
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground to-foreground/70 max-w-4xl mx-auto mb-6 leading-tight"
+                className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground to-foreground/70 max-w-4xl mx-auto mb-6 leading-[1.1]"
               >
-                Transform Market Data Into <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-pink-500">Strategic Insights</span>
+                Transform Market Data Into <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-violet-500 to-indigo-400">Strategic Insights</span>
               </motion.h1>
               
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8"
+                className="text-lg text-muted-foreground/90 max-w-2xl mx-auto mb-8 leading-relaxed"
               >
                 Forecastro AI analyzes millions of market data points in real-time to deliver actionable insights, helping businesses stay ahead of trends and outpace competitors.
               </motion.p>
@@ -1258,7 +1288,7 @@ export default function AuthPage() {
               >
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white px-8 shadow-md hover:shadow-xl hover:shadow-primary/10 transition-all duration-200"
+                  className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-600/90 text-white shadow-sm hover:shadow-lg hover:shadow-primary/10 transition-all duration-200 font-medium"
                   onClick={() => switchView("pricing")}
                 >
                   Start Free Trial
@@ -1266,10 +1296,10 @@ export default function AuthPage() {
                 
                 <Dialog>
                   <DialogTrigger asChild>
-                <Button
+                    <Button
                       variant="outline"
-                  size="lg"
-                      className="px-8 bg-background/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 hover:bg-primary/5"
+                      size="lg"
+                      className="bg-background/80 backdrop-blur-sm border-border hover:border-primary/40 hover:bg-primary/5 font-medium"
                     >
                       <Play className="mr-2 h-4 w-4" /> Watch Demo
                     </Button>
@@ -1279,23 +1309,23 @@ export default function AuthPage() {
               </motion.div>
             </div>
             
-            {/* Dashboard Preview Section */}
+            {/* Dashboard Preview Section - Modernized */}
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.4 }}
-              className="relative rounded-xl border border-border/40 shadow-2xl shadow-primary/5 overflow-hidden backdrop-blur-sm bg-background/30 max-w-5xl mx-auto"
+              className="relative rounded-xl border border-border/50 shadow-2xl shadow-primary/5 overflow-hidden backdrop-blur-md bg-background/40 max-w-5xl mx-auto"
             >
-              {/* Toolbar */}
-              <div className="border-b border-border/40 bg-muted/50 px-4 py-3 flex items-center">
+              {/* Modern Toolbar */}
+              <div className="border-b border-border/40 bg-muted/30 backdrop-blur-md px-5 py-3 flex items-center">
                 <div className="flex space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500/70"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/70"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500/70"></div>
+                  <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-amber-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-emerald-500/80"></div>
                 </div>
                 <div className="flex-1 flex justify-center">
-                  <div className="text-xs text-muted-foreground bg-background/40 rounded-full px-3 py-0.5">
-                    Forecastro AI Dashboard
+                  <div className="text-xs font-medium text-muted-foreground bg-background/50 backdrop-blur-md rounded-full px-4 py-0.5 border border-border/20 shadow-sm">
+                    <span className="text-primary">●</span> Forecastro AI Dashboard
                   </div>
                 </div>
               </div>
@@ -1348,24 +1378,29 @@ export default function AuthPage() {
                   </div>
                 </div>
                 
-                {/* Enhanced Chart Area */}
-                <div className="grid grid-cols-3 gap-4 mb-6">
+                {/* Enhanced Modern Chart Area */}
+                <div className="grid grid-cols-3 gap-5 mb-6">
                   {/* Main Chart */}
-                  <div className="col-span-2 border border-border/40 rounded-lg overflow-hidden bg-muted/20 backdrop-blur-sm">
-                    <div className="border-b border-border/40 bg-muted/30 px-3 py-2 flex justify-between items-center">
+                  <div className="col-span-2 border border-border/50 rounded-lg overflow-hidden bg-card/50 backdrop-blur-md shadow-sm">
+                    <div className="border-b border-border/30 bg-muted/20 backdrop-blur-md px-4 py-3 flex justify-between items-center">
                       <div className="flex items-center gap-2">
-                        <LineChart className="h-4 w-4 text-primary" />
-                        <span className="text-sm font-medium">Market Trends</span>
+                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                          <LineChart className="h-4 w-4 text-primary" />
+                        </div>
+                        <div>
+                          <span className="text-sm font-semibold block">Market Trends</span>
+                          <span className="text-xs text-muted-foreground">Real-time data</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
                         {["1D", "1W", "1M", "1Y", "All"].map((period, i) => (
                           <button 
                             key={i} 
                             className={cn(
-                              "text-xs px-2 py-1 rounded transition-colors",
+                              "text-xs px-3 py-1.5 rounded-md transition-all font-medium",
                               period === "1M" 
-                                ? "bg-primary text-primary-foreground" 
-                                : "text-muted-foreground hover:bg-muted/50"
+                                ? "bg-primary text-primary-foreground shadow-sm" 
+                                : "text-muted-foreground hover:bg-muted/70"
                             )}
                           >
                             {period}
@@ -2025,49 +2060,68 @@ export default function AuthPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
+                whileHover={{ y: key === "pro" ? -5 : -8 }}
                 className={cn(
-                  "rounded-xl overflow-hidden border bg-card relative",
-                  key === "pro" ? "border-primary/50 md:scale-105 shadow-lg" : "border-border shadow-sm"
+                  "rounded-xl overflow-hidden border bg-card/90 backdrop-blur-sm relative",
+                  key === "pro" 
+                    ? "border-primary/50 md:scale-105 shadow-xl ring-1 ring-primary/20" 
+                    : "border-border/60 shadow-lg hover:border-border/80 transition-colors"
                 )}
               >
-                {/* Background gradient */}
-                <div className={`absolute inset-0 ${plan.color} opacity-40`} />
+                {/* Modern gradient background */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${plan.color} opacity-25`} />
+                
+                {/* Top accent line */}
+                <div className={`absolute top-0 left-0 right-0 h-1 ${key === "pro" ? "bg-gradient-to-r from-primary to-violet-500" : "bg-gradient-to-r from-border/50 to-border/10"}`} />
                 
                 {plan.badge && (
-                  <div className="absolute -right-10 top-6 rotate-45 bg-primary px-10 py-1">
-                    <span className="text-xs font-bold text-white">{plan.badge}</span>
+                  <div className="absolute -right-12 top-7 rotate-45 bg-gradient-to-r from-primary to-violet-600 px-12 py-1 shadow-sm">
+                    <span className="text-xs font-medium text-white tracking-wide">{plan.badge}</span>
                   </div>
                 )}
                 
-                <div className="p-6 relative z-10">
-                  <div className={`h-12 w-12 rounded-lg ${plan.textColor} bg-primary/10 flex items-center justify-center mb-4`}>
+                <div className="p-8 relative z-10">
+                  <div className={`h-14 w-14 rounded-xl ${plan.textColor} bg-primary/10 flex items-center justify-center mb-5 shadow-sm`}>
                     {plan.icon}
                   </div>
-                  <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
-                  <p className="text-muted-foreground text-sm mt-1.5 mb-5">{plan.description}</p>
+                  <h3 className="text-xl font-bold text-foreground tracking-tight">{plan.name}</h3>
+                  <p className="text-muted-foreground text-sm mt-2 mb-6 leading-relaxed">{plan.description}</p>
                   
-                  <div className="mb-5">
+                  <div className="mb-6">
                     <div className="flex items-baseline">
-                      <span className="text-3xl font-bold text-foreground">{plan.price}</span>
-                      <span className="text-muted-foreground text-sm ml-1.5">{plan.period}</span>
+                      <span className="text-3xl font-bold text-foreground tracking-tight">{plan.price}</span>
+                      <span className="text-muted-foreground text-sm ml-2">{plan.period}</span>
                     </div>
                     {plan.saveAmount && billingPeriod === "annual" && (
-                      <p className="text-green-600 dark:text-green-400 text-sm mt-1">Save ${plan.saveAmount} per year</p>
+                      <div className="flex items-center mt-2 text-emerald-600 dark:text-emerald-400 text-sm font-medium">
+                        <ArrowRight className="h-3 w-3 mr-1 rotate-45" />
+                        Save ${plan.saveAmount} per year
+                      </div>
                     )}
                   </div>
                   
-                  <Button className="w-full mb-6" variant={key === "pro" ? "default" : "outline"}>
+                  <Button 
+                    className={cn(
+                      "w-full mb-7 shadow-sm font-medium", 
+                      key === "pro" 
+                        ? "bg-gradient-to-r from-primary to-violet-600 hover:from-primary/95 hover:to-violet-600/95 text-white"
+                        : "bg-muted/70 hover:bg-muted text-foreground border border-border/50"
+                    )}
+                  >
                     {plan.buttonText}
                   </Button>
                   
-                  <ul className="space-y-3">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-2">
-                        <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-sm text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="space-y-3">
+                    <p className="text-sm font-medium text-foreground">Includes:</p>
+                    <ul className="space-y-3">
+                      {plan.features.map((feature, i) => (
+                        <li key={i} className="flex items-start gap-2.5">
+                          <CheckCircle2 className="h-5 w-5 text-emerald-500 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
+                          <span className="text-sm text-muted-foreground">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -2828,86 +2882,102 @@ const fetchMarketData = async () => {
       <main className="pt-24 pb-16 relative z-10">
         <div className="container mx-auto px-4 flex flex-col items-center min-h-[60vh]">
           <div className="w-full max-w-md relative">
+            {/* Enhanced background effect */}
             <motion.div 
-              className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-3xl blur-xl"
+              className="absolute inset-0 bg-gradient-to-r from-primary/5 via-violet-500/5 to-indigo-500/5 rounded-3xl blur-2xl"
               animate={{ 
-                opacity: [0.5, 0.15, 0.5],
-                scale: [0.98, 1.01, 0.98] 
+                opacity: [0.6, 0.2, 0.6],
+                scale: [0.97, 1.02, 0.97] 
               }}
               transition={{ 
-                duration: 5, 
+                duration: 7, 
                 repeat: Infinity,
                 ease: "easeInOut" 
               }}
             />
-            <div className="glass-form rounded-2xl overflow-hidden relative shadow-soft">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full -z-10">
-                <div className="absolute -right-1/3 -bottom-1/4 w-2/3 h-2/3 bg-blue-500/5 rounded-full blur-2xl" />
-                <div className="absolute -left-1/4 -top-1/4 w-1/2 h-1/2 bg-purple-500/5 rounded-full blur-2xl" />
-              </div>
+            
+            {/* Accent shapes */}
+            <div className="absolute -top-10 -left-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl opacity-60" />
+            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-violet-500/5 rounded-full blur-3xl opacity-60" />
+            
+            <div className="glass-form rounded-2xl overflow-hidden relative shadow-lg border border-border/50 backdrop-blur-lg bg-background/50">
+              {/* Inner glow effect */}
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+              
               {/* Auth Tabs */}
-              <div className="p-6 sm:p-8">
+              <div className="p-7">
                 <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <TabsList className="grid grid-cols-2 mb-6 w-full bg-muted/50">
-                    <TabsTrigger value="login" className="font-medium text-sm">Sign In</TabsTrigger>
-                    <TabsTrigger value="register" className="font-medium text-sm">Create Account</TabsTrigger>
+                  <TabsList className="grid grid-cols-2 mb-7 w-full bg-muted/60 p-1 rounded-lg">
+                    <TabsTrigger value="login" className="font-medium text-sm rounded-md">Sign In</TabsTrigger>
+                    <TabsTrigger value="register" className="font-medium text-sm rounded-md">Create Account</TabsTrigger>
                   </TabsList>
-                  <TabsContent value="login" className="mt-0 space-y-4">
+                  <TabsContent value="login" className="mt-0 space-y-5">
                     <div>
-                      <h2 className="text-xl font-bold text-foreground mb-1">Welcome back</h2>
+                      <h2 className="text-2xl font-bold text-foreground mb-2 tracking-tight">Welcome back</h2>
                       <p className="text-muted-foreground mb-6 text-sm">Sign in to access your account</p>
                     </div>
                     <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
                       <div className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="login-username">Username</Label>
+                        <div className="space-y-2.5">
+                          <Label htmlFor="login-username" className="text-sm font-medium">Username</Label>
                           <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
-                              <User className="h-5 w-5" />
+                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
+                              <User className="h-4 w-4" />
                             </div>
                             <Input
                               id="login-username"
                               type="text"
-                              className="pl-10"
+                              className="pl-10 py-5 h-11 bg-muted/40 border-border/50 focus:border-primary/50 rounded-lg"
                               placeholder="Enter your username"
                               {...loginForm.register("username")}
                             />
                           </div>
                           {loginForm.formState.errors.username && (
-                            <p className="text-sm text-destructive">{loginForm.formState.errors.username.message}</p>
+                            <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                              <AlertCircle className="h-3.5 w-3.5" />
+                              {loginForm.formState.errors.username.message}
+                            </p>
                           )}
                         </div>
-                        <div className="space-y-2">
+                        <div className="space-y-2.5">
                           <div className="flex items-center justify-between">
-                            <Label htmlFor="login-password">Password</Label>
-                            <a href="#" className="text-xs text-primary hover:underline">Forgot password?</a>
+                            <Label htmlFor="login-password" className="text-sm font-medium">Password</Label>
+                            <a href="#" className="text-xs text-primary hover:text-primary/80 transition-colors">Forgot password?</a>
                           </div>
                           <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
-                              <Lock className="h-5 w-5" />
+                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
+                              <Lock className="h-4 w-4" />
                             </div>
                             <Input
                               id="login-password"
                               type="password"
-                              className="pl-10"
+                              className="pl-10 py-5 h-11 bg-muted/40 border-border/50 focus:border-primary/50 rounded-lg"
                               placeholder="Enter your password"
                               {...loginForm.register("password")}
                             />
                           </div>
                           {loginForm.formState.errors.password && (
-                            <p className="text-sm text-destructive">{loginForm.formState.errors.password.message}</p>
+                            <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                              <AlertCircle className="h-3.5 w-3.5" />
+                              {loginForm.formState.errors.password.message}
+                            </p>
                           )}
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Checkbox id="remember" />
+                          <Checkbox id="remember" className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
                           <label
                             htmlFor="remember"
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground"
+                            className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground"
                           >
                             Remember me
                           </label>
                         </div>
-                        <Button type="submit" className="w-full" disabled={isLoading}>
+                        <Button 
+                          type="submit" 
+                          className="w-full py-5 h-11 bg-gradient-to-r from-primary to-violet-600 hover:from-primary/95 hover:to-violet-600/95 text-white font-medium shadow-sm" 
+                          disabled={isLoading}
+                        >
                           {isLoading ? (
                             <>
                               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -2921,27 +2991,37 @@ const fetchMarketData = async () => {
                     </form>
                     <div className="relative my-6">
                       <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-border"></div>
+                        <div className="w-full border-t border-border/50"></div>
                       </div>
                       <div className="relative flex justify-center text-xs">
-                        <span className="px-2 bg-card text-muted-foreground">Or continue with</span>
+                        <span className="px-3 bg-background text-muted-foreground">Or continue with</span>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <Button variant="outline" type="button" className="hover:bg-muted/50 transition-colors" onClick={handleGoogleLogin}>
+                      <Button 
+                        variant="outline" 
+                        type="button" 
+                        className="border-border/50 hover:bg-muted/40 hover:border-border transition-all py-5 h-11 font-medium" 
+                        onClick={handleGoogleLogin}
+                      >
                         <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                           <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                           <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
                           <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                         </svg>
-                        Google
+                        <span>Google</span>
                       </Button>
-                      <Button variant="outline" type="button" className="hover:bg-muted/50 transition-colors" onClick={handleTwitterLogin}>
+                      <Button 
+                        variant="outline" 
+                        type="button" 
+                        className="border-border/50 hover:bg-muted/40 hover:border-border transition-all py-5 h-11 font-medium" 
+                        onClick={handleTwitterLogin}
+                      >
                         <svg className="mr-2 h-4 w-4" fill="#1DA1F2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
                         </svg>
-                        Twitter
+                        <span>Twitter</span>
                       </Button>
                     </div>
                   </TabsContent>
