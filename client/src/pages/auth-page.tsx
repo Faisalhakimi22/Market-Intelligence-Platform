@@ -119,8 +119,8 @@ type ViewId = "auth" | "login" | "features" | "pricing" | "faq" | "privacy" | "t
 
 // Animation utility to make scrolling smoother
 const smoothScrollAnimation = {
-  viewport: { once: true, margin: "-40% 0px" },
-  transition: { duration: 1.2, ease: "easeOut" }
+  viewport: { once: true, margin: "-20% 0px" },
+  transition: { duration: 0.8, ease: "easeOut" }
 };
 
 // Extended schemas with validation
@@ -619,25 +619,19 @@ export default function AuthPage() {
     styleEl.innerHTML = `
       /* Smoother animations */
       .motion-reduce {
-        transition: all 1s ease-out;
+        transition: all 0.5s ease-out;
       }
       
       html {
         scroll-behavior: smooth;
-        scroll-padding-top: 100px;
       }
       
       /* Improved scrolling for animations */
       @media (prefers-reduced-motion: no-preference) {
         [data-whileinview] {
           transition-property: transform, opacity;
-          transition-duration: 1.5s;
-          transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        
-        .motion-div {
-          will-change: transform, opacity;
-          transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+          transition-duration: 0.6s;
+          transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
         }
       }
     `;
@@ -680,30 +674,14 @@ export default function AuthPage() {
     // Set smooth scrolling for the entire page
     document.documentElement.style.scrollBehavior = 'smooth';
     
-    // Reduce scroll speed for a smoother experience
-    const handleWheel = (e) => {
-      if (e.deltaY !== 0) {
-        // Slow down the scroll speed
-        window.scrollBy({
-          top: e.deltaY * 0.35, // Reduce scroll speed by 65%
-          behavior: 'smooth'
-        });
-        e.preventDefault();
-      }
-    };
-    
-    // Apply the motion class to all animating elements
-    const allMotionElements = document.querySelectorAll('[data-motion], .motion-div, [data-whileinview]');
+    // Find all motion divs and add a custom class to reduce flicker
+    const allMotionElements = document.querySelectorAll('[data-motion]');
     allMotionElements.forEach(el => {
       el.classList.add('motion-reduce');
     });
     
-    // Add the wheel event listener for controlled scrolling
-    window.addEventListener('wheel', handleWheel, { passive: false });
-    
     return () => {
       document.documentElement.style.scrollBehavior = '';
-      window.removeEventListener('wheel', handleWheel);
     };
   }, []);
 
@@ -776,13 +754,8 @@ export default function AuthPage() {
 
   // Function to switch between views
   const switchView = (view: ViewId) => {
-    // First scroll smoothly to top with a subtle transition
+    setActiveView(view);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    // Then update the view after a slight delay for smoother transition
-    setTimeout(() => {
-      setActiveView(view);
-    }, 300);
   };
 
   // Define interfaces for plan types
