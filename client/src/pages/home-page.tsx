@@ -11,6 +11,7 @@ import { CompetitorsWidget } from "@/components/dashboard/competitors-widget";
 import { ForecastWidget } from "@/components/dashboard/forecast-widget";
 import { AlertsWidget } from "@/components/dashboard/alerts-widget";
 import { useTheme } from "next-themes";
+import { MoonIcon, SunIcon, LayoutGridIcon, BarChartIcon, AlertTriangleIcon, TrendingUpIcon } from "lucide-react";
 
 export default function HomePage() {
   const [activeIndustryId, setActiveIndustryId] = useState<number | null>(null);
@@ -39,244 +40,239 @@ export default function HomePage() {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
   
-  // Animation variants for staggered children
+  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.07
       }
     }
   };
   
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    show: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 300 } }
+    show: { 
+      y: 0, 
+      opacity: 1, 
+      transition: { 
+        type: "spring", 
+        stiffness: 260,
+        damping: 20
+      } 
+    }
   };
   
   return (
     <DashboardLayout>
-      <div className="px-4 md:px-6 py-6 bg-shapes relative min-h-screen overflow-hidden">
-        {/* Particle background effect */}
-        <div className="particle-container absolute inset-0 -z-10"></div>
-        
-        {/* Animated background gradient */}
-        <div className="absolute inset-0 bg-animated-gradient -z-10 opacity-30"></div>
-        
-        {/* Futuristic decorative elements */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500 rounded-full filter blur-3xl opacity-10 animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500 rounded-full filter blur-3xl opacity-10 animate-pulse delay-700"></div>
-        
-        {/* Theme toggle & header section */}
-        <div className="flex justify-between items-center mb-6">
-          <motion.h1 
-            className="text-2xl font-bold text-gradient-primary"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            Market Intelligence Dashboard
-          </motion.h1>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="neo-brutalism-button px-3 py-2 rounded-lg flex items-center gap-2"
-            onClick={toggleTheme}
-          >
-            <span className="text-sm font-medium">{theme === 'dark' ? 'Light' : 'Dark'}</span>
-            <span className={`w-6 h-6 rounded-full ${theme === 'dark' ? 'bg-yellow-400' : 'bg-indigo-900'} flex items-center justify-center`}>
-              {theme === 'dark' ? '☀️' : '🌙'}
-            </span>
-          </motion.button>
-        </div>
-        
-        {/* Industry Selection Bar */}
+      <div className="bg-slate-50 dark:bg-slate-900 min-h-screen overflow-hidden">
+        {/* Header Bar */}
         <motion.div 
-          className="mb-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7 }}
-        >
-          <IndustrySelector 
-            industries={industries || []} 
-            isLoading={isLoadingIndustries}
-            activeIndustryId={activeIndustryId}
-            onToggle={handleIndustryToggle}
-          />
-        </motion.div>
-        
-        {/* AI Insights Summary */}
-        <motion.div 
-          className="mb-8"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <AIInsightsSummary 
-            industryId={activeIndustryId} 
-            className="glass-card-premium shadow-blue-glow border border-opacity-20 border-blue-300 dark:border-blue-600"
-          />
-        </motion.div>
-        
-        {/* Dashboard Grid */}
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-        >
-          {/* Market Growth Trends */}
-          <motion.div 
-            variants={itemVariants}
-            className="col-span-1 md:col-span-2 group"
-            whileHover={{ 
-              scale: 1.02,
-              transition: { duration: 0.2 }
-            }}
-          >
-            <div className="relative h-full overflow-hidden cyberpunk-card">
-              <div className="absolute inset-0 bg-gradient-to-tr from-blue-900/20 to-purple-900/20"></div>
-              <div className="absolute inset-0 border border-cyan-500/20 rounded-xl"></div>
-              <div className="corner-accent top-0 left-0"></div>
-              <div className="corner-accent top-0 right-0"></div>
-              <MarketGrowthChart 
-                className="col-span-1 md:col-span-2 p-4 backdrop-blur-sm transition-all duration-300 h-full" 
-              />
-            </div>
-          </motion.div>
-          
-          {/* Key Opportunities */}
-          <motion.div 
-            variants={itemVariants}
-            className="relative group" 
-            whileHover={{ 
-              scale: 1.02,
-              rotateY: 5,
-              transition: { duration: 0.2 }
-            }}
-          >
-            <div className="neo-glass-card relative h-full overflow-hidden">
-              <div className="animated-border"></div>
-              <OpportunitiesWidget 
-                industryId={activeIndustryId} 
-                className="p-4 h-full"
-              />
-            </div>
-          </motion.div>
-          
-          {/* Competitive Intelligence */}
-          <motion.div 
-            variants={itemVariants}
-            className="col-span-1 md:col-span-2 group"
-            whileHover={{ 
-              scale: 1.02, 
-              transition: { duration: 0.2 }
-            }}
-          >
-            <div className="holographic-card h-full">
-              <CompetitorsWidget 
-                industryId={activeIndustryId} 
-                className="p-4 h-full" 
-              />
-            </div>
-          </motion.div>
-          
-          {/* Forecast Widget */}
-          <motion.div 
-            variants={itemVariants}
-            className="group" 
-            whileHover={{ 
-              scale: 1.03,
-              rotateX: 3,
-              transition: { duration: 0.2 }
-            }}
-          >
-            <div className="neo-glass-card relative overflow-hidden">
-              <div className="tech-pattern"></div>
-              <ForecastWidget 
-                className="p-4 relative z-10"
-              />
-            </div>
-          </motion.div>
-          
-          {/* Market Alerts */}
-          <motion.div 
-            variants={itemVariants}
-            className="lg:col-span-2 group"
-            whileHover={{ 
-              scale: 1.02,
-              transition: { duration: 0.2 }
-            }}
-          >
-            <div className="neural-card relative overflow-hidden">
-              <AlertsWidget 
-                className="p-4 relative z-10"
-              />
-            </div>
-          </motion.div>
-        </motion.div>
-        
-        {/* Stats Overview Row */}
-        <motion.div 
-          className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4"
-          initial={{ opacity: 0, y: 20 }}
+          className="flex justify-between items-center pt-6 px-8 pb-4 border-b border-slate-200 dark:border-slate-800 mb-6"
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.5 }}
+          transition={{ duration: 0.4 }}
         >
-          {[
-            { title: "Market Size", value: "$8.4B", change: "+14%", isUp: true, icon: "📈" },
-            { title: "Growth Rate", value: "22.5%", change: "+3.2%", isUp: true, icon: "🚀" },
-            { title: "Competitors", value: "37", change: "+5", isUp: true, icon: "🥊" },
-            { title: "Opportunities", value: "12", change: "+3", isUp: true, icon: "💎" }
-          ].map((stat, index) => (
-            <motion.div 
-              key={index} 
-              className="glass-panel p-4 rounded-lg overflow-hidden relative group"
-              whileHover={{ 
-                scale: 1.05, 
-                transition: { duration: 0.2 }
-              }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 * index, duration: 0.5 }}
-            >
-              <div className={`absolute inset-0 bg-gradient-to-br ${stat.isUp ? 'from-green-500/5 to-blue-500/10' : 'from-red-500/5 to-orange-500/10'} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
-              <div className="flex items-center gap-3">
-                <div className="text-2xl">{stat.icon}</div>
-                <p className="text-sm text-muted-foreground">{stat.title}</p>
-              </div>
-              <div className="flex items-end justify-between mt-2">
-                <p className="text-2xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">{stat.value}</p>
-                <span className={`text-sm px-2 py-1 rounded ${stat.isUp ? 'text-green-500 bg-green-500/10' : 'text-red-500 bg-red-500/10'} flex items-center`}>
-                  {stat.isUp ? '▲ ' : '▼ '}
-                  {stat.change}
-                </span>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+          <div>
+            <h1 className="font-sans text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+              Market Intelligence
+            </h1>
+            <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">
+              Get real-time insights into your market performance
+            </p>
+          </div>
 
-        {/* Footer with quick actions */}
-        <motion.div 
-          className="mt-8 flex justify-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.5 }}
-        >
-          <div className="backdrop-blur-md bg-white/5 dark:bg-black/20 rounded-full px-6 py-3 border border-gray-200/20 dark:border-gray-700/20 flex gap-4">
-            {['Export', 'Share', 'Print', 'Settings'].map((action, index) => (
-              <motion.button
-                key={action}
-                className="px-4 py-2 rounded-full text-sm font-medium transition-colors hover:bg-white/10 dark:hover:bg-black/20"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {action}
-              </motion.button>
-            ))}
+          <div className="flex items-center gap-4">
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="rounded-lg bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-4 py-2 shadow-sm border border-slate-200 dark:border-slate-700 font-medium flex items-center gap-2"
+              onClick={toggleTheme}
+            >
+              {theme === 'dark' ? <SunIcon className="w-4 h-4" /> : <MoonIcon className="w-4 h-4" />}
+              <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+            </motion.button>
           </div>
         </motion.div>
+        
+        <div className="px-8">
+          {/* Industry Selection Bar */}
+          <motion.div 
+            className="mb-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <IndustrySelector 
+              industries={industries || []} 
+              isLoading={isLoadingIndustries}
+              activeIndustryId={activeIndustryId}
+              onToggle={handleIndustryToggle}
+            />
+          </motion.div>
+          
+          {/* Main Content Grid */}
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="grid gap-6"
+          >
+            {/* Top Row - AI Insights Summary */}
+            <motion.div variants={itemVariants}>
+              <div className="p-6 bg-gradient-to-r from-blue-600 to-violet-600 rounded-xl shadow-lg">
+                <AIInsightsSummary 
+                  industryId={activeIndustryId} 
+                  className="text-white" 
+                />
+              </div>
+            </motion.div>
+            
+            {/* Main Content Area */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left Column */}
+              <motion.div 
+                variants={itemVariants} 
+                className="lg:col-span-2 space-y-6"
+              >
+                {/* Market Growth Chart */}
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                  <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <TrendingUpIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      <h2 className="font-semibold text-slate-800 dark:text-slate-200 text-lg">Market Growth Trends</h2>
+                    </div>
+                    <div className="flex gap-2">
+                      <button className="px-3 py-1 text-sm bg-slate-100 dark:bg-slate-700 rounded-md font-medium text-slate-600 dark:text-slate-300">Monthly</button>
+                      <button className="px-3 py-1 text-sm rounded-md font-medium text-slate-600 dark:text-slate-300">Quarterly</button>
+                      <button className="px-3 py-1 text-sm rounded-md font-medium text-slate-600 dark:text-slate-300">Yearly</button>
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <MarketGrowthChart className="h-72" />
+                  </div>
+                </div>
+
+                {/* Competitive Intelligence */}
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                  <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2">
+                    <LayoutGridIcon className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                    <h2 className="font-semibold text-slate-800 dark:text-slate-200 text-lg">Competitive Intelligence</h2>
+                  </div>
+                  <div className="p-5">
+                    <CompetitorsWidget 
+                      industryId={activeIndustryId} 
+                      className="h-full" 
+                    />
+                  </div>
+                </div>
+              </motion.div>
+              
+              {/* Right Column */}
+              <motion.div 
+                variants={itemVariants} 
+                className="space-y-6"
+              >
+                {/* Key Opportunities */}
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                  <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2">
+                    <BarChartIcon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                    <h2 className="font-semibold text-slate-800 dark:text-slate-200 text-lg">Key Opportunities</h2>
+                  </div>
+                  <div className="p-5">
+                    <OpportunitiesWidget 
+                      industryId={activeIndustryId} 
+                      className="h-full"
+                    />
+                  </div>
+                </div>
+                
+                {/* Forecast Widget */}
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                  <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2">
+                    <TrendingUpIcon className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                    <h2 className="font-semibold text-slate-800 dark:text-slate-200 text-lg">Market Forecast</h2>
+                  </div>
+                  <div className="p-5">
+                    <ForecastWidget 
+                      className="h-full"
+                    />
+                  </div>
+                </div>
+                
+                {/* Market Alerts */}
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                  <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2">
+                    <AlertTriangleIcon className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                    <h2 className="font-semibold text-slate-800 dark:text-slate-200 text-lg">Market Alerts</h2>
+                  </div>
+                  <div className="p-5">
+                    <AlertsWidget 
+                      className="h-full"
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+            
+            {/* Stats Overview Row */}
+            <motion.div 
+              variants={itemVariants}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2"
+            >
+              {[
+                { title: "Market Size", value: "$8.4B", change: "+14%", isUp: true, color: "blue" },
+                { title: "Growth Rate", value: "22.5%", change: "+3.2%", isUp: true, color: "emerald" },
+                { title: "Competitors", value: "37", change: "+5", isUp: true, color: "violet" },
+                { title: "Opportunities", value: "12", change: "+3", isUp: true, color: "amber" }
+              ].map((stat, index) => (
+                <div 
+                  key={index} 
+                  className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm"
+                >
+                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{stat.title}</p>
+                  <div className="flex items-end justify-between mt-2">
+                    <p className={`text-2xl font-semibold text-${stat.color}-600 dark:text-${stat.color}-400`}>
+                      {stat.value}
+                    </p>
+                    <span className={`px-2 py-1 rounded text-sm font-medium ${
+                      stat.isUp 
+                        ? 'text-emerald-700 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-900/30' 
+                        : 'text-red-700 bg-red-50 dark:text-red-400 dark:bg-red-900/30'
+                    }`}>
+                      {stat.isUp ? '▲ ' : '▼ '}
+                      {stat.change}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          </motion.div>
+          
+          {/* Footer with quick actions */}
+          <motion.div 
+            className="mt-8 pb-8 flex flex-wrap justify-between items-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.9, duration: 0.5 }}
+          >
+            <div className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+              Last updated: Today at 14:35 PM
+            </div>
+            
+            <div className="flex gap-3 mt-4 sm:mt-0">
+              {['Export Report', 'Share Dashboard', 'Print View', 'Settings'].map((action, index) => (
+                <button
+                  key={action}
+                  className="px-4 py-2 rounded-lg text-sm font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors"
+                >
+                  {action}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        </div>
       </div>
     </DashboardLayout>
   );
