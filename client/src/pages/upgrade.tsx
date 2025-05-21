@@ -1,5 +1,5 @@
 import React from "react";
-import DashboardLayout from "../home-page";
+import DashboardLayout from "@/layouts/dashboard-layout";
 import { motion } from "framer-motion";
 import { Check, ChevronRight, Star, Zap, Shield, BarChart3, Globe, TrendingUp } from "lucide-react";
 
