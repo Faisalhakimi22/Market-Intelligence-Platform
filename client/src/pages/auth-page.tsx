@@ -138,7 +138,7 @@ const Logo = () => (
       </motion.div>
     </div>
     <h1 className="text-2xl font-bold font-heading text-foreground">
-      MarketInsight<span className="text-primary bg-clip-text bg-gradient-to-r from-primary to-purple-500 text-transparent">AI</span>
+      Fore<span className="text-primary bg-clip-text bg-gradient-to-r from-primary to-purple-500 text-transparent">castro</span>
     </h1>
   </div>
 );
@@ -413,11 +413,11 @@ export default function AuthPage() {
   // FAQ data
   const faqs = [
     {
-      question: "How does MarketInsightAI collect and process data?",
+      question: "How does Forecastro collect and process data?",
       answer: "Our platform aggregates data from thousands of public and premium sources, including financial reports, news outlets, social media, industry publications, and proprietary databases. This data is then processed through our advanced AI algorithms to identify patterns, correlations, and insights that would be difficult to discover manually."
     },
     {
-      question: "Can I integrate MarketInsightAI with my existing tools?",
+      question: "Can I integrate Forecastro with my existing tools?",
       answer: "Yes, we offer robust API access with our Professional and Enterprise plans. This allows you to integrate our market intelligence data with your existing CRM, business intelligence, analytics platforms, and other business tools. Our development team can also assist with custom integration needs for Enterprise customers."
     },
     {
@@ -433,7 +433,7 @@ export default function AuthPage() {
       answer: "All plans include access to our knowledge base and community forums. The Starter plan includes email support with a 24-hour response time. Professional plans add priority email and chat support with faster response times. Enterprise customers receive 24/7 priority support, a dedicated account manager, and optional onsite training and implementation assistance."
     },
     {
-      question: "Can I try MarketInsightAI before purchasing?",
+      question: "Can I try Forecastro before purchasing?",
       answer: "Yes, we offer a 14-day free trial with no credit card required. This gives you access to most features of our Professional plan, allowing you to experience the value of our platform before making a commitment. You can upgrade or downgrade your plan at any time after purchasing."
     }
   ];
@@ -1211,7 +1211,7 @@ export default function AuthPage() {
         <div className="container mx-auto px-4">
           <ContentTemplate 
             title="API Documentation" 
-            subtitle="Integrate MarketInsightAI into your applications with our powerful API." 
+            subtitle="Integrate Forecastro into your applications with our powerful API." 
             icon={<Code className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />} 
           />
           
@@ -1225,7 +1225,7 @@ export default function AuthPage() {
                   <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">1</div>
                   <div className="flex-1">
                     <h3 className="font-medium">Get your API key</h3>
-                    <p className="text-sm text-muted-foreground">Sign up for a MarketInsightAI account and generate an API key from your dashboard.</p>
+                    <p className="text-sm text-muted-foreground">Sign up for a Forecastro account and generate an API key from your dashboard.</p>
                   </div>
                 </div>
                 
@@ -1253,7 +1253,7 @@ export default function AuthPage() {
                 <pre className="text-sm text-muted-foreground">
 {`// Example API request using JavaScript
 const fetchMarketData = async () => {
-  const response = await fetch('https://api.marketinsightai.com/v1/market/trends', {
+  const response = await fetch('https://api.forecastro.com/v1/market/trends', {
     method: 'GET',
     headers: {
       'Authorization': 'Bearer YOUR_API_KEY',
@@ -1286,7 +1286,7 @@ const fetchMarketData = async () => {
         <div className="container mx-auto px-4">
           <ContentTemplate 
             title="Integrations" 
-            subtitle="Connect MarketInsightAI with your favorite tools and platforms." 
+            subtitle="Connect Forecastro with your favorite tools and platforms." 
             icon={<Package className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />} 
           />
           
@@ -1329,7 +1329,7 @@ const fetchMarketData = async () => {
         <div className="container mx-auto px-4">
           <ContentTemplate 
             title="Documentation" 
-            subtitle="Learn how to use MarketInsightAI with our comprehensive documentation." 
+            subtitle="Learn how to use Forecastro with our comprehensive documentation." 
             icon={<FileText className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />} 
           />
           
@@ -1352,12 +1352,12 @@ const fetchMarketData = async () => {
             <div className="md:col-span-2 space-y-8">
               <div className="glass-card rounded-xl p-6 border border-border/50">
                 <h2 className="text-2xl font-bold mb-4">Getting Started</h2>
-                <p className="text-muted-foreground mb-4">Welcome to MarketInsightAI! This guide will help you get up and running with our platform.</p>
+                <p className="text-muted-foreground mb-4">Welcome to Forecastro! This guide will help you get up and running with our platform.</p>
                 
                 <div className="space-y-6">
                   <div>
                     <h3 className="text-lg font-medium mb-2">1. Create Your Account</h3>
-                    <p className="text-sm text-muted-foreground">Sign up for a MarketInsightAI account to get started. You can begin with our 14-day free trial.</p>
+                    <p className="text-sm text-muted-foreground">Sign up for a Forecastro account to get started. You can begin with our 14-day free trial.</p>
                   </div>
                   
                   <div>
@@ -1597,7 +1597,7 @@ const fetchMarketData = async () => {
                 Our founders, a team of data scientists and market research experts, set out to change this paradigm. By harnessing the power of AI and machine learning, we've created a platform that provides enterprise-grade market intelligence at a fraction of the traditional cost.
               </p>
               <p className="text-muted-foreground">
-                Today, MarketInsightAI serves thousands of businesses worldwide, helping them discover market opportunities, track competitors, and make data-driven decisions with confidence.
+                Today, Forecastro serves thousands of businesses worldwide, helping them discover market opportunities, track competitors, and make data-driven decisions with confidence.
               </p>
             </div>
             
