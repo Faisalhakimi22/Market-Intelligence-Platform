@@ -562,93 +562,121 @@ export default function AuthPage() {
     }
   ];
 
-  // Helper function to render the base layout
+  // Helper function to render the base layout with a more modern design
   const renderBaseLayout = (content: React.ReactNode) => {
     return (
-      <div className="min-h-screen w-full bg-background overflow-hidden font-sans antialiased relative">
-        {/* Elegant background with single gradient layer */}
-        <div className="absolute inset-0 z-0 pointer-events-none bg-animated-gradient">
-          {/* We're using just one background layer with custom animation from our new CSS */}
+      <div className="min-h-screen w-full bg-background font-sans antialiased relative modern-gradient-bg">
+        {/* Modern animated background */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-primary/5 rounded-full blur-3xl" />
+          <div className="absolute -bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-purple-500/5 rounded-full blur-3xl" />
+          <div className="absolute top-1/4 right-1/4 w-32 h-32 bg-blue-500/5 rounded-full blur-xl" />
+          <div className="absolute bottom-1/4 left-1/4 w-32 h-32 bg-indigo-500/5 rounded-full blur-xl" />
+          
+          {/* Subtle animated shapes */}
+          <motion.div
+            className="absolute top-1/3 left-1/3 w-64 h-64 rounded-full border border-primary/10"
+            animate={{
+              scale: [1, 1.1, 1],
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          
+          <motion.div
+            className="absolute bottom-1/3 right-1/3 w-96 h-96 rounded-full border border-purple-500/10"
+            animate={{
+              scale: [1, 1.15, 1],
+              opacity: [0.2, 0.4, 0.2],
+            }}
+            transition={{
+              duration: 12,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1
+            }}
+          />
         </div>
         
-        {/* Enhanced geometry shapes with SVG animations */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-          <GeometryShapes />
-        </div>
-        
-        {/* Background shapes that add depth without doubling backgrounds */}
-        <div className="absolute inset-0 bg-shapes pointer-events-none z-0"></div>
-
-        {/* Header with enhanced glass effect */}
+        {/* Modern Header */}
         <header 
           className={cn(
             "fixed top-0 left-0 w-full z-50 transition-all duration-300",
-            "glass-panel",
-            isHeaderVisible ? "translate-y-0" : "-translate-y-full"
+            isHeaderVisible ? "translate-y-0" : "-translate-y-full",
+            "bg-background/70 backdrop-blur-xl border-b border-border/20"
           )}
         >
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto px-6">
             <div className="flex h-16 items-center justify-between">
-              {/* Logo */}
-              <Logo />
+              {/* Logo with animation */}
+              <div 
+                className="flex items-center gap-2 group cursor-pointer" 
+                onClick={() => {
+                  window.location.href = "/";
+                  window.location.reload();
+                }}
+              >
+                <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-lg overflow-hidden group-hover:shadow-primary/30 transition-all duration-300">
+                  <motion.div
+                    initial={{ y: 0 }}
+                    animate={{
+                      y: [0, -2, 0, 2, 0],
+                    }}
+                    transition={{
+                      duration: 5,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <BarChart2 className="h-6 w-6 text-white" />
+                  </motion.div>
+                </div>
+                <h1 className="text-2xl font-bold text-foreground">
+                  Fore<span className="bg-clip-text bg-gradient-to-r from-primary to-purple-600 text-transparent">castro AI</span>
+                </h1>
+              </div>
 
-              {/* Desktop Navigation */}
+              {/* Desktop Navigation - More minimal and modern */}
               <nav className="hidden md:flex items-center space-x-8">
-                <button 
-                  onClick={() => switchView("auth")}
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200 font-medium text-sm"
-                >
-                  Home
-                </button>
-                <button 
-                  onClick={() => switchView("features")}
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200 font-medium text-sm"
-                >
-                  Features
-                </button>
-                <button 
-                  onClick={() => switchView("pricing")}
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200 font-medium text-sm"
-                >
-                  Pricing
-                </button>
-                <button 
-                  onClick={() => switchView("faq")}
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200 font-medium text-sm"
-                >
-                  FAQ
-                </button>
-                <button 
-                  onClick={() => switchView("about")}
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200 font-medium text-sm"
-                >
-                  About
-                </button>
+                {["Home", "Features", "Pricing", "FAQ", "About"].map((item, i) => (
+                  <button 
+                    key={i}
+                    onClick={() => switchView(item.toLowerCase() as ViewId)}
+                    className="text-muted-foreground hover:text-primary transition-colors duration-200 text-sm relative group"
+                  >
+                    {item}
+                    <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left"></span>
+                  </button>
+                ))}
               </nav>
 
-              {/* Theme Toggler, Login Button and Mobile Menu Button */}
-              <div className="flex items-center space-x-4">
+              {/* Right Section */}
+              <div className="flex items-center space-x-5">
                 <ThemeToggle />
                 <Button 
                   onClick={() => switchView("login")}
                   variant="outline"
                   size="sm"
-                  className="hidden md:flex"
+                  className="hidden md:flex bg-background hover:bg-muted/50 border-primary/20 hover:border-primary text-foreground"
                 >
                   Sign In
                 </Button>
                 <button 
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
-                  className="md:hidden flex items-center p-2 rounded-md text-muted-foreground hover:text-primary focus:outline-none"
+                  className="md:hidden flex items-center p-1.5 rounded-md text-muted-foreground hover:text-primary focus:outline-none"
                 >
-                  <Menu className="h-6 w-6" />
+                  <Menu className="h-5 w-5" />
                 </button>
               </div>
             </div>
           </div>
         </header>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu - Modernized */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div 
@@ -657,62 +685,29 @@ export default function AuthPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="fixed top-16 left-0 w-full z-40 bg-background/95 backdrop-blur-lg border-b border-border/30 shadow-lg md:hidden"
+              className="fixed top-16 left-0 w-full z-40 bg-background/80 backdrop-blur-xl border-b border-border/20 shadow-lg md:hidden"
             >
-              <div className="container mx-auto px-4 py-4">
-                <div className="flex flex-col space-y-4">
-                  <button 
-                    onClick={() => {
-                      switchView("auth");
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="text-muted-foreground hover:text-primary transition-colors duration-200 font-medium text-sm py-2"
-                  >
-                    Home
-                  </button>
-                  <button 
-                    onClick={() => {
-                      switchView("features");
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="text-muted-foreground hover:text-primary transition-colors duration-200 font-medium text-sm py-2"
-                  >
-                    Features
-                  </button>
-                  <button 
-                    onClick={() => {
-                      switchView("pricing");
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="text-muted-foreground hover:text-primary transition-colors duration-200 font-medium text-sm py-2"
-                  >
-                    Pricing
-                  </button>
-                  <button 
-                    onClick={() => {
-                      switchView("faq");
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="text-muted-foreground hover:text-primary transition-colors duration-200 font-medium text-sm py-2"
-                  >
-                    FAQ
-                  </button>
-                  <button 
-                    onClick={() => {
-                      switchView("about");
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="text-muted-foreground hover:text-primary transition-colors duration-200 font-medium text-sm py-2"
-                  >
-                    About
-                  </button>
+              <div className="container mx-auto px-6 py-6">
+                <div className="flex flex-col space-y-5">
+                  {["Home", "Features", "Pricing", "FAQ", "About"].map((item, i) => (
+                    <button 
+                      key={i}
+                      onClick={() => {
+                        switchView(item.toLowerCase() as ViewId);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="flex items-center justify-between text-foreground py-2 px-2 rounded-md hover:bg-muted transition-colors duration-200"
+                    >
+                      <span>{item}</span>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                  ))}
                   <Button 
                     onClick={() => {
                       switchView("login");
                       setIsMobileMenuOpen(false);
                     }}
-                    variant="outline"
-                    className="w-full"
+                    className="w-full bg-gradient-to-r from-primary to-purple-600 text-white hover:from-primary/90 hover:to-purple-600/90"
                   >
                     Sign In
                   </Button>
@@ -724,89 +719,80 @@ export default function AuthPage() {
         
         {content}
         
-        {/* Footer */}
-        <footer className="bg-card/50 dark:bg-card/30 border-t border-border pt-12 pb-8 relative z-10">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        {/* Modern Footer */}
+        <footer className="bg-background border-t border-border/20 pt-16 pb-8 relative z-10">
+          <div className="container mx-auto px-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
               <div className="col-span-1 md:col-span-1">
-                <Logo />
-                <p className="text-muted-foreground text-sm my-4">AI-powered market intelligence for smarter business decisions.</p>
+                <div className="flex items-center gap-2 mb-6">
+                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center">
+                    <BarChart2 className="h-4 w-4 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground">
+                    Forecastro<span className="text-primary">AI</span>
+                  </h3>
+                </div>
+                <p className="text-muted-foreground text-sm mb-6">AI-powered market intelligence for smarter business decisions.</p>
                 <div className="flex space-x-4">
-                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  {[
+                    { icon: <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd"></path>
-                    </svg>
-                  </a>
-                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    </svg> },
+                    { icon: <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path>
-                    </svg>
-                  </a>
-                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    </svg> },
+                    { icon: <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd"></path>
-                    </svg>
-                  </a>
-                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    </svg> },
+                    { icon: <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path fillRule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.51 0 10-4.48 10-10S17.51 2 12 2zm6.605 4.61a8.502 8.502 0 011.93 5.314c-.281-.054-3.101-.629-5.943-.271-.065-.141-.12-.293-.184-.445a25.416 25.416 0 00-.564-1.236c3.145-1.28 4.577-3.124 4.761-3.362zM12 3.475c2.17 0 4.154.813 5.662 2.148-.152.216-1.443 1.941-4.48 3.08-1.399-2.57-2.95-4.675-3.189-5A8.687 8.687 0 0112 3.475zm-3.633.803a53.896 53.896 0 013.167 4.935c-3.992 1.063-7.517 1.04-7.896 1.04a8.581 8.581 0 014.729-5.975zM3.453 12.01v-.26c.37.01 4.512.065 8.775-1.215.25.477.477.965.694 1.453-.109.033-.228.065-.336.098-4.404 1.42-6.747 5.303-6.942 5.629a8.522 8.522 0 01-2.19-5.705zM12 20.547a8.482 8.482 0 01-5.239-1.8c.152-.315 1.888-3.656 6.703-5.337.022-.01.033-.01.054-.022a35.318 35.318 0 011.823 6.475 8.4 8.4 0 01-3.341.684zm4.761-1.465c-.086-.52-.542-3.015-1.659-6.084 2.679-.423 5.022.271 5.314.369a8.468 8.468 0 01-3.655 5.715z" clipRule="evenodd"></path>
-                    </svg>
-                  </a>
+                    </svg> }
+                  ].map((item, i) => (
+                    <a 
+                      key={i} 
+                      href="#" 
+                      className="text-muted-foreground hover:text-primary transition-all duration-200 hover:scale-110"
+                    >
+                      {item.icon}
+                    </a>
+                  ))}
                 </div>
               </div>
-              <div className="col-span-1">
-                <h3 className="text-base font-medium text-foreground mb-3">Product</h3>
-                <ul className="space-y-2.5">
-                  <li>
-                    <button onClick={() => switchView("features")} className="text-muted-foreground hover:text-primary text-sm">Features</button>
-                  </li>
-                  <li>
-                    <button onClick={() => switchView("pricing")} className="text-muted-foreground hover:text-primary text-sm">Pricing</button>
-                  </li>
-                  <li>
-                    <button onClick={() => switchView("api")} className="text-muted-foreground hover:text-primary text-sm">API</button>
-                  </li>
-                  <li>
-                    <button onClick={() => switchView("integrations")} className="text-muted-foreground hover:text-primary text-sm">Integrations</button>
-                  </li>
-                </ul>
-              </div>
-              <div className="col-span-1">
-                <h3 className="text-base font-medium text-foreground mb-3">Resources</h3>
-                <ul className="space-y-2.5">
-                  <li>
-                    <button onClick={() => switchView("documentation")} className="text-muted-foreground hover:text-primary text-sm">Documentation</button>
-                  </li>
-                  <li>
-                    <button onClick={() => switchView("guides")} className="text-muted-foreground hover:text-primary text-sm">Guides</button>
-                  </li>
-                  <li>
-                    <button onClick={() => switchView("blog")} className="text-muted-foreground hover:text-primary text-sm">Blog</button>
-                  </li>
-                  <li>
-                    <button onClick={() => switchView("faq")} className="text-muted-foreground hover:text-primary text-sm">FAQ</button>
-                  </li>
-                </ul>
-              </div>
-              <div className="col-span-1">
-                <h3 className="text-base font-medium text-foreground mb-3">Company</h3>
-                <ul className="space-y-2.5">
-                  <li>
-                    <button onClick={() => switchView("about")} className="text-muted-foreground hover:text-primary text-sm">About</button>
-                  </li>
-                  <li>
-                    <button onClick={() => switchView("contact")} className="text-muted-foreground hover:text-primary text-sm">Contact</button>
-                  </li>
-                  <li>
-                    <button onClick={() => switchView("privacy")} className="text-muted-foreground hover:text-primary text-sm">Privacy Policy</button>
-                  </li>
-                  <li>
-                    <button onClick={() => switchView("terms")} className="text-muted-foreground hover:text-primary text-sm">Terms of Service</button>
-                  </li>
-                </ul>
-              </div>
+              
+              {[
+                {
+                  title: "Product",
+                  links: ["Features", "Pricing", "API", "Integrations"]
+                },
+                {
+                  title: "Resources",
+                  links: ["Documentation", "Guides", "Blog", "FAQ"]
+                },
+                {
+                  title: "Company",
+                  links: ["About", "Contact", "Privacy Policy", "Terms of Service"]
+                }
+              ].map((section, i) => (
+                <div key={i} className="col-span-1">
+                  <h3 className="text-base font-medium text-foreground mb-5 uppercase tracking-wider text-sm">{section.title}</h3>
+                  <ul className="space-y-3">
+                    {section.links.map((link, j) => (
+                      <li key={j}>
+                        <button 
+                          onClick={() => switchView(link.toLowerCase().replace(' ', '-') as ViewId)} 
+                          className="text-muted-foreground hover:text-primary transition-colors duration-200 text-sm flex items-center group"
+                        >
+                          <span className="h-0.5 w-0 bg-primary mr-0 group-hover:w-2 group-hover:mr-2 transition-all duration-200"></span>
+                          {link}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
-            <div className="mt-12 border-t border-border pt-8">
+            
+            <div className="mt-16 border-t border-border/20 pt-8">
               <p className="text-muted-foreground text-xs text-center">
                 &copy; {new Date().getFullYear()} Forecastro AI. All rights reserved.
               </p>
@@ -855,272 +841,346 @@ export default function AuthPage() {
 
   if (activeView === "auth") {
     return renderBaseLayout(
-      <main className="pt-20 pb-16 relative z-10">
-        <div className="container mx-auto px-4 relative">
+      <main className="pt-32 pb-20 relative z-10">
+        <div className="container mx-auto px-6">
           {/* Hero Section */}
-          <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-stretch relative z-10 mb-20">
-            {/* Left Column - Hero Content */}
-            <div className="w-full lg:w-1/2 p-2 lg:p-8 flex flex-col justify-center">
-              <div className="flex items-center mb-4">
-                <Badge variant="secondary" className="px-3 py-1 bg-primary/10 text-primary dark:bg-primary/20 gap-1 group hover:bg-primary/20 transition-colors">
-                  <Sparkles className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
-                  <span>AI-Powered Market Intelligence</span>
-                </Badge>
+          <div className="grid lg:grid-cols-12 gap-12 items-center mb-24">
+            {/* Left Column - Content */}
+            <div className="lg:col-span-6 space-y-8">
+              <div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <Badge 
+                    className="px-3 py-1.5 bg-primary/10 text-primary hover:bg-primary/20 transition-colors mb-6 inline-flex items-center gap-1.5 uppercase tracking-wide text-xs font-semibold rounded-full"
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                    <span>AI-Powered Intelligence</span>
+                  </Badge>
+                </motion.div>
+                <motion.h1 
+                  className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                >
+                  Discover Market <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-pink-500">Opportunities</span> with AI Precision
+                </motion.h1>
+                <motion.p 
+                  className="text-lg text-muted-foreground leading-relaxed mb-8 max-w-2xl"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                  Harness the power of advanced AI to analyze market trends, track competitors, and identify growth opportunities with unparalleled accuracy and speed.
+                </motion.p>
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold font-heading mb-6 text-foreground leading-tight">
-                Uncover Market <span className="bg-clip-text bg-gradient-to-r from-primary to-purple-600 text-transparent">Insights</span> with Confidence
-              </h1>
-              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                Make strategic decisions with our AI-powered market intelligence platform. Get ahead of trends, monitor competitors, and identify growth opportunities with data-driven insights.
-              </p>
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 mb-8">
+              
+              {/* Action Buttons with better styling */}
+              <motion.div 
+                className="flex flex-col sm:flex-row gap-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+              >
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto"
+                  className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white shadow-md hover:shadow-lg transition-all duration-200 px-8"
                   onClick={() => switchView("pricing")}
                 >
                   Start Free Trial
                 </Button>
                 <Dialog>
                   <DialogTrigger asChild>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-full sm:w-auto"
-                >
-                  View Demo
-                </Button>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="border-primary/20 hover:border-primary bg-background/50 hover:bg-background/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 px-8"
+                    >
+                      Watch Demo
+                    </Button>
                   </DialogTrigger>
                   <DemoModal />
                 </Dialog>
-              </div>
-              {/* Trust Indicators */}
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  <span>Trusted by 10,000+ businesses worldwide</span>
-            </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Shield className="h-5 w-5 text-blue-500" />
-                  <span>Enterprise-grade security & compliance</span>
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Zap className="h-5 w-5 text-amber-500" />
-                  <span>Real-time market data & insights</span>
-                </div>
-              </div>
-            </div>
-            {/* Right Column - Enhanced Business Image */}
-            <div className="hidden lg:flex w-1/2 items-center justify-center relative">
-              {/* Background Effects */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-purple-500/5 rounded-2xl" />
-              <div className="absolute inset-0">
-                <div className="absolute -right-8 -top-8 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
-                <div className="absolute -left-8 -bottom-8 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl" />
-              </div>
+              </motion.div>
               
-              {/* Floating Elements */}
-              <motion.div
-                className="absolute -left-4 top-1/4 bg-card/50 backdrop-blur-sm border border-border/50 p-4 rounded-lg shadow-lg"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{
-                  duration: 0.5,
-                  delay: 0.2,
-                }}
+              {/* Trust Badges - More modern styling */}
+              <motion.div 
+                className="pt-8 space-y-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
               >
-                <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center">
-                    <TrendingUp className="h-4 w-4 text-green-500" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium">Market Growth</div>
-                    <div className="text-xs text-muted-foreground">+24.8% Increase</div>
-                  </div>
+                <div className="text-sm font-medium text-muted-foreground/70 mb-4">TRUSTED BY INNOVATIVE COMPANIES</div>
+                <div className="flex flex-wrap gap-8 items-center">
+                  {[
+                    "Microsoft", "Google", "Amazon", "Meta", "Shopify"
+                  ].map((company, i) => (
+                    <div key={i} className="text-muted-foreground/60 hover:text-muted-foreground transition-colors duration-200 font-semibold">
+                      {company}
+                    </div>
+                  ))}
                 </div>
               </motion.div>
-
-              <motion.div
-                className="absolute -right-4 bottom-1/4 bg-card/50 backdrop-blur-sm border border-border/50 p-4 rounded-lg shadow-lg"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{
-                  duration: 0.5,
-                  delay: 0.4,
-                }}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center">
-                    <Users className="h-4 w-4 text-blue-500" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium">Competitor Analysis</div>
-                    <div className="text-xs text-muted-foreground">12 New Insights</div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Main Image Container */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="relative z-10 w-[90%] aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-border"
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-background/0 z-10" />
-              <img
-                src={marketAnalysisJpg}
-                alt="Business market analysis illustration"
-                  className="w-full h-full object-cover"
-                />
-                
-                {/* Overlay Stats */}
-                <motion.div
-                  className="absolute bottom-4 left-4 right-4 bg-card/50 backdrop-blur-sm border border-border/50 rounded-lg p-4 z-20"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.6 }}
-                >
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="text-center">
-                      <div className="text-sm font-medium text-primary">Markets</div>
-                      <div className="text-2xl font-bold">150+</div>
             </div>
-                    <div className="text-center border-l border-r border-border">
-                      <div className="text-sm font-medium text-primary">Accuracy</div>
-                      <div className="text-2xl font-bold">96%</div>
-          </div>
-                    <div className="text-center">
-                      <div className="text-sm font-medium text-primary">Insights</div>
-                      <div className="text-2xl font-bold">24/7</div>
+            
+            {/* Right Column - Visualizations */}
+            <div className="lg:col-span-6 relative h-full">
+              {/* Main visualization */}
+              <div className="relative aspect-[4/3] w-full">
+                {/* Background effects */}
+                <div className="absolute -inset-4 bg-gradient-to-br from-primary/10 via-purple-500/10 to-blue-500/5 rounded-3xl blur-2xl opacity-70"></div>
+                
+                {/* Main feature display */}
+                <motion.div
+                  className="relative bg-background/30 backdrop-blur-xl border border-border/40 rounded-2xl overflow-hidden shadow-2xl"
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                >
+                  {/* Mockup Header */}
+                  <div className="h-10 bg-muted/50 border-b border-border/40 flex items-center px-4">
+                    <div className="flex space-x-2">
+                      <div className="w-3 h-3 rounded-full bg-red-500/70"></div>
+                      <div className="w-3 h-3 rounded-full bg-yellow-500/70"></div>
+                      <div className="w-3 h-3 rounded-full bg-green-500/70"></div>
+                    </div>
+                    <div className="text-xs text-muted-foreground/70 mx-auto">
+                      Market Intelligence Dashboard
+                    </div>
+                  </div>
+                  
+                  {/* Dashboard Content */}
+                  <div className="p-6">
+                    <div className="flex justify-between items-center mb-6">
+                      <h3 className="text-lg font-semibold">Market Trends</h3>
+                      <div className="flex items-center text-sm text-muted-foreground gap-2">
+                        <span>Last updated:</span>
+                        <span className="text-foreground">Just now</span>
+                        <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
+                      </div>
+                    </div>
+                    
+                    {/* Chart Visualization */}
+                    <div className="h-60 w-full mb-6 relative">
+                      <div className="absolute inset-0 flex items-end">
+                        {Array.from({ length: 24 }).map((_, i) => {
+                          const height = 20 + Math.random() * 80;
+                          return (
+                            <motion.div
+                              key={i}
+                              className="flex-1 mx-0.5 rounded-t-sm bg-gradient-to-t from-primary/40 to-primary/80"
+                              initial={{ height: 0 }}
+                              animate={{ height: `${height}%` }}
+                              transition={{ duration: 0.8, delay: 0.05 * i }}
+                            />
+                          );
+                        })}
+                      </div>
+                      
+                      {/* Animated Cursor Line */}
+                      <motion.div
+                        className="absolute top-0 w-0.5 h-full bg-white/50"
+                        initial={{ left: '0%' }}
+                        animate={{ left: '100%' }}
+                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                      />
+                    </div>
+                    
+                    {/* Stats Row */}
+                    <div className="grid grid-cols-3 gap-4">
+                      {[
+                        { label: "Market Growth", value: "+24.8%", color: "text-green-500" },
+                        { label: "Opportunities", value: "37", color: "text-blue-500" },
+                        { label: "Risk Score", value: "Low", color: "text-green-500" }
+                      ].map((stat, i) => (
+                        <motion.div
+                          key={i}
+                          className="bg-muted/30 rounded-lg p-4 border border-border/30"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 0.6 + (i * 0.1) }}
+                        >
+                          <div className="text-xs text-muted-foreground mb-1">{stat.label}</div>
+                          <div className={`text-xl font-bold ${stat.color}`}>{stat.value}</div>
+                        </motion.div>
+                      ))}
                     </div>
                   </div>
                 </motion.div>
-              </motion.div>
-
-              {/* Decorative Elements */}
-              <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-primary rounded-full" />
-                <div className="absolute top-1/3 left-1/3 w-3 h-3 bg-purple-500 rounded-full" />
-                <div className="absolute bottom-1/4 right-1/3 w-2 h-2 bg-blue-500 rounded-full" />
+                
+                {/* Floating Elements */}
+                <motion.div
+                  className="absolute -left-12 top-1/4 bg-card/80 backdrop-blur-sm border border-border/50 p-4 rounded-lg shadow-lg z-10"
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.7, delay: 0.7 }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center">
+                      <TrendingUp className="h-4 w-4 text-green-500" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium">New Opportunity</div>
+                      <div className="text-xs text-muted-foreground">Emerging Market Detected</div>
+                    </div>
+                  </div>
+                </motion.div>
+                
+                <motion.div
+                  className="absolute -right-8 bottom-1/3 bg-card/80 backdrop-blur-sm border border-border/50 p-4 rounded-lg shadow-lg z-10"
+                  initial={{ opacity: 0, x: 30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.7, delay: 0.9 }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center">
+                      <Users className="h-4 w-4 text-blue-500" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium">Competitor Alert</div>
+                      <div className="text-xs text-muted-foreground">Price strategy changed</div>
+                    </div>
+                  </div>
+                </motion.div>
+                
+                {/* AI Suggestion Element */}
+                <motion.div
+                  className="absolute -bottom-8 left-1/4 right-1/4 bg-card/90 backdrop-blur-md border border-primary/20 p-4 rounded-lg shadow-xl z-20"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, delay: 1.1 }}
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="h-7 w-7 rounded-full bg-primary/20 flex items-center justify-center">
+                      <Sparkles className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <div className="text-sm font-medium text-primary">AI Recommendation</div>
+                  </div>
+                  <div className="mt-2 text-sm">Consider expanding into the European market based on current trends and competitor analysis.</div>
+                </motion.div>
+              </div>
+              
+              {/* Decorative elements */}
+              <div className="absolute -z-10 inset-0 overflow-hidden">
+                <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-primary rounded-full"></div>
+                <div className="absolute top-1/3 left-1/3 w-3 h-3 bg-purple-500 rounded-full"></div>
+                <div className="absolute bottom-1/4 right-1/3 w-2 h-2 bg-blue-500 rounded-full"></div>
               </div>
             </div>
           </div>
-
-          {/* Features Grid */}
-          <div className="mb-20">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">Why Choose Forecastro AI?</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">Experience the power of AI-driven market intelligence with our comprehensive suite of tools.</p>
+          
+          {/* Feature Section - Modern Cards */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="mb-24"
+          >
+            <div className="text-center mb-16">
+              <Badge className="mb-4 px-3 py-1.5 bg-primary/10 text-primary rounded-full">
+                Core Features
+              </Badge>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-6">Why Choose Forecastro AI?</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">Experience the most advanced market intelligence platform powered by cutting-edge AI technology.</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true }}
-                className="glass-card p-6 rounded-xl border border-border/50"
-              >
-                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <LineChart className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Real-time Analytics</h3>
-                <p className="text-muted-foreground">Get instant insights into market trends and competitor movements as they happen.</p>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                viewport={{ once: true }}
-                className="glass-card p-6 rounded-xl border border-border/50"
-              >
-                <div className="h-12 w-12 rounded-lg bg-purple-500/10 flex items-center justify-center mb-4">
-                  <BrainCircuit className="h-6 w-6 text-purple-500" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">AI Predictions</h3>
-                <p className="text-muted-foreground">Leverage advanced AI algorithms to predict market trends and opportunities.</p>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                viewport={{ once: true }}
-                className="glass-card p-6 rounded-xl border border-border/50"
-              >
-                <div className="h-12 w-12 rounded-lg bg-green-500/10 flex items-center justify-center mb-4">
-                  <Users className="h-6 w-6 text-green-500" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Competitor Tracking</h3>
-                <p className="text-muted-foreground">Monitor your competitors' strategies and stay ahead of market changes.</p>
-              </motion.div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[
+                {
+                  icon: <LineChart className="h-6 w-6 text-primary" />,
+                  title: "Real-time Analytics",
+                  description: "Get instant insights into market trends and competitor movements as they happen."
+                },
+                {
+                  icon: <BrainCircuit className="h-6 w-6 text-purple-500" />,
+                  title: "AI Predictions",
+                  description: "Leverage advanced AI algorithms to predict market trends and identify opportunities."
+                },
+                {
+                  icon: <Users className="h-6 w-6 text-blue-500" />,
+                  title: "Competitor Tracking",
+                  description: "Monitor your competitors' strategies and stay ahead of market changes."
+                }
+              ].map((feature, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  className="group relative overflow-hidden rounded-xl border border-border/40 bg-gradient-to-b from-background to-muted/20 p-6 transition-all duration-300 hover:shadow-md hover:border-primary/20 card-glow"
+                >
+                  <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-3xl"></div>
+                  
+                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-muted/50 to-muted flex items-center justify-center mb-6 relative z-10 group-hover:scale-110 transition-transform duration-300">
+                    {feature.icon}
+                  </div>
+                  
+                  <h3 className="text-xl font-semibold mb-3 relative z-10">{feature.title}</h3>
+                  <p className="text-muted-foreground relative z-10">{feature.description}</p>
+                  
+                  <div className="mt-6 flex items-center text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300 relative z-10 gap-2">
+                    <span className="text-sm font-medium">Learn more</span>
+                    <ChevronRight className="h-4 w-4" />
+                  </div>
+                </motion.div>
+              ))}
             </div>
-          </div>
-
-          {/* Stats Section */}
-          <div className="mb-20">
-            <div className="glass-card rounded-xl border border-border/50 p-8">
+          </motion.div>
+          
+          {/* Stats Section - Modern Version */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="mb-24"
+          >
+            <div className="bg-gradient-to-br from-muted/30 via-card/30 to-muted/30 border border-border/40 rounded-2xl p-10 backdrop-blur-sm">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5 }}
-                  viewport={{ once: true }}
-                  className="text-center"
-                >
-                  <div className="text-3xl font-bold text-primary mb-2">10K+</div>
-                  <div className="text-muted-foreground">Active Users</div>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                  viewport={{ once: true }}
-                  className="text-center"
-                >
-                  <div className="text-3xl font-bold text-purple-500 mb-2">50M+</div>
-                  <div className="text-muted-foreground">Data Points</div>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  viewport={{ once: true }}
-                  className="text-center"
-                >
-                  <div className="text-3xl font-bold text-green-500 mb-2">99.9%</div>
-                  <div className="text-muted-foreground">Uptime</div>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                  viewport={{ once: true }}
-                  className="text-center"
-                >
-                  <div className="text-3xl font-bold text-blue-500 mb-2">24/7</div>
-                  <div className="text-muted-foreground">Support</div>
-                </motion.div>
+                {[
+                  { value: "10K+", label: "Active Users", color: "text-primary", colorBg: "bg-primary" },
+                  { value: "50M+", label: "Data Points", color: "text-purple-500", colorBg: "bg-purple-500" },
+                  { value: "99.9%", label: "Uptime", color: "text-green-500", colorBg: "bg-green-500" },
+                  { value: "24/7", label: "Support", color: "text-blue-500", colorBg: "bg-blue-500" }
+                ].map((stat, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                    className="text-center relative"
+                  >
+                    <div className={`absolute w-12 h-12 rounded-full ${stat.colorBg}/10 blur-xl -z-10 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2`}></div>
+                    <div className={`text-4xl font-bold ${stat.color} mb-2`}>{stat.value}</div>
+                    <div className="text-muted-foreground text-sm">{stat.label}</div>
+                  </motion.div>
+                ))}
               </div>
             </div>
-          </div>
-
+          </motion.div>
+          
           {/* CTA Section */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Market Strategy?</h2>
-            <p className="text-muted-foreground mb-8">Join thousands of businesses making smarter decisions with Forecastro AI.</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" onClick={() => switchView("pricing")} className="w-full sm:w-auto">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-6">Ready to Transform Your Market Strategy?</h2>
+            <p className="text-muted-foreground mb-10">Join thousands of businesses making smarter decisions with Forecastro AI.</p>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <Button size="lg" onClick={() => switchView("pricing")} className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white font-medium shadow-md hover:shadow-lg transition-all duration-200 px-8">
                 Get Started Now
               </Button>
-              <Button size="lg" variant="outline" onClick={() => switchView("contact")} className="w-full sm:w-auto">
-                Talk to Sales
+              <Button size="lg" variant="outline" onClick={() => switchView("contact")} className="border-primary/20 hover:border-primary bg-background/50 hover:bg-background/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 px-8">
+                Contact Sales
               </Button>
             </div>
           </motion.div>
