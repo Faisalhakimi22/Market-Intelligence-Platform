@@ -209,10 +209,22 @@ export default function AuthPage() {
     loginMutation.mutate(data);
   };
 
-  const onRegisterSubmit = (data: RegisterFormValues) => {
-    // Remove confirmPassword and terms as they're not in the API schema
-    const { confirmPassword, terms, ...registerData } = data;
-    registerMutation.mutate(registerData);
+  const onRegisterSubmit = async (data: RegisterFormValues) => {
+    try {
+      if (!data.terms) {
+        registerForm.setError("terms", {
+          type: "manual",
+          message: "You must accept the terms and conditions"
+        });
+        return;
+      }
+      
+      // Remove confirmPassword and terms as they're not in the API schema
+      const { confirmPassword, terms, ...registerData } = data;
+      await registerMutation.mutateAsync(registerData);
+    } catch (error) {
+      console.error("Registration error:", error);
+    }
   };
 
   // Close mobile menu when clicking outside
@@ -1872,7 +1884,10 @@ const fetchMarketData = async () => {
                         <div className="flex items-start space-x-2">
                           <Checkbox 
                             id="terms" 
-                            {...registerForm.register("terms")}
+                            onCheckedChange={(checked) => {
+                              registerForm.setValue("terms", checked === true);
+                            }}
+                            checked={registerForm.watch("terms")}
                             className="mt-1" 
                           />
                           <div>
@@ -1880,7 +1895,7 @@ const fetchMarketData = async () => {
                               htmlFor="terms"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground"
                             >
-                              I agree to the <button onClick={() => switchView("terms")} className="text-primary hover:underline">Terms of Service</button> and <button onClick={() => switchView("privacy")} className="text-primary hover:underline">Privacy Policy</button>
+                              I agree to the <button type="button" onClick={() => switchView("terms")} className="text-primary hover:underline">Terms of Service</button> and <button type="button" onClick={() => switchView("privacy")} className="text-primary hover:underline">Privacy Policy</button>
                             </label>
                             {registerForm.formState.errors.terms && (
                               <p className="text-sm text-destructive mt-1">{registerForm.formState.errors.terms.message}</p>
