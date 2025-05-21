@@ -8,6 +8,17 @@ import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import {
+  LineChart as RechartsLineChart,
+  Line,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
+} from 'recharts';
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -1166,6 +1177,28 @@ export default function AuthPage() {
     );
   };
 
+  // Add this helper function before the AuthPage component
+  const generateMarketData = (days: number) => {
+    const data = [];
+    let value = 1000;
+    
+    for (let i = 0; i < days; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() - (days - i - 1));
+      
+      // Create more realistic market movements
+      const change = (Math.random() - 0.48) * 20; // Slight upward bias
+      value = Math.max(100, value + change);
+      
+      data.push({
+        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        value: Number(value.toFixed(2)),
+        volume: Math.floor(Math.random() * 1000000) + 500000,
+      });
+    }
+    return data;
+  };
+
   if (activeView === "auth") {
     return renderBaseLayout(
       <main>
@@ -1341,34 +1374,71 @@ export default function AuthPage() {
                       </div>
                     </div>
                     
-                    <div className="p-4 h-64 relative">
-                      {/* Enhanced Interactive Line Chart */}
-                      <div className="absolute inset-0 flex items-end">
-                        <div className="w-full h-full flex items-end">
-                          {Array.from({ length: 50 }).map((_, i) => {
-                            const height = 30 + Math.sin(i * 0.2) * 20 + Math.cos(i * 0.3) * 15 + (Math.random() * 10);
-                            return (
-                              <motion.div
-                                key={i}
-                                className="flex-1 mx-0.5 rounded-t-sm relative group"
-                                style={{
-                                  background: `linear-gradient(to top, rgba(var(--primary), 0.2), rgba(var(--primary), 0.4))`,
-                                  height: `${height}%`
-                                }}
-                                initial={{ height: 0 }}
-                                animate={{ height: `${height}%` }}
-                                transition={{ duration: 1, delay: i * 0.01 }}
-                                whileHover={{ scale: 1.1 }}
-                              >
-                                <div className="absolute -top-16 left-1/2 -translate-x-1/2 bg-popover p-2 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-                                  <div className="text-xs font-medium">Value: ${(Math.random() * 1000).toFixed(2)}</div>
-                                  <div className="text-xs text-muted-foreground">Apr {i + 1}</div>
-                                </div>
-                              </motion.div>
-                            );
-                          })}
-                        </div>
-                      </div>
+                    <div className="p-4 h-[300px] relative">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart
+                          data={generateMarketData(30)}
+                          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                        >
+                          <defs>
+                            <linearGradient id="marketGradient" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.2}/>
+                              <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                            </linearGradient>
+                          </defs>
+                          <XAxis
+                            dataKey="date"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                          />
+                          <YAxis
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                            domain={['auto', 'auto']}
+                            tickFormatter={(value) => `$${value.toLocaleString()}`}
+                          />
+                          <CartesianGrid
+                            strokeDasharray="3 3"
+                            vertical={false}
+                            stroke="hsl(var(--border))"
+                            opacity={0.2}
+                          />
+                          <Tooltip
+                            content={({ active, payload, label }) => {
+                              if (active && payload && payload.length) {
+                                return (
+                                  <div className="rounded-lg border border-border bg-background p-3 shadow-lg">
+                                    <div className="text-sm font-medium mb-1">{label}</div>
+                                    <div className="text-sm text-muted-foreground">
+                                      Value: <span className="text-primary font-medium">${payload[0].value.toLocaleString()}</span>
+                                    </div>
+                                    <div className="text-sm text-muted-foreground">
+                                      Volume: <span className="text-primary font-medium">{payload[0].payload.volume.toLocaleString()}</span>
+                                    </div>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }}
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="value"
+                            stroke="hsl(var(--primary))"
+                            strokeWidth={2}
+                            fill="url(#marketGradient)"
+                            dot={false}
+                            activeDot={{
+                              r: 4,
+                              fill: "hsl(var(--primary))",
+                              stroke: "hsl(var(--background))",
+                              strokeWidth: 2,
+                            }}
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
                     </div>
                   </div>
 
