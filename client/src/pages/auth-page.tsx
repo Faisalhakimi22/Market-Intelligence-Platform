@@ -911,14 +911,100 @@ export default function AuthPage() {
                 </div>
               </div>
             </div>
-            {/* Right Column - Enlarged Business Image */}
-            <div className="hidden lg:flex w-1/2 items-center justify-center">
-              <img
-                src={marketAnalysisJpg}
-                alt="Business market analysis illustration"
-                className="max-w-2xl w-full h-auto rounded-2xl shadow-2xl border border-border bg-card object-cover"
-                style={{minHeight: '420px', maxHeight: '600px'}}
-              />
+            {/* Right Column - Enhanced Business Image */}
+            <div className="hidden lg:flex w-1/2 items-center justify-center relative">
+              {/* Background Effects */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-purple-500/5 rounded-2xl" />
+              <div className="absolute inset-0">
+                <div className="absolute -right-8 -top-8 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
+                <div className="absolute -left-8 -bottom-8 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl" />
+              </div>
+              
+              {/* Floating Elements */}
+              <motion.div
+                className="absolute -left-4 top-1/4 bg-card/50 backdrop-blur-sm border border-border/50 p-4 rounded-lg shadow-lg"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{
+                  duration: 0.5,
+                  delay: 0.2,
+                }}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center">
+                    <TrendingUp className="h-4 w-4 text-green-500" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium">Market Growth</div>
+                    <div className="text-xs text-muted-foreground">+24.8% Increase</div>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                className="absolute -right-4 bottom-1/4 bg-card/50 backdrop-blur-sm border border-border/50 p-4 rounded-lg shadow-lg"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{
+                  duration: 0.5,
+                  delay: 0.4,
+                }}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center">
+                    <Users className="h-4 w-4 text-blue-500" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium">Competitor Analysis</div>
+                    <div className="text-xs text-muted-foreground">12 New Insights</div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Main Image Container */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="relative z-10 w-[90%] aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-border"
+              >
+                <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-background/0 z-10" />
+                <img
+                  src={marketAnalysisJpg}
+                  alt="Business market analysis illustration"
+                  className="w-full h-full object-cover"
+                />
+                
+                {/* Overlay Stats */}
+                <motion.div
+                  className="absolute bottom-4 left-4 right-4 bg-card/50 backdrop-blur-sm border border-border/50 rounded-lg p-4 z-20"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.6 }}
+                >
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="text-center">
+                      <div className="text-sm font-medium text-primary">Markets</div>
+                      <div className="text-2xl font-bold">150+</div>
+                    </div>
+                    <div className="text-center border-l border-r border-border">
+                      <div className="text-sm font-medium text-primary">Accuracy</div>
+                      <div className="text-2xl font-bold">96%</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-sm font-medium text-primary">Insights</div>
+                      <div className="text-2xl font-bold">24/7</div>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+
+              {/* Decorative Elements */}
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-primary rounded-full" />
+                <div className="absolute top-1/3 left-1/3 w-3 h-3 bg-purple-500 rounded-full" />
+                <div className="absolute bottom-1/4 right-1/3 w-2 h-2 bg-blue-500 rounded-full" />
+              </div>
             </div>
           </div>
 
