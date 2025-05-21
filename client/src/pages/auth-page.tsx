@@ -87,6 +87,14 @@ import {
   Newspaper
 } from "lucide-react";
 
+// SVG imports
+import analyticsDashboardSvg from "../assets/analytics-dashboard.svg";
+import marketAnalysisSvg from "../assets/market-analysis.jpg";
+import businessGrowthSvg from "../assets/business-growth.png";
+import geometricBackgroundSvg from "../assets/geometric-background.svg";
+import abstractBackgroundSvg from "../assets/abstract-background.svg";
+import patternBackgroundSvg from "../assets/pattern-background.svg";
+
 // Type Definitions
 type ViewId = "auth" | "login" | "features" | "pricing" | "faq" | "privacy" | "terms" | "contact"
   | "api" | "integrations" | "documentation" | "guides" | "blog" | "about";
@@ -143,12 +151,8 @@ const Logo = () => (
   </div>
 );
 
-// Replace with placeholder image URLs
-const PLACEHOLDER_IMAGES = {
-  analyticsDashboard: "https://placehold.co/600x400?text=Analytics+Dashboard",
-  marketAnalysis: "https://placehold.co/600x400?text=Market+Analysis",
-  businessGrowth: "https://placehold.co/600x400?text=Business+Growth"
-};
+// Add import for the new image at the top with other assets
+import marketAnalysisJpg from "../assets/market-analysis.jpg";
 
 // Add the DemoModal component before the AuthPage component
 function DemoModal() {
@@ -158,19 +162,19 @@ function DemoModal() {
     {
       title: "Real-time Market Analytics",
       description: "Watch as our AI analyzes market trends in real-time, providing actionable insights for your business.",
-      image: PLACEHOLDER_IMAGES.analyticsDashboard,
+      image: analyticsDashboardSvg,
       icon: <BarChart2 className="h-5 w-5 text-primary" />
     },
     {
       title: "Competitor Analysis",
       description: "Track your competitors' movements and stay ahead with detailed comparative analysis.",
-      image: PLACEHOLDER_IMAGES.marketAnalysis,
+      image: marketAnalysisSvg,
       icon: <Users className="h-5 w-5 text-purple-500" />
     },
     {
       title: "AI-Powered Predictions",
       description: "Experience the power of our machine learning models predicting market trends with high accuracy.",
-      image: PLACEHOLDER_IMAGES.businessGrowth,
+      image: businessGrowthSvg,
       icon: <BrainCircuit className="h-5 w-5 text-green-500" />
     }
   ];
@@ -339,8 +343,8 @@ export default function AuthPage() {
         return;
       }
       
-      // Remove confirmPassword and terms as they're not in the API schema
-      const { confirmPassword, terms, ...registerData } = data;
+    // Remove confirmPassword and terms as they're not in the API schema
+    const { confirmPassword, terms, ...registerData } = data;
       await registerMutation.mutateAsync(registerData);
     } catch (error) {
       console.error("Registration error:", error);
@@ -880,13 +884,13 @@ export default function AuthPage() {
                 </Button>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button
-                      size="lg"
-                      variant="outline"
-                      className="w-full sm:w-auto"
-                    >
-                      View Demo
-                    </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full sm:w-auto"
+                >
+                  View Demo
+                </Button>
                   </DialogTrigger>
                   <DemoModal />
                 </Dialog>
@@ -896,7 +900,7 @@ export default function AuthPage() {
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
                   <span>Trusted by 10,000+ businesses worldwide</span>
-                </div>
+            </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Shield className="h-5 w-5 text-blue-500" />
                   <span>Enterprise-grade security & compliance</span>
@@ -965,9 +969,9 @@ export default function AuthPage() {
                 className="relative z-10 w-[90%] aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-border"
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-background/0 z-10" />
-                <img
-                  src={PLACEHOLDER_IMAGES.marketAnalysis}
-                  alt="Business market analysis illustration"
+              <img
+                src={marketAnalysisJpg}
+                alt="Business market analysis illustration"
                   className="w-full h-full object-cover"
                 />
                 
@@ -982,11 +986,11 @@ export default function AuthPage() {
                     <div className="text-center">
                       <div className="text-sm font-medium text-primary">Markets</div>
                       <div className="text-2xl font-bold">150+</div>
-                    </div>
+            </div>
                     <div className="text-center border-l border-r border-border">
                       <div className="text-sm font-medium text-primary">Accuracy</div>
                       <div className="text-2xl font-bold">96%</div>
-                    </div>
+          </div>
                     <div className="text-center">
                       <div className="text-sm font-medium text-primary">Insights</div>
                       <div className="text-2xl font-bold">24/7</div>
