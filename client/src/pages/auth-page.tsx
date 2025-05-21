@@ -84,7 +84,10 @@ import {
   Award,
   DollarSign,
   BookOpen,
-  Newspaper
+  Newspaper,
+  X,
+  Play,
+  TrendingDown
 } from "lucide-react";
 
 // SVG imports
@@ -269,6 +272,323 @@ function DemoModal() {
     </DialogContent>
   );
 }
+
+// Define the new header component
+const ModernHeader = ({ isHeaderVisible, switchView, setIsMobileMenuOpen, isMobileMenuOpen, mobileMenuRef, activeView }: {
+  isHeaderVisible: boolean;
+  switchView: (view: ViewId) => void;
+  setIsMobileMenuOpen: (open: boolean) => void;
+  isMobileMenuOpen: boolean;
+  mobileMenuRef: React.RefObject<HTMLDivElement>;
+  activeView: ViewId;
+}) => {
+  // Tracking the active nav item for animation
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const navRefs = useRef<{ [key: string]: HTMLElement | null }>({});
+  const navContainerRef = useRef<HTMLDivElement | null>(null);
+  const [pillStyle, setPillStyle] = useState({ left: 0, width: 0 });
+  
+  // Update the pill position based on active or hovered item
+  useEffect(() => {
+    const updatePill = () => {
+      if (hoveredItem && navRefs.current[hoveredItem]) {
+        const el = navRefs.current[hoveredItem];
+        const container = navContainerRef.current;
+        if (el && container) {
+          const rect = el.getBoundingClientRect();
+          const containerRect = container.getBoundingClientRect();
+          setPillStyle({
+            left: rect.left - containerRect.left,
+            width: rect.width
+          });
+        }
+      } else {
+        // Default to active view
+        const activeEl = navRefs.current[activeView] || navRefs.current['home'];
+        const container = navContainerRef.current;
+        if (activeEl && container) {
+          const rect = activeEl.getBoundingClientRect();
+          const containerRect = container.getBoundingClientRect();
+          setPillStyle({
+            left: rect.left - containerRect.left,
+            width: rect.width
+          });
+        }
+      }
+    };
+    
+    updatePill();
+    window.addEventListener('resize', updatePill);
+    return () => window.removeEventListener('resize', updatePill);
+  }, [hoveredItem, activeView]);
+  
+  // Navigation items
+  const navItems = [
+    { id: 'home', label: 'Home', view: 'auth' as ViewId },
+    { id: 'features', label: 'Features', view: 'features' as ViewId },
+    { id: 'pricing', label: 'Pricing', view: 'pricing' as ViewId },
+    { id: 'api', label: 'API', view: 'api' as ViewId },
+    { id: 'about', label: 'About', view: 'about' as ViewId }
+  ];
+  
+  return (
+    <>
+      <header 
+        className={cn(
+          "fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out",
+          isHeaderVisible ? "translate-y-0" : "-translate-y-full",
+          "bg-background/60 backdrop-blur-xl border-b border-border/10"
+        )}
+      >
+        <div className="container mx-auto px-6">
+          <div className="flex h-20 items-center justify-between">
+            {/* Animated Logo */}
+            <motion.div
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={() => switchView('auth')}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            >
+              <div className="relative h-10 w-10 overflow-hidden rounded-xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary via-purple-600 to-pink-500 animate-gradient-xy"></div>
+                <div className="absolute inset-0.5 bg-background/90 rounded-[10px] flex items-center justify-center">
+                  <motion.div
+                    animate={{ 
+                      y: [0, -3, 0, 3, 0],
+                      rotate: [0, -5, 0, 5, 0]
+                    }}
+                    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <BarChart2 className="h-6 w-6 text-primary" />
+                  </motion.div>
+                </div>
+              </div>
+              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-pink-500">
+                Forecastro AI
+              </h1>
+            </motion.div>
+
+            {/* Desktop Navigation */}
+            <nav 
+              className="hidden lg:block relative"
+              ref={navContainerRef}
+            >
+              <div className="flex items-center gap-8">
+                {navItems.map((item) => (
+                  <button 
+                    key={item.id}
+                    ref={(el) => navRefs.current[item.id] = el}
+                    onClick={() => switchView(item.view)}
+                    onMouseEnter={() => setHoveredItem(item.id)}
+                    onMouseLeave={() => setHoveredItem(null)}
+                    className={cn(
+                      "text-sm font-medium transition-colors duration-200 relative py-1",
+                      activeView === item.view ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+                
+                {/* Animated pill indicator */}
+                <motion.div 
+                  className="header-pill absolute h-0.5 bottom-0 bg-gradient-to-r from-primary to-purple-500"
+                  style={{ 
+                    left: pillStyle.left,
+                    width: pillStyle.width
+                  }}
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                />
+              </div>
+            </nav>
+
+            {/* Right Side Actions */}
+            <div className="flex items-center gap-5">
+              {/* Documentation Link */}
+              <a 
+                href="#" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  switchView('documentation');
+                }} 
+                className="hidden md:flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <FileText className="h-4 w-4" />
+                <span>Docs</span>
+              </a>
+              
+              {/* GitHub Link */}
+              <a 
+                href="https://github.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="hidden md:flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd"></path>
+                </svg>
+                <span>GitHub</span>
+              </a>
+              
+              {/* Theme Toggle */}
+              <div className="border-l border-border/30 pl-5 hidden md:block">
+                <ThemeToggle />
+              </div>
+              
+              {/* Sign In / Sign Up Actions */}
+              <div className="flex items-center gap-3">
+                <Button 
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => switchView("login")}
+                  className="hidden md:flex hover:bg-muted/50"
+                >
+                  Sign In
+                </Button>
+                
+                <Button 
+                  onClick={() => switchView("login")}
+                  size="sm"
+                  className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white shadow-sm hidden md:flex"
+                >
+                  Get Started
+                </Button>
+                
+                {/* Mobile Menu Trigger */}
+                <button 
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+                  className="lg:hidden rounded-md p-2 text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
+                  aria-label="Toggle menu"
+                >
+                  {isMobileMenuOpen ? (
+                    <X className="h-5 w-5" />
+                  ) : (
+                    <Menu className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Menu - Reimagined */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            ref={mobileMenuRef}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-40 lg:hidden menu-backdrop"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setIsMobileMenuOpen(false);
+              }
+            }}
+          >
+            <motion.div 
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-background border-l border-border/20 shadow-xl flex flex-col"
+            >
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border/20">
+                <h2 className="text-lg font-semibold">Navigation</h2>
+                <button 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-2 rounded-md hover:bg-muted/50 text-muted-foreground"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              
+              <div className="py-6 px-6 flex-1 overflow-y-auto">
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <h3 className="text-xs uppercase tracking-wider text-muted-foreground/70 font-medium">Menu</h3>
+                    <div className="space-y-1.5">
+                      {navItems.map((item) => (
+                        <button 
+                          key={item.id}
+                          onClick={() => {
+                            switchView(item.view);
+                            setIsMobileMenuOpen(false);
+                          }}
+                          className={cn(
+                            "w-full flex items-center gap-3 p-2.5 rounded-lg",
+                            activeView === item.view 
+                              ? "bg-muted text-foreground font-medium" 
+                              : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                          )}
+                        >
+                          <span>{item.label}</span>
+                          {activeView === item.view && (
+                            <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary"></div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <h3 className="text-xs uppercase tracking-wider text-muted-foreground/70 font-medium">Resources</h3>
+                    <div className="space-y-1.5">
+                      {[
+                        { id: 'documentation', label: 'Documentation', icon: <FileText className="h-4 w-4" /> },
+                        { id: 'guides', label: 'Guides', icon: <BookOpen className="h-4 w-4" /> },
+                        { id: 'blog', label: 'Blog', icon: <Newspaper className="h-4 w-4" /> },
+                      ].map((item) => (
+                        <button 
+                          key={item.id}
+                          onClick={() => {
+                            switchView(item.id as ViewId);
+                            setIsMobileMenuOpen(false);
+                          }}
+                          className="w-full flex items-center gap-3 p-2.5 rounded-lg text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                        >
+                          {item.icon}
+                          <span>{item.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-6 border-t border-border/20">
+                <div className="flex flex-col gap-3">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-center border-primary/20"
+                    onClick={() => {
+                      switchView("login");
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    Sign In
+                  </Button>
+                  <Button 
+                    className="w-full justify-center bg-gradient-to-r from-primary to-purple-600"
+                    onClick={() => {
+                      switchView("login");
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    Get Started
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
 
 export default function AuthPage() {
   const [_, navigate] = useLocation();
@@ -562,16 +882,16 @@ export default function AuthPage() {
     }
   ];
 
-  // Helper function to render the base layout with a more modern design
+  // Helper function to render the base layout with the new header
   const renderBaseLayout = (content: React.ReactNode) => {
     return (
       <div className="min-h-screen w-full bg-background font-sans antialiased relative modern-gradient-bg">
         {/* Modern animated background */}
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-primary/5 rounded-full blur-3xl" />
-          <div className="absolute -bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-purple-500/5 rounded-full blur-3xl" />
-          <div className="absolute top-1/4 right-1/4 w-32 h-32 bg-blue-500/5 rounded-full blur-xl" />
-          <div className="absolute bottom-1/4 left-1/4 w-32 h-32 bg-indigo-500/5 rounded-full blur-xl" />
+          <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-primary/5 rounded-full blur-3xl opacity-70" />
+          <div className="absolute -bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-purple-500/5 rounded-full blur-3xl opacity-70" />
+          <div className="absolute top-1/4 right-1/4 w-32 h-32 bg-blue-500/5 rounded-full blur-xl opacity-70" />
+          <div className="absolute bottom-1/4 left-1/4 w-32 h-32 bg-indigo-500/5 rounded-full blur-xl opacity-70" />
           
           {/* Subtle animated shapes */}
           <motion.div
@@ -603,123 +923,18 @@ export default function AuthPage() {
         </div>
         
         {/* Modern Header */}
-        <header 
-          className={cn(
-            "fixed top-0 left-0 w-full z-50 transition-all duration-300",
-            isHeaderVisible ? "translate-y-0" : "-translate-y-full",
-            "bg-background/70 backdrop-blur-xl border-b border-border/20"
-          )}
-        >
-          <div className="container mx-auto px-6">
-            <div className="flex h-16 items-center justify-between">
-              {/* Logo with animation */}
-              <div 
-                className="flex items-center gap-2 group cursor-pointer" 
-                onClick={() => {
-                  window.location.href = "/";
-                  window.location.reload();
-                }}
-              >
-                <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-lg overflow-hidden group-hover:shadow-primary/30 transition-all duration-300">
-                  <motion.div
-                    initial={{ y: 0 }}
-                    animate={{
-                      y: [0, -2, 0, 2, 0],
-                    }}
-                    transition={{
-                      duration: 5,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  >
-                    <BarChart2 className="h-6 w-6 text-white" />
-                  </motion.div>
-                </div>
-                <h1 className="text-2xl font-bold text-foreground">
-                  Fore<span className="bg-clip-text bg-gradient-to-r from-primary to-purple-600 text-transparent">castro AI</span>
-                </h1>
-              </div>
-
-              {/* Desktop Navigation - More minimal and modern */}
-              <nav className="hidden md:flex items-center space-x-8">
-                {["Home", "Features", "Pricing", "FAQ", "About"].map((item, i) => (
-                  <button 
-                    key={i}
-                    onClick={() => switchView(item.toLowerCase() as ViewId)}
-                    className="text-muted-foreground hover:text-primary transition-colors duration-200 text-sm relative group"
-                  >
-                    {item}
-                    <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left"></span>
-                  </button>
-                ))}
-              </nav>
-
-              {/* Right Section */}
-              <div className="flex items-center space-x-5">
-                <ThemeToggle />
-                <Button 
-                  onClick={() => switchView("login")}
-                  variant="outline"
-                  size="sm"
-                  className="hidden md:flex bg-background hover:bg-muted/50 border-primary/20 hover:border-primary text-foreground"
-                >
-                  Sign In
-                </Button>
-                <button 
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
-                  className="md:hidden flex items-center p-1.5 rounded-md text-muted-foreground hover:text-primary focus:outline-none"
-                >
-                  <Menu className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Mobile Menu - Modernized */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div 
-              ref={mobileMenuRef}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-              className="fixed top-16 left-0 w-full z-40 bg-background/80 backdrop-blur-xl border-b border-border/20 shadow-lg md:hidden"
-            >
-              <div className="container mx-auto px-6 py-6">
-                <div className="flex flex-col space-y-5">
-                  {["Home", "Features", "Pricing", "FAQ", "About"].map((item, i) => (
-                    <button 
-                      key={i}
-                      onClick={() => {
-                        switchView(item.toLowerCase() as ViewId);
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="flex items-center justify-between text-foreground py-2 px-2 rounded-md hover:bg-muted transition-colors duration-200"
-                    >
-                      <span>{item}</span>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    </button>
-                  ))}
-                  <Button 
-                    onClick={() => {
-                      switchView("login");
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="w-full bg-gradient-to-r from-primary to-purple-600 text-white hover:from-primary/90 hover:to-purple-600/90"
-                  >
-                    Sign In
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <ModernHeader 
+          isHeaderVisible={isHeaderVisible}
+          switchView={switchView}
+          setIsMobileMenuOpen={setIsMobileMenuOpen}
+          isMobileMenuOpen={isMobileMenuOpen}
+          mobileMenuRef={mobileMenuRef}
+          activeView={activeView}
+        />
         
         {content}
         
-        {/* Modern Footer */}
+        {/* Footer remains the same for now - will update in next edit */}
         <footer className="bg-background border-t border-border/20 pt-16 pb-8 relative z-10">
           <div className="container mx-auto px-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
@@ -839,352 +1054,675 @@ export default function AuthPage() {
     }
   };
 
+  // Add a few more components for the marketing content
+  const FeatureCard = ({ icon, title, description, index }: { 
+    icon: React.ReactNode, 
+    title: string, 
+    description: string,
+    index: number
+  }) => {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: index * 0.1 }}
+        className="group relative z-10 rounded-xl border border-border/40 bg-card p-6 transition-all duration-300 hover:border-primary/20 hover:shadow-lg"
+      >
+        <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-background/0 to-background/80 backdrop-blur-sm transition-opacity duration-300 opacity-0 group-hover:opacity-100" />
+        
+        <div className="relative z-10">
+          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors duration-300">
+            {icon}
+          </div>
+          <h3 className="mb-2 text-xl font-semibold text-foreground">{title}</h3>
+          <p className="text-muted-foreground">{description}</p>
+        </div>
+        
+        <div className="absolute -right-px -bottom-px h-16 w-16 rounded-br-xl bg-gradient-to-l from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      </motion.div>
+    );
+  };
+
+  const TestimonialCard = ({ quote, author, role, company, index }: {
+    quote: string,
+    author: string,
+    role: string,
+    company: string,
+    index: number
+  }) => {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.1 + (index * 0.1) }}
+        className="rounded-xl bg-card p-6 border border-border/30 relative overflow-hidden"
+      >
+        <div className="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-primary/10 blur-xl" />
+        
+        <svg
+          width="30"
+          height="30"
+          viewBox="0 0 30 30"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="mb-4 text-primary/60"
+        >
+          <path
+            d="M12.8182 7C9.28409 7 6.13636 8.35888 4.38636 10.8235C2.63636 13.2882 2 16.8235 2 21C2 22.4118 2.63636 23.7647 3.75 24.4706C4.86364 25.1765 6.13636 25.1765 7.25 24.4706C8.36364 23.7647 9 22.4118 9 21C9 17.5294 8.36364 16.1765 7.88636 15.4706C7.40909 14.7647 7.09091 14.7647 7.09091 14.7647C7.38415 13.5207 8.2964 12.4977 9.61364 12.0588C9.61364 12.0588 10.4091 12.0588 11.0682 12.7647C11.7273 13.4706 12.8182 15.4706 12.8182 21C12.8182 22.4118 13.4545 23.7647 14.5682 24.4706C15.6818 25.1765 16.9545 25.1765 18.0682 24.4706C19.1818 23.7647 19.8182 22.4118 19.8182 21C19.8182 16.8235 19.1818 13.2882 17.4318 10.8235C15.6818 8.35888 12.5341 7 9 7"
+            fill="currentColor"
+          />
+          <path
+            d="M29.8182 7C26.2841 7 23.1364 8.35888 21.3864 10.8235C19.6364 13.2882 19 16.8235 19 21C19 22.4118 19.6364 23.7647 20.75 24.4706C21.8636 25.1765 23.1364 25.1765 24.25 24.4706C25.3636 23.7647 26 22.4118 26 21C26 17.5294 25.3636 16.1765 24.8864 15.4706C24.4091 14.7647 24.0909 14.7647 24.0909 14.7647C24.3841 13.5207 25.2964 12.4977 26.6136 12.0588C26.6136 12.0588 27.4091 12.0588 28.0682 12.7647C28.7273 13.4706 29.8182 15.4706 29.8182 21C29.8182 22.4118 30.4545 23.7647 31.5682 24.4706C32.6818 25.1765 33.9545 25.1765 35.0682 24.4706C36.1818 23.7647 36.8182 22.4118 36.8182 21C36.8182 16.8235 36.1818 13.2882 34.4318 10.8235C32.6818 8.35888 29.5341 7 26 7"
+            fill="currentColor"
+          />
+        </svg>
+        
+        <p className="mb-6 text-base text-muted-foreground">{quote}</p>
+        
+        <div className="flex items-center">
+          <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-foreground font-semibold">
+            {author.charAt(0)}
+          </div>
+          <div className="ml-3">
+            <p className="text-sm font-medium text-foreground">{author}</p>
+            <p className="text-xs text-muted-foreground">{role}, {company}</p>
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
+
+  const MetricCard = ({ value, label, icon, color, bgColor }: {
+    value: string,
+    label: string,
+    icon: React.ReactNode,
+    color: string,
+    bgColor: string
+  }) => {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        className={`relative p-6 rounded-xl border border-border/50 bg-gradient-to-b from-background to-muted/30 overflow-hidden group`}
+      >
+        <div className={`absolute -right-3 -top-3 w-24 h-24 rounded-full ${bgColor} blur-2xl opacity-30 group-hover:opacity-50 transition-opacity duration-300`} />
+        
+        <div className="flex flex-col">
+          <div className={`${color} mb-3 h-10 w-10 rounded-lg ${bgColor} flex items-center justify-center`}>
+            {icon}
+          </div>
+          <div className={`text-3xl font-bold ${color} mb-1`}>{value}</div>
+          <div className="text-sm text-muted-foreground">{label}</div>
+        </div>
+      </motion.div>
+    );
+  };
+
   if (activeView === "auth") {
     return renderBaseLayout(
-      <main className="pt-32 pb-20 relative z-10">
-        <div className="container mx-auto px-6">
-          {/* Hero Section */}
-          <div className="grid lg:grid-cols-12 gap-12 items-center mb-24">
-            {/* Left Column - Content */}
-            <div className="lg:col-span-6 space-y-8">
-              <div>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
-                >
-                  <Badge 
-                    className="px-3 py-1.5 bg-primary/10 text-primary hover:bg-primary/20 transition-colors mb-6 inline-flex items-center gap-1.5 uppercase tracking-wide text-xs font-semibold rounded-full"
-                  >
-                    <Sparkles className="h-3.5 w-3.5" />
-                    <span>AI-Powered Intelligence</span>
-                  </Badge>
-                </motion.div>
-                <motion.h1 
-                  className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
-                >
-                  Discover Market <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-pink-500">Opportunities</span> with AI Precision
-                </motion.h1>
-                <motion.p 
-                  className="text-lg text-muted-foreground leading-relaxed mb-8 max-w-2xl"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                >
-                  Harness the power of advanced AI to analyze market trends, track competitors, and identify growth opportunities with unparalleled accuracy and speed.
-                </motion.p>
-              </div>
-              
-              {/* Action Buttons with better styling */}
-              <motion.div 
-                className="flex flex-col sm:flex-row gap-4"
+      <main>
+        {/* Hero Section - Advanced Design */}
+        <section className="relative pt-32 pb-16 overflow-hidden">
+          {/* Decorative elements */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute left-1/4 -top-48 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-70" />
+            <div className="absolute right-1/3 top-1/3 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl opacity-60" />
+            
+            {/* Animated lines */}
+            <motion.div 
+              className="absolute left-0 right-0 top-24 h-px bg-gradient-to-r from-transparent via-border to-transparent"
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: 0.5 }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+            />
+            
+            {/* Grid pattern overlay */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,transparent_0%,transparent_49.5%,rgba(var(--foreground-rgb),0.05)_49.5%,rgba(var(--foreground-rgb),0.05)_50.5%,transparent_50.5%,transparent_100%),linear-gradient(to_bottom,transparent_0%,transparent_49.5%,rgba(var(--foreground-rgb),0.05)_49.5%,rgba(var(--foreground-rgb),0.05)_50.5%,transparent_50.5%,transparent_100%)] bg-[length:40px_40px] opacity-[0.15]" />
+          </div>
+          
+          <div className="container mx-auto px-6">
+            <div className="max-w-5xl mx-auto text-center mb-16">
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex rounded-full mb-6 px-3 py-1 bg-primary/10 text-primary text-xs font-medium uppercase tracking-wider"
+              >
+                AI-Powered Market Intelligence
+              </motion.div>
+              
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-4xl md:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground to-foreground/70 max-w-4xl mx-auto mb-6 leading-tight"
+              >
+                Transform Market Data Into <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-pink-500">Strategic Insights</span>
+              </motion.h1>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8"
+              >
+                Forecastro AI analyzes millions of market data points in real-time to deliver actionable insights, helping businesses stay ahead of trends and outpace competitors.
+              </motion.p>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="flex flex-col sm:flex-row gap-4 justify-center"
               >
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white shadow-md hover:shadow-lg transition-all duration-200 px-8"
+                  className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white px-8 shadow-md hover:shadow-xl hover:shadow-primary/10 transition-all duration-200"
                   onClick={() => switchView("pricing")}
                 >
                   Start Free Trial
                 </Button>
+                
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button
-                      size="lg"
                       variant="outline"
-                      className="border-primary/20 hover:border-primary bg-background/50 hover:bg-background/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 px-8"
+                      size="lg"
+                      className="px-8 bg-background/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 hover:bg-primary/5"
                     >
-                      Watch Demo
+                      <Play className="mr-2 h-4 w-4" /> Watch Demo
                     </Button>
                   </DialogTrigger>
                   <DemoModal />
                 </Dialog>
               </motion.div>
-              
-              {/* Trust Badges - More modern styling */}
-              <motion.div 
-                className="pt-8 space-y-4"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-              >
-                <div className="text-sm font-medium text-muted-foreground/70 mb-4">TRUSTED BY INNOVATIVE COMPANIES</div>
-                <div className="flex flex-wrap gap-8 items-center">
-                  {[
-                    "Microsoft", "Google", "Amazon", "Meta", "Shopify"
-                  ].map((company, i) => (
-                    <div key={i} className="text-muted-foreground/60 hover:text-muted-foreground transition-colors duration-200 font-semibold">
-                      {company}
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
             </div>
             
-            {/* Right Column - Visualizations */}
-            <div className="lg:col-span-6 relative h-full">
-              {/* Main visualization */}
-              <div className="relative aspect-[4/3] w-full">
-                {/* Background effects */}
-                <div className="absolute -inset-4 bg-gradient-to-br from-primary/10 via-purple-500/10 to-blue-500/5 rounded-3xl blur-2xl opacity-70"></div>
-                
-                {/* Main feature display */}
-                <motion.div
-                  className="relative bg-background/30 backdrop-blur-xl border border-border/40 rounded-2xl overflow-hidden shadow-2xl"
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
-                >
-                  {/* Mockup Header */}
-                  <div className="h-10 bg-muted/50 border-b border-border/40 flex items-center px-4">
-                    <div className="flex space-x-2">
-                      <div className="w-3 h-3 rounded-full bg-red-500/70"></div>
-                      <div className="w-3 h-3 rounded-full bg-yellow-500/70"></div>
-                      <div className="w-3 h-3 rounded-full bg-green-500/70"></div>
-                    </div>
-                    <div className="text-xs text-muted-foreground/70 mx-auto">
-                      Market Intelligence Dashboard
-                    </div>
+            {/* Dashboard Preview Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.4 }}
+              className="relative rounded-xl border border-border/40 shadow-2xl shadow-primary/5 overflow-hidden backdrop-blur-sm bg-background/30 max-w-5xl mx-auto"
+            >
+              {/* Toolbar */}
+              <div className="border-b border-border/40 bg-muted/50 px-4 py-3 flex items-center">
+                <div className="flex space-x-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500/70"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/70"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500/70"></div>
+                </div>
+                <div className="flex-1 flex justify-center">
+                  <div className="text-xs text-muted-foreground bg-background/40 rounded-full px-3 py-0.5">
+                    Forecastro AI Dashboard
+                  </div>
+                </div>
+              </div>
+              
+              {/* Dashboard Content */}
+              <div className="p-6">
+                {/* Header with Stats */}
+                <div className="grid grid-cols-4 gap-4 mb-6">
+                  <div className="col-span-2">
+                    <h3 className="text-xl font-bold flex items-center">
+                      Market Overview
+                      <Badge className="ml-2 bg-green-500/10 text-green-500 hover:bg-green-500/20">Live</Badge>
+                    </h3>
+                    <p className="text-sm text-muted-foreground">Real-time analysis of global markets</p>
                   </div>
                   
-                  {/* Dashboard Content */}
-                  <div className="p-6">
-                    <div className="flex justify-between items-center mb-6">
-                      <h3 className="text-lg font-semibold">Market Trends</h3>
-                      <div className="flex items-center text-sm text-muted-foreground gap-2">
-                        <span>Last updated:</span>
-                        <span className="text-foreground">Just now</span>
-                        <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
+                  <div className="col-span-2 flex justify-end items-center gap-4">
+                    <div className="text-right">
+                      <div className="text-sm text-muted-foreground">Last updated</div>
+                      <div className="text-sm font-medium flex items-center">
+                        Just now
+                        <span className="ml-2 h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
                       </div>
                     </div>
                     
-                    {/* Chart Visualization */}
-                    <div className="h-60 w-full mb-6 relative">
-                      <div className="absolute inset-0 flex items-end">
-                        {Array.from({ length: 24 }).map((_, i) => {
-                          const height = 20 + Math.random() * 80;
+                    <div className="h-8 w-px bg-border"></div>
+                    
+                    <div className="text-right">
+                      <div className="text-sm text-muted-foreground">AI confidence</div>
+                      <div className="text-sm font-medium">98.2%</div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Main Chart Area */}
+                <div className="mb-6 border border-border/40 rounded-lg overflow-hidden bg-muted/20 backdrop-blur-sm">
+                  <div className="border-b border-border/40 bg-muted/30 px-3 py-2 flex justify-between items-center">
+                    <div className="text-sm font-medium">Market Trends</div>
+                    <div className="flex items-center gap-2">
+                      {["1D", "1W", "1M", "1Y", "All"].map((period, i) => (
+                        <button 
+                          key={i} 
+                          className={cn(
+                            "text-xs px-2 py-1 rounded",
+                            period === "1M" ? "bg-primary/20 text-primary" : "text-muted-foreground hover:bg-muted/50"
+                          )}
+                        >
+                          {period}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 h-64 relative">
+                    {/* Interactive Line Chart */}
+                    <div className="absolute inset-0 flex items-end">
+                      <div className="w-full h-full flex items-end">
+                        {Array.from({ length: 50 }).map((_, i) => {
+                          const height = 30 + Math.sin(i * 0.2) * 20 + Math.cos(i * 0.3) * 15 + (Math.random() * 10);
                           return (
                             <motion.div
                               key={i}
-                              className="flex-1 mx-0.5 rounded-t-sm bg-gradient-to-t from-primary/40 to-primary/80"
+                              className="flex-1 mx-0.5 rounded-t-sm"
+                              style={{
+                                background: `linear-gradient(to top, rgba(var(--primary), 0.2), rgba(var(--primary), 0.4))`,
+                                height: `${height}%`
+                              }}
                               initial={{ height: 0 }}
                               animate={{ height: `${height}%` }}
-                              transition={{ duration: 0.8, delay: 0.05 * i }}
+                              transition={{ duration: 1, delay: i * 0.01 }}
                             />
                           );
                         })}
                       </div>
                       
-                      {/* Animated Cursor Line */}
+                      {/* Trend Line */}
+                      <div className="absolute inset-x-0 bottom-0 h-64 overflow-hidden">
+                        <svg
+                          viewBox="0 0 1000 200"
+                          className="absolute inset-0 w-full h-full"
+                          preserveAspectRatio="none"
+                        >
+                          <motion.path
+                            d="M0,100 C50,90 100,110 150,95 C200,80 250,100 300,100 C350,100 400,80 450,90 C500,100 550,120 600,110 C650,100 700,80 750,70 C800,60 850,80 900,90 C950,100 1000,90 1000,90"
+                            fill="none"
+                            stroke="hsl(var(--primary))"
+                            strokeWidth="2"
+                            strokeDasharray="2000"
+                            strokeDashoffset="2000"
+                            animate={{ strokeDashoffset: 0 }}
+                            transition={{ duration: 2, ease: "easeInOut" }}
+                          />
+                        </svg>
+                      </div>
+                      
+                      {/* Cursor Tracker - Animated Vertical Line */}
                       <motion.div
-                        className="absolute top-0 w-0.5 h-full bg-white/50"
-                        initial={{ left: '0%' }}
-                        animate={{ left: '100%' }}
-                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                        className="absolute top-0 w-0.5 h-full bg-primary/50"
+                        initial={{ left: "0%" }}
+                        animate={{ left: "100%" }}
+                        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
                       />
                     </div>
-                    
-                    {/* Stats Row */}
-                    <div className="grid grid-cols-3 gap-4">
-                      {[
-                        { label: "Market Growth", value: "+24.8%", color: "text-green-500" },
-                        { label: "Opportunities", value: "37", color: "text-blue-500" },
-                        { label: "Risk Score", value: "Low", color: "text-green-500" }
-                      ].map((stat, i) => (
-                        <motion.div
-                          key={i}
-                          className="bg-muted/30 rounded-lg p-4 border border-border/30"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.4, delay: 0.6 + (i * 0.1) }}
-                        >
-                          <div className="text-xs text-muted-foreground mb-1">{stat.label}</div>
-                          <div className={`text-xl font-bold ${stat.color}`}>{stat.value}</div>
-                        </motion.div>
-                      ))}
-                    </div>
                   </div>
-                </motion.div>
+                </div>
                 
-                {/* Floating Elements */}
-                <motion.div
-                  className="absolute -left-12 top-1/4 bg-card/80 backdrop-blur-sm border border-border/50 p-4 rounded-lg shadow-lg z-10"
-                  initial={{ opacity: 0, x: -30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.7, delay: 0.7 }}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center">
-                      <TrendingUp className="h-4 w-4 text-green-500" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium">New Opportunity</div>
-                      <div className="text-xs text-muted-foreground">Emerging Market Detected</div>
-                    </div>
-                  </div>
-                </motion.div>
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                  {[
+                    { label: "Market Growth", value: "+24.8%", trend: "up", percent: "+2.4%" },
+                    { label: "Opportunity Score", value: "86/100", trend: "up", percent: "+12%" },
+                    { label: "Risk Level", value: "Low", trend: "down", percent: "-5%" }
+                  ].map((stat, i) => (
+                    <motion.div
+                      key={i}
+                      className="border border-border/40 rounded-lg p-4 bg-muted/10"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.5 + (i * 0.1) }}
+                    >
+                      <div className="text-sm text-muted-foreground mb-1">{stat.label}</div>
+                      <div className="flex justify-between items-center">
+                        <div className="text-2xl font-bold">{stat.value}</div>
+                        <div className={cn(
+                          "flex items-center text-xs font-medium",
+                          stat.trend === "up" ? "text-green-500" : "text-red-500"
+                        )}>
+                          {stat.trend === "up" ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
+                          {stat.percent}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
                 
+                {/* AI Recommendation Card */}
                 <motion.div
-                  className="absolute -right-8 bottom-1/3 bg-card/80 backdrop-blur-sm border border-border/50 p-4 rounded-lg shadow-lg z-10"
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.7, delay: 0.9 }}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center">
-                      <Users className="h-4 w-4 text-blue-500" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium">Competitor Alert</div>
-                      <div className="text-xs text-muted-foreground">Price strategy changed</div>
-                    </div>
-                  </div>
-                </motion.div>
-                
-                {/* AI Suggestion Element */}
-                <motion.div
-                  className="absolute -bottom-8 left-1/4 right-1/4 bg-card/90 backdrop-blur-md border border-primary/20 p-4 rounded-lg shadow-xl z-20"
+                  className="border border-primary/20 bg-primary/5 rounded-lg p-4 flex items-start gap-3"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, delay: 1.1 }}
+                  transition={{ duration: 0.5, delay: 0.8 }}
                 >
-                  <div className="flex items-center gap-2">
-                    <div className="h-7 w-7 rounded-full bg-primary/20 flex items-center justify-center">
-                      <Sparkles className="h-3.5 w-3.5 text-primary" />
-                    </div>
-                    <div className="text-sm font-medium text-primary">AI Recommendation</div>
+                  <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Sparkles className="h-4 w-4 text-primary" />
                   </div>
-                  <div className="mt-2 text-sm">Consider expanding into the European market based on current trends and competitor analysis.</div>
+                  <div>
+                    <div className="font-medium text-primary mb-1">AI Recommendation</div>
+                    <p className="text-sm text-muted-foreground">Based on current market trends and competitive analysis, we recommend expanding into the European market, particularly focusing on sustainable product lines which show 32% growth potential.</p>
+                  </div>
                 </motion.div>
               </div>
-              
-              {/* Decorative elements */}
-              <div className="absolute -z-10 inset-0 overflow-hidden">
-                <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-primary rounded-full"></div>
-                <div className="absolute top-1/3 left-1/3 w-3 h-3 bg-purple-500 rounded-full"></div>
-                <div className="absolute bottom-1/4 right-1/3 w-2 h-2 bg-blue-500 rounded-full"></div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Feature Section - Modern Cards */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="mb-24"
-          >
-            <div className="text-center mb-16">
-              <Badge className="mb-4 px-3 py-1.5 bg-primary/10 text-primary rounded-full">
-                Core Features
-              </Badge>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-6">Why Choose Forecastro AI?</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">Experience the most advanced market intelligence platform powered by cutting-edge AI technology.</p>
-            </div>
+            </motion.div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[
-                {
-                  icon: <LineChart className="h-6 w-6 text-primary" />,
-                  title: "Real-time Analytics",
-                  description: "Get instant insights into market trends and competitor movements as they happen."
-                },
-                {
-                  icon: <BrainCircuit className="h-6 w-6 text-purple-500" />,
-                  title: "AI Predictions",
-                  description: "Leverage advanced AI algorithms to predict market trends and identify opportunities."
-                },
-                {
-                  icon: <Users className="h-6 w-6 text-blue-500" />,
-                  title: "Competitor Tracking",
-                  description: "Monitor your competitors' strategies and stay ahead of market changes."
-                }
-              ].map((feature, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.1 }}
-                  className="group relative overflow-hidden rounded-xl border border-border/40 bg-gradient-to-b from-background to-muted/20 p-6 transition-all duration-300 hover:shadow-md hover:border-primary/20 card-glow"
-                >
-                  <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-3xl"></div>
-                  
-                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-muted/50 to-muted flex items-center justify-center mb-6 relative z-10 group-hover:scale-110 transition-transform duration-300">
-                    {feature.icon}
-                  </div>
-                  
-                  <h3 className="text-xl font-semibold mb-3 relative z-10">{feature.title}</h3>
-                  <p className="text-muted-foreground relative z-10">{feature.description}</p>
-                  
-                  <div className="mt-6 flex items-center text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300 relative z-10 gap-2">
-                    <span className="text-sm font-medium">Learn more</span>
-                    <ChevronRight className="h-4 w-4" />
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-          
-          {/* Stats Section - Modern Version */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="mb-24"
-          >
-            <div className="bg-gradient-to-br from-muted/30 via-card/30 to-muted/30 border border-border/40 rounded-2xl p-10 backdrop-blur-sm">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                {[
-                  { value: "10K+", label: "Active Users", color: "text-primary", colorBg: "bg-primary" },
-                  { value: "50M+", label: "Data Points", color: "text-purple-500", colorBg: "bg-purple-500" },
-                  { value: "99.9%", label: "Uptime", color: "text-green-500", colorBg: "bg-green-500" },
-                  { value: "24/7", label: "Support", color: "text-blue-500", colorBg: "bg-blue-500" }
-                ].map((stat, i) => (
+            {/* Trusted By Section */}
+            <div className="mt-20 text-center">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="text-sm font-medium text-muted-foreground mb-6"
+              >
+                TRUSTED BY INNOVATIVE COMPANIES WORLDWIDE
+              </motion.p>
+              
+              <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8">
+                {["Microsoft", "Google", "Amazon", "Shopify", "Adobe"].map((company, i) => (
                   <motion.div
                     key={i}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
                     transition={{ duration: 0.5, delay: i * 0.1 }}
-                    className="text-center relative"
+                    className="text-muted-foreground/60 hover:text-muted-foreground transition-colors duration-300 text-xl font-semibold"
                   >
-                    <div className={`absolute w-12 h-12 rounded-full ${stat.colorBg}/10 blur-xl -z-10 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2`}></div>
-                    <div className={`text-4xl font-bold ${stat.color} mb-2`}>{stat.value}</div>
-                    <div className="text-muted-foreground text-sm">{stat.label}</div>
+                    {company}
                   </motion.div>
                 ))}
               </div>
             </div>
-          </motion.div>
-          
-          {/* CTA Section */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold mb-6">Ready to Transform Your Market Strategy?</h2>
-            <p className="text-muted-foreground mb-10">Join thousands of businesses making smarter decisions with Forecastro AI.</p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <Button size="lg" onClick={() => switchView("pricing")} className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white font-medium shadow-md hover:shadow-lg transition-all duration-200 px-8">
-                Get Started Now
-              </Button>
-              <Button size="lg" variant="outline" onClick={() => switchView("contact")} className="border-primary/20 hover:border-primary bg-background/50 hover:bg-background/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 px-8">
-                Contact Sales
-              </Button>
+          </div>
+        </section>
+        
+        {/* Features Section - Advanced version */}
+        <section className="py-24 relative">
+          <div className="container mx-auto px-6">
+            <div className="max-w-3xl mx-auto text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm text-primary bg-primary/10 font-medium mb-6"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>Advanced Capabilities</span>
+              </motion.div>
+              
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-3xl md:text-4xl font-bold mb-6"
+              >
+                Harness the Power of AI for Market Intelligence
+              </motion.h2>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-muted-foreground text-lg"
+              >
+                Our AI-powered platform provides comprehensive market analysis and predictive insights to help your business make data-driven decisions with confidence.
+              </motion.p>
             </div>
-          </motion.div>
-        </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+              {[
+                {
+                  icon: <LineChart className="h-6 w-6" />,
+                  title: "Real-time Analytics",
+                  description: "Monitor market trends and competitors with our real-time analytics dashboard, updated every minute."
+                },
+                {
+                  icon: <BrainCircuit className="h-6 w-6" />,
+                  title: "AI Predictions",
+                  description: "Our advanced machine learning models predict market trends with industry-leading 96% accuracy."
+                },
+                {
+                  icon: <Users className="h-6 w-6" />,
+                  title: "Competitor Intelligence",
+                  description: "Track your competitors' strategies, pricing, and market positioning to stay ahead."
+                },
+                {
+                  icon: <Target className="h-6 w-6" />,
+                  title: "Opportunity Detection",
+                  description: "Automatically identify market gaps and growth opportunities before your competitors."
+                },
+                {
+                  icon: <BarChart className="h-6 w-6" />,
+                  title: "Custom Reports",
+                  description: "Generate comprehensive market reports tailored to your specific business needs."
+                },
+                {
+                  icon: <Zap className="h-6 w-6" />,
+                  title: "Smart Alerts",
+                  description: "Receive intelligent notifications about critical market changes that affect your business."
+                }
+              ].map((feature, i) => (
+                <FeatureCard 
+                  key={i}
+                  icon={feature.icon}
+                  title={feature.title}
+                  description={feature.description}
+                  index={i}
+                />
+              ))}
+            </div>
+            
+            <div className="text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+              >
+                <Button
+                  size="lg"
+                  onClick={() => switchView("features")}
+                  variant="outline"
+                  className="border-primary/20 hover:border-primary/40 hover:bg-primary/5"
+                >
+                  Explore All Features <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+        
+        {/* Metrics Section - With Cards */}
+        <section className="py-20 bg-muted/30 relative">
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute left-1/4 top-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl opacity-70 transform -translate-y-1/2" />
+            <div className="absolute right-1/4 top-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl opacity-70" />
+          </div>
+          
+          <div className="container mx-auto px-6">
+            <div className="max-w-3xl mx-auto text-center mb-16">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="text-3xl md:text-4xl font-bold mb-6"
+              >
+                Proven Results for Businesses Worldwide
+              </motion.h2>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-muted-foreground text-lg"
+              >
+                Companies using Forecastro AI report significant improvements in market understanding, strategic decision-making, and overall business performance.
+              </motion.p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <MetricCard
+                value="10K+"
+                label="Active Users"
+                icon={<Users className="h-5 w-5" />}
+                color="text-blue-500"
+                bgColor="bg-blue-500"
+              />
+              <MetricCard
+                value="32%"
+                label="Average Growth"
+                icon={<TrendingUp className="h-5 w-5" />}
+                color="text-green-500"
+                bgColor="bg-green-500"
+              />
+              <MetricCard
+                value="96%"
+                label="Prediction Accuracy"
+                icon={<Target className="h-5 w-5" />}
+                color="text-purple-500"
+                bgColor="bg-purple-500"
+              />
+              <MetricCard
+                value="24/7"
+                label="Market Monitoring"
+                icon={<LineChart className="h-5 w-5" />}
+                color="text-pink-500"
+                bgColor="bg-pink-500"
+              />
+            </div>
+          </div>
+        </section>
+        
+        {/* Testimonials Section */}
+        <section className="py-24 relative">
+          <div className="container mx-auto px-6">
+            <div className="max-w-3xl mx-auto text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm text-primary bg-primary/10 font-medium mb-6"
+              >
+                <Star className="h-3.5 w-3.5" />
+                <span>Customer Success Stories</span>
+              </motion.div>
+              
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-3xl md:text-4xl font-bold mb-6"
+              >
+                What Our Customers Say
+              </motion.h2>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-muted-foreground text-lg"
+              >
+                Discover how Forecastro AI has transformed businesses across industries with its powerful market intelligence capabilities.
+              </motion.p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <TestimonialCard
+                quote="Forecastro AI has completely transformed how we approach market analysis. We've identified three new market opportunities that we would have otherwise missed."
+                author="Sarah Johnson"
+                role="Chief Strategy Officer"
+                company="TechNova Inc."
+                index={0}
+              />
+              <TestimonialCard
+                quote="The AI-powered predictions have been remarkably accurate. We've been able to adjust our strategy ahead of market shifts and gain a significant advantage over competitors."
+                author="Michael Chen"
+                role="VP of Product"
+                company="GrowthWave"
+                index={1}
+              />
+              <TestimonialCard
+                quote="What impressed me most was how quickly we could extract actionable insights from complex market data. Forecastro AI's platform is intuitive yet incredibly powerful."
+                author="Priya Mehta"
+                role="Marketing Director"
+                company="Elevate Brands"
+                index={2}
+              />
+            </div>
+          </div>
+        </section>
+        
+        {/* CTA Section */}
+        <section className="py-20 relative">
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute inset-0 bg-muted/30" />
+            <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent opacity-30" />
+            <div className="absolute left-0 right-0 bottom-0 h-px bg-gradient-to-r from-transparent via-border to-transparent opacity-30" />
+            <div className="absolute left-1/3 top-1/2 w-96 h-96 bg-primary/5 rounded-full blur-3xl opacity-60 transform -translate-y-1/2" />
+            <div className="absolute right-1/3 top-1/4 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl opacity-60" />
+          </div>
+          
+          <div className="container mx-auto px-6 relative">
+            <div className="max-w-4xl mx-auto text-center">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6"
+              >
+                Ready to Transform Your Market Strategy?
+              </motion.h2>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto"
+              >
+                Join thousands of forward-thinking businesses that are leveraging Forecastro AI to gain a competitive edge in their markets.
+              </motion.p>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="flex flex-col sm:flex-row gap-4 justify-center"
+              >
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white px-8 shadow-md hover:shadow-xl hover:shadow-primary/10 transition-all duration-200"
+                  onClick={() => switchView("pricing")}
+                >
+                  Start Free Trial
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="px-8 bg-background/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 hover:bg-primary/5"
+                  onClick={() => switchView("contact")}
+                >
+                  Contact Sales
+                </Button>
+              </motion.div>
+            </div>
+          </div>
+        </section>
       </main>
     );
   }
