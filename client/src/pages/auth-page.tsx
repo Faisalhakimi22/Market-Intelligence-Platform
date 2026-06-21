@@ -619,7 +619,7 @@ export default function AuthPage() {
     styleEl.innerHTML = `
       /* Smoother animations */
       .motion-reduce {
-        transition: all 1s ease-out;
+        transition: opacity 1s ease-out, transform 1s ease-out;
       }
       
       html {
@@ -652,58 +652,41 @@ export default function AuthPage() {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("annual");
   const [activeTab, setActiveTab] = useState("login");
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollYRef = useRef(0);
+  const headerVisibleRef = useRef(true);
+  const scrollFrameRef = useRef<number | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeView, setActiveView] = useState<ViewId>("auth");
   
-  // Hide header on scroll down, show on scroll up
+  // Hide the header on scroll down without re-rendering the page on every scroll tick.
   useEffect(() => {
-    const handleScroll = () => {
+    const updateHeaderVisibility = () => {
+      scrollFrameRef.current = null;
       const currentScrollY = window.scrollY;
-      if (currentScrollY > lastScrollY && currentScrollY > 80) {
-        setIsHeaderVisible(false);
-      } else {
-        setIsHeaderVisible(true);
+      const shouldShowHeader = !(currentScrollY > lastScrollYRef.current && currentScrollY > 80);
+
+      if (shouldShowHeader !== headerVisibleRef.current) {
+        headerVisibleRef.current = shouldShowHeader;
+        setIsHeaderVisible(shouldShowHeader);
       }
-      setLastScrollY(currentScrollY);
+
+      lastScrollYRef.current = currentScrollY;
+    };
+
+    const handleScroll = () => {
+      if (scrollFrameRef.current === null) {
+        scrollFrameRef.current = window.requestAnimationFrame(updateHeaderVisibility);
+      }
     };
     
+    lastScrollYRef.current = window.scrollY;
     window.addEventListener('scroll', handleScroll, { passive: true });
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
-    };
-  }, [lastScrollY]);
-  
-  // Add smooth scrolling behavior
-  useEffect(() => {
-    // Set smooth scrolling for the entire page
-    document.documentElement.style.scrollBehavior = 'smooth';
-    
-    // Reduce scroll speed for a smoother experience
-    const handleWheel = (e) => {
-      if (e.deltaY !== 0) {
-        // Slow down the scroll speed
-        window.scrollBy({
-          top: e.deltaY * 0.35, // Reduce scroll speed by 65%
-          behavior: 'smooth'
-        });
-        e.preventDefault();
+      if (scrollFrameRef.current !== null) {
+        window.cancelAnimationFrame(scrollFrameRef.current);
       }
-    };
-    
-    // Apply the motion class to all animating elements
-    const allMotionElements = document.querySelectorAll('[data-motion], .motion-div, [data-whileinview]');
-    allMotionElements.forEach(el => {
-      el.classList.add('motion-reduce');
-    });
-    
-    // Add the wheel event listener for controlled scrolling
-    window.addEventListener('wheel', handleWheel, { passive: false });
-    
-    return () => {
-      document.documentElement.style.scrollBehavior = '';
-      window.removeEventListener('wheel', handleWheel);
     };
   }, []);
 
