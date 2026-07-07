@@ -1,3 +1,6 @@
+<div align="center">
+
+
 # 📊 Market Intelligence Platform
 
 <div align="center">
