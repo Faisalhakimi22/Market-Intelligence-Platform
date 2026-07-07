@@ -3,7 +3,7 @@
 
 # 📊 Market Intelligence Platform
 
-<div align="center">
+</div>
 
 ![React](https://img.shields.io/badge/React-18-61dafb.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178c6.svg)
