@@ -3,14 +3,13 @@
 
 # 📊 Market Intelligence Platform
 
-</div>
-
 ![React](https://img.shields.io/badge/React-18-61dafb.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178c6.svg)
 ![Express](https://img.shields.io/badge/Express-4.21-000000.svg)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-4169e1.svg)
 ![OpenAI](https://img.shields.io/badge/OpenAI-API-412991.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
+</div>
 
 **Enterprise-grade market intelligence platform with AI-powered insights, real-time data integrations, and advanced forecasting for entrepreneurs and startup founders**
 
